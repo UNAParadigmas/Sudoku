@@ -103,7 +103,7 @@
 					<div class="col-md-10">
 						<div class="col-sm-4">
 						<div class="panel panel-success " align="center">
-							<div class="panel-heading">9x9 Dificil</div>
+							<div class="panel-heading" id="size">9x9 Dificil</div>
 						</div>		
 						</div>						
 						<div class="btn-group col-md-offset-1">
@@ -273,7 +273,7 @@
 							<option>JUMBO</option>
 						</select>
 					</div>
-					<div class="form-group">
+					<div class="form-group" id="dificultad">
 					  <label for="sel1">Dificultad:</label>
 						<select class="form-control" id="sel1">
 							<option>Fácil</option>
@@ -281,6 +281,7 @@
 							<option>Difícil</option>
 						</select>
 					</div>
+					<button type="button" class="btn btn-success">Juego Nuevo</button>
 					</div>
 				</div>				
 			</div>
@@ -298,6 +299,15 @@
 			$('#pauseButton').prop('disabled', true);			
 			$('#PasuedMsg').prop('hidden', true);
 			$('.logged').prop('hidden', true);
+			$('#dificultad').prop("hidden", true);
+		});
+		
+		$("#sel1").change(function(){
+			if(this.value != '9x9'){
+				$('#dificultad').prop("hidden", true);
+			}else{
+				$('#dificultad').prop("hidden", false);
+			}
 		});
 		
 		$('#startButton').click(function () {
