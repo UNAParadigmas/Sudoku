@@ -281,7 +281,7 @@
 							<option>Difícil</option>
 						</select>
 					</div>
-					<button type="button" class="btn btn-success">Juego Nuevo</button>
+					<button type="button" class="btn btn-success" id="nuevoJuego">Crear Juego</button>
 					</div>
 				</div>				
 			</div>
@@ -300,16 +300,14 @@
 			$('#PasuedMsg').prop('hidden', true);
 			$('.logged').prop('hidden', true);
 			$('#dificultad').prop("hidden", true);
-		});
-		
+		});		
 		$("#sel1").change(function(){
 			if(this.value != '9x9'){
 				$('#dificultad').prop("hidden", true);
 			}else{
 				$('#dificultad').prop("hidden", false);
 			}
-		});
-		
+		});		
 		$('#startButton').click(function () {
 			timer.start();
 			$('#startButton').prop('disabled', true);	
@@ -330,6 +328,9 @@
 		});
 		timer.addEventListener('started', function (e) {
 			$('#values').html(timer.getTimeValues().toString());
+		});
+		$('#nuevoJuego').click(function () {
+			$('#size').html($('#sel1 option:selected').text(););
 		});
 	</script>
   </body>
