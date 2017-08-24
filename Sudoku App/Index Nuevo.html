@@ -12,7 +12,7 @@
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 	<script src="http://code.jquery.com/ui/1.9.2/jquery-ui.js"></script>
     
-	
+	<!-- Angular 2 -->
   </head>
   <body>
 <script type="text/javascript" >
@@ -614,22 +614,26 @@
 				<div class="row"> 
 					<div id='sudoku' align="center">
 
-					<div id='main'>
-					<table>
-					<tr>
-					<td>
-						<!--canvas id='canvas2' width='541' height='55' title="Click here to set the currently selected digit">Canvas is not supported by this browser.</canvas-->
-						<canvas id='canvas1' width='541' height='541'>Canvas is not supported by this browser.</canvas>
-				</td>
-					<td style="width: 135px">
-						Show allowed: <input id='chbAllowed' type="checkbox" checked='yes' title='Untick this to hide allowed values'/><br/>
-						Show singles: <input id='chbShowSingles' type="checkbox" checked='yes' title='Untick this to hide naked and hidden singles - these are shown in red'/><br/>
-						<span id="message" style="width: 130; color: Red; "></span><br/>	
+						<div id='main'>
+							<table>
+								<tr>
+								<td>
+									<!--canvas id='canvas2' width='541' height='55' title="Click here to set the currently selected digit">Canvas is not supported by this browser.</canvas-->
+									<canvas id='canvas1' width='541' height='541'>Canvas is not supported by this browser.</canvas>
+								</td>
+								<td style="width: 135px">
+									Show allowed: <input id='chbAllowed' type="checkbox" checked='yes' title='Untick this to hide allowed values'/><br/>
+									Show singles: <input id='chbShowSingles' type="checkbox" checked='yes' title='Untick this to hide naked and hidden singles - these are shown in red'/><br/>
+								</td>
+								</tr>
+							</table><br><br>						
+						</div>
+						<div class="alert alert-success">
+							<span id="message" ></span>
+						</div>
 
-					</td>
-					</tr>
-					</table>
-				</div></div></div>				
+					</div>
+				</div>				
 				<br>
 			</div>
 			<div class="col-lg-3" >
@@ -639,7 +643,6 @@
 						<div>
 							<div class="well" id="values">00:00:00</div>
 							<div class="btn-group">
-								<button class="btn btn-default" id="startButton">Comenzar</button>
 								<button class="btn btn-default" id="pauseButton">Parar</button>
 							</div>
 						</div>
@@ -675,10 +678,7 @@
 	<script>
 		var timer = new Timer();
 		$( document ).ready(function() {
-			$('#pauseButton').prop('disabled', true);			
-			$('#PasuedMsg').prop('hidden', true);
-			$('.logged').prop('hidden', true);
-			$('#dificultad').prop("hidden", true);
+			$('#elemenrs').initButtons();
 		});		
 		$("#sel1").change(function(){
 			if(this.value != '9x9'){
@@ -715,16 +715,31 @@
 			val += (val == '9x9')? " " + $('#sel2 option:selected').text() : " Default";
 			$('#size').html(val);
 		});
+		(function( $elements ){
+			$.fn.initButtons = function() {
+				$('#pauseButton').prop('disabled', true);			
+				$('#PasuedMsg').prop('hidden', true);
+				$('.logged').prop('hidden', true);
+				$('#dificultad').prop('hidden', true);
+				$('#message').html('Para Jugar: Cree o Cargue Nuevo Juego');
+				$('#btnClear').prop('disabled', true);
+				$('#btnReset').prop('disabled', true);
+				$('#btnSolve').prop('disabled', true);
+				$('#btnAccept').prop('disabled', true);
+				$('#btnHint').prop('disabled', true);
+				$('#btnUndo').prop('disabled', true);
+			}; 
+		})( jQuery );
 	</script>
 	<script type="text/javascript" >
 	var CellSize = 60;
 	var SubCellSize = 18;
 
 	var canvas1 = document.getElementById("canvas1");
-	var canvas2 = document.getElementById("canvas2");
-	var chbAllowed = document.getElementById("chbAllowed");
-	var chbShowSingles = document.getElementById("chbShowSingles");
-	var tbSerial = document.getElementById("tbSerial");
+	//var canvas2 = document.getElementById("canvas2");
+	var chbAllowed = document.getElementById("chbAllowed"); // check box
+	var chbShowSingles = document.getElementById("chbShowSingles"); // check box
+	//var tbSerial = document.getElementById("tbSerial");
 	var extraInfo = document.getElementById("extraInfo");
 
 	var board1 = new Board();
@@ -753,9 +768,9 @@
 	function checkStatus() {
 		extraInfo.innerHTML = "";
 		if (!board1._isValid)
-			message.innerHTML = "*Invalid*";
+			message.innerHTML = "* Incorrecto*";
 		else if (board1._isSolved)
-			message.innerHTML = "*Solved*";
+			message.innerHTML = "* Resuelto *";
 		else
 			message.innerHTML = "";
 	}
@@ -781,7 +796,7 @@
 
 	function drawCells() {
 		var context = canvas1.getContext('2d'); 
-
+	
 		context.font = "12pt Calibri"; // small text
 		context.textAlign = "center";
 		context.textBaseline = "middle";
@@ -864,7 +879,7 @@
 	function updateUI() {
 		drawCanvas();
 		checkStatus();
-		tbSerial.value = board1.toString();
+		//tbSerial.value = board1.toString();
 	}
 
 	function readOptions() {
@@ -943,7 +958,10 @@
 	}
 
 	function loadText() {
-		var ret = board1.setString(tbSerial.value);
+		/*
+			traer el texto del modal donde se importa del modal
+		*/
+		//var ret = board1.setString(tbSerial.value);
 		updateUI();
 		if (!ret)
 			message.innerHTML = "String is not of length 81";
@@ -991,14 +1009,15 @@
 
 	//http://magictour.free.fr/sudoku.htm for list of hard Sudoku puzzles
 	// http://www.sudokuwiki.org/sudoku.htm good on-line solver accepting serial format
-	//board1.setString("7.8...3.....2.1...5.........4.....263...8.......1...9..9.6....4....7.5..........."); //very hard
+	//board1.setString("................................................................................."); // medium
 	board1.setString("6.81..........72.............3.5..615....4..........8.47....5.....63.....2......."); // medium
 	updateUI();
 	var digCellSize = 54;
 
 	// New stuff - draw a digit selector in canvas above board
-	function initDigitSource() {
+	//function initDigitSource() {
 		// Only ever called once!
+		/*
 		var context = canvas2.getContext('2d');
 		context.strokeStyle = '#808080';
 		var SourceSize = BoardSize + 1;
@@ -1031,10 +1050,10 @@
 			context.fillText(value, x, y);
 		}
 
-	}
-	initDigitSource();
+	}*/
+	//initDigitSource();
 
-	canvas2.onmousedown = function canvasMouseDown(ev) {
+	/*canvas2.onmousedown = function canvasMouseDown(ev) {
 		var x = ev.pageX - this.offsetLeft;
 		var y = ev.pageY - this.offsetTop;
 		var coords = this.relMouseCoords(ev);
@@ -1043,6 +1062,7 @@
 			dig = 0;
 		setDigitInCell(dig);
 	}
+	*/
 
 
 </script>
