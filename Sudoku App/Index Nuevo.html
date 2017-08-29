@@ -613,6 +613,10 @@
 				<br>
 				<div class="row"> 
 					<div id='sudoku' align="center">
+						<div id="panelMsg" class="alert alert-success alert-dismissable fade in">
+							<b id="message"></b>
+							<button  id="bclose" aria-label="close">&times;</button>
+						</div>
 
 						<div id='main'>
 							<table>
@@ -621,17 +625,9 @@
 									<!--canvas id='canvas2' width='541' height='55' title="Click here to set the currently selected digit">Canvas is not supported by this browser.</canvas-->
 									<canvas id='canvas1' width='541' height='541'>Canvas is not supported by this browser.</canvas>
 								</td>
-								<td style="width: 135px">
-									Show allowed: <input id='chbAllowed' type="checkbox" checked='yes' title='Untick this to hide allowed values'/><br/>
-									Show singles: <input id='chbShowSingles' type="checkbox" checked='yes' title='Untick this to hide naked and hidden singles - these are shown in red'/><br/>
-								</td>
 								</tr>
 							</table><br><br>						
 						</div>
-						<div class="alert alert-success">
-							<span id="message" ></span>
-						</div>
-
 					</div>
 				</div>				
 				<br>
@@ -675,72 +671,16 @@
 	</div>
 	
 	<script src="js/timer.js"></script>	
-	<script>
-		var timer = new Timer();
-		$( document ).ready(function() {
-			$('#elemenrs').initButtons();
-		});		
-		$("#sel1").change(function(){
-			if(this.value != '9x9'){
-				$('#dificultad').prop("hidden", true);
-			}else{
-				$('#dificultad').prop("hidden", false);
-			}
-		});		
-		$('#startButton').click(function () {
-			timer.start();
-			$('#startButton').prop('disabled', true);	
-			$('#startButton').html('Reanudar');
-			$('#pauseButton').prop('disabled', false);			
-			$('#grid').prop('hidden', false);			
-			$('#PasuedMsg').prop('hidden', true);
-		});
-		$('#pauseButton').click(function () {
-			timer.pause();
-			$('#startButton').prop('disabled', false);
-			$('#pauseButton').prop('disabled', true);			
-			$('#grid').prop('hidden', true);
-			$('#PasuedMsg').prop('hidden', false);
-		});
-		//TIMER
-		timer.addEventListener('secondsUpdated', function (e) {
-			$('#values').html(timer.getTimeValues().toString());
-		});
-		timer.addEventListener('started', function (e) {
-			$('#values').html(timer.getTimeValues().toString());
-		});
-		//TIMER END
-		$('#nuevoJuego').click(function () {
-			var val =  $('#sel1 option:selected').text();
-			val += (val == '9x9')? " " + $('#sel2 option:selected').text() : " Default";
-			$('#size').html(val);
-		});
-		(function( $elements ){
-			$.fn.initButtons = function() {
-				$('#pauseButton').prop('disabled', true);			
-				$('#PasuedMsg').prop('hidden', true);
-				$('.logged').prop('hidden', true);
-				$('#dificultad').prop('hidden', true);
-				$('#message').html('Para Jugar: Cree o Cargue Nuevo Juego');
-				$('#btnClear').prop('disabled', true);
-				$('#btnReset').prop('disabled', true);
-				$('#btnSolve').prop('disabled', true);
-				$('#btnAccept').prop('disabled', true);
-				$('#btnHint').prop('disabled', true);
-				$('#btnUndo').prop('disabled', true);
-			}; 
-		})( jQuery );
-	</script>
 	<script type="text/javascript" >
 	var CellSize = 60;
 	var SubCellSize = 18;
 
 	var canvas1 = document.getElementById("canvas1");
 	//var canvas2 = document.getElementById("canvas2");
-	var chbAllowed = document.getElementById("chbAllowed"); // check box
-	var chbShowSingles = document.getElementById("chbShowSingles"); // check box
+	var chbAllowed = true; // check box
+	var chbShowSingles = true; // check box
 	//var tbSerial = document.getElementById("tbSerial");
-	var extraInfo = document.getElementById("extraInfo");
+	//var extraInfo = document.getElementById("extraInfo");
 
 	var board1 = new Board();
 	var selectRow = 0;
@@ -766,7 +706,7 @@
 	}
 
 	function checkStatus() {
-		extraInfo.innerHTML = "";
+		//extraInfo.innerHTML = "";
 		if (!board1._isValid)
 			message.innerHTML = "* Incorrecto*";
 		else if (board1._isSolved)
@@ -1004,14 +944,13 @@
 		board1.trySolve(Location.empty, 0);
 		var diff = new Date().getTime() - s;
 		updateUI();
-		extraInfo.innerHTML = "Solve took " + String(diff) + " milliseconds";
+		//extraInfo.innerHTML = "Solve took " + String(diff) + " milliseconds";
 	}
 
 	//http://magictour.free.fr/sudoku.htm for list of hard Sudoku puzzles
 	// http://www.sudokuwiki.org/sudoku.htm good on-line solver accepting serial format
-	//board1.setString("................................................................................."); // medium
 	board1.setString("6.81..........72.............3.5..615....4..........8.47....5.....63.....2......."); // medium
-	updateUI();
+	//updateUI();
 	var digCellSize = 54;
 
 	// New stuff - draw a digit selector in canvas above board
@@ -1066,5 +1005,70 @@
 
 
 </script>
+	<script>
+		var timer = new Timer();
+		$( document ).ready(function() {
+			$().nuevoJuego(".................................................................................",'Bienvenido');
+			$().initButtons();
+		});		
+		$("#sel1").change(function(){
+			$('#dificultad').prop('hidden',(this.value != '9x9'));
+		});		
+		$('#pauseButton').click(function () {
+			timer.pause();
+			$('#startButton').prop('disabled', false);
+			$('#pauseButton').prop('disabled', true);			
+			$('#grid').prop('hidden', true);
+			$('#PasuedMsg').prop('hidden', false);
+		});//TIMER
+		timer.addEventListener('secondsUpdated', function (e) {
+			$('#values').html(timer.getTimeValues().toString());
+		});
+		timer.addEventListener('started', function (e) {
+			$('#values').html(timer.getTimeValues().toString());
+		});
+		//TIMER END
+		$('#nuevoJuego').click(function () {
+			var val = $('#sel1 option:selected').text();
+			$().nuevoJuego("6.81..........72.............3.5..615....4..........8.47....5.....63.....2.......",val,true);
+		});
+		$('#bclose').click(function(){$('#panelMsg').prop('hidden',true)});
+		$.fn.initButtons = function() {
+				$('#pauseButton').prop('disabled', true);			
+				$('#PasuedMsg').prop('hidden', true);
+				$('.logged').prop('hidden', true);
+				$('#dificultad').prop('hidden', true);
+				$('#message').text('Para Jugar: Cree o Cargue Nuevo Juego');
+				$('#btnClear').css({'background-color':'#FFFFFF'}).prop('disabled', true);
+				$('#btnReset').css({'background-color':'#FFFFFF'}).prop('disabled', true);
+				$('#btnSolve').css({'background-color':'#FFFFFF'}).prop('disabled', true);
+				$('#btnAccept').css({'background-color':'#FFFFFF'}).prop('disabled', true);
+				$('#btnHint').css({'background-color':'#FFFFFF'}).prop('disabled', true);
+				$('#btnUndo').css({'background-color':'#FFFFFF'}).prop('disabled', true);
+		};
+		$.fn.nuevoJuego = function(txt,val,time = false){
+			var aux = $('#sel2 option:selected').text();
+			var dif = (val !== '9x9' || aux === 'Fácil') ? 1 : (aux === 'Normal') ? 2 : 3 ;
+			showAllowed = showSingles = (dif === 1); // eliminar showSingles
+			
+			//$('#panelMsg').prop('hidden', false);
+			//$('#message').prop('hidden',false);
+			//$('#message').text('Juego Nuevo');
+				
+			$('#size').text(val + ((val == '9x9')? " " + aux : ""));
+			if(timer.isRunning()){				
+				timer.stop();
+				timer.start("00:00:00");
+				$('#pauseButton').prop('disabled', true);
+			}else{
+				timer.start("00:00:00");
+				$('#pauseButton').prop('disabled', false);
+			}
+			
+			board1.setString(txt);
+			updateUI();
+		};
+	</script>
+
   </body>
 </html>
