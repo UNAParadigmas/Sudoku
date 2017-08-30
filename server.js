@@ -47,11 +47,3 @@ mongodb.MongoClient.connect(process.env.MONGODB_URI || 'mongodb://admin:0150@ds1
     });
 });
 
-
-/*app.use('/', index);
-//app.use('/api', sudoku);
-app.use('/api', login);
-
-app.listen(port, function(){
-    console.log('Servidor iniciado en puerto '+port);
-});*/
