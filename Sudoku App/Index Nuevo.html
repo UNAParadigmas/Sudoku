@@ -7,10 +7,12 @@
     
 	<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
 	<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.css" rel="stylesheet">
-    
+    <link href="css/Login.css" rel="stylesheet">
+	
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 	<script src="http://code.jquery.com/ui/1.9.2/jquery-ui.js"></script>
+	<script src="js/Login.js"></script>
     
 	
 	<!-- Angular 2 -->
@@ -582,8 +584,7 @@
 		  <li><a href="#">Ayuda</a></li>	  		  
 		</ul>
 		<ul class="nav navbar-nav navbar-right notlogged">
-		  <li><a href="#"><span class="glyphicon glyphicon-user"></span> Regístrate</a></li>
-		  <li><a href="#"><span class="glyphicon glyphicon-log-in"></span> Ingresa</a></li>
+		  <li><a  class="btn btn-lg" role="button" data-toggle="modal" data-target="#login-modal"href="" ><span class="glyphicon glyphicon-log-in" ></span> Ingresa</a></li>
 		</ul>
 	  </div>
 	</nav>
@@ -668,6 +669,66 @@
 					</div>
 				</div>				
 			</div>
+		</div>
+	</div>
+	
+	<div class="modal fade" id="login-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+    	<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header" align="center">
+					<img id="img_logo" src="img/icon.png">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+					</button>
+				</div>
+                
+                <div id="div-forms">
+					<!-- Login Form -->
+                    <form id="login-form">
+		                <div class="modal-body">
+				    		<div id="div-login-msg">
+                                <div id="icon-login-msg" class="glyphicon glyphicon-chevron-right"></div>
+                                <span id="text-login-msg">Ingrese su nombre de usuario y contraseña.</span>
+                            </div>
+				    		<input id="login_username" class="form-control" type="text" placeholder="Nombre de Usuario" required>
+				    		<input id="login_password" class="form-control" type="password" placeholder="Contraseña" required>
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox"> Remember me
+                                </label>
+                            </div>
+        		    	</div>
+				        <div class="modal-footer">
+                            <div>
+                                <button type="submit" class="btn btn-success btn-lg btn-block">Login</button>
+                            </div>
+				    	    <div>
+                                <button id="login_register_btn" type="button" class="btn btn-link">Register</button>
+                            </div>
+				        </div>
+                    </form>
+                     <!-- Register Form -->
+                    <form id="register-form" style="display:none;">
+            		    <div class="modal-body">
+		    				<div id="div-register-msg">
+                                <div id="icon-register-msg" class="glyphicon glyphicon-chevron-right"></div>
+                                <span id="text-register-msg">Resgistro de usuario.</span>
+                            </div>
+		    				<input id="register_username" class="form-control" type="text" placeholder="Nombre Usuario" required>
+                            <input id="register_email" class="form-control" type="text" placeholder="Correo Electrónico" required>
+                            <input id="register_password" class="form-control" type="password" placeholder="Contraseña" required>
+            			</div>
+		    		    <div class="modal-footer">
+                            <div>
+                                <button type="submit" class="btn btn-success btn-lg btn-block">Register</button>
+                            </div>
+                            <div>
+                                <button id="register_login_btn" type="button" class="btn btn-link">Log In</button>
+                            </div>
+		    		    </div>
+                    </form>
+                </div>
+            </div>
 		</div>
 	</div>
 	<script src="js/timer.js"></script>	

@@ -9,7 +9,7 @@ class Game {
 			this.selCol = 0;
 			this.showAllowed = showAllowed;
 			this.stack = new Array();
-			this.BoardSize = 9;
+			this.BoardSize = 9; //quitar
 		}
 		/* stack methods */
 		undo () {
