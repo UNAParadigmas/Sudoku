@@ -12,6 +12,7 @@
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 	<script src="http://code.jquery.com/ui/1.9.2/jquery-ui.js"></script>
     
+	
 	<!-- Angular 2 -->
   </head>
   <body>
@@ -669,76 +670,9 @@
 			</div>
 		</div>
 	</div>
-	
 	<script src="js/timer.js"></script>	
 	<script src="js/Game.js"></script>	
+	<script src="js/Control.js"></script>	
 	
-	<script>
-		var timer = new Timer();
-		var game = new Game();
-	
-		$( document ).ready(function() {
-			$().nuevoJuego(".................................................................................",'Bienvenido');
-			$().initButtons();
-		});		
-		$("#sel1").change(function(){
-			$('#dificultad').prop('hidden',(this.value != '9x9'));
-		});		
-		$('#pauseButton').click(function () {
-			timer.pause();
-			$('#startButton').prop('disabled', false);
-			$('#pauseButton').prop('disabled', true);			
-			$('#grid').prop('hidden', true);
-			$('#PasuedMsg').prop('hidden', false);
-		});//TIMER
-		timer.addEventListener('secondsUpdated', function (e) {
-			$('#values').html(timer.getTimeValues().toString());
-		});
-		timer.addEventListener('started', function (e) {
-			$('#values').html(timer.getTimeValues().toString());
-		});
-		//TIMER END
-		$('#nuevoJuego').click(function () {
-			var val = $('#sel1 option:selected').text();
-			$().nuevoJuego("6.81..........72.............3.5..615....4..........8.47....5.....63.....2.......",val,true);
-		});
-		$('#bclose').click(function(){$('#panelMsg').prop('hidden',true)});
-		$.fn.initButtons = function() {
-				$('#pauseButton').prop('disabled', true);			
-				$('#PasuedMsg').prop('hidden', true);
-				$('.logged').prop('hidden', true);
-				$('#dificultad').prop('hidden', true);
-				$('#message').text('Para Jugar: Cree o Cargue Nuevo Juego');
-				$('#btnClear').css({'background-color':'#FFFFFF'}).prop('disabled', true);
-				$('#btnReset').css({'background-color':'#FFFFFF'}).prop('disabled', true);
-				$('#btnSolve').css({'background-color':'#FFFFFF'}).prop('disabled', true);
-				$('#btnAccept').css({'background-color':'#FFFFFF'}).prop('disabled', true);
-				$('#btnHint').css({'background-color':'#FFFFFF'}).prop('disabled', true);
-				$('#btnUndo').css({'background-color':'#FFFFFF'}).prop('disabled', true);
-		};
-		$.fn.nuevoJuego = function(txt,val,time = false){
-			var aux = $('#sel2 option:selected').text();
-			var dif = (val !== '9x9' || aux === 'Fácil') ? 1 : (aux === 'Normal') ? 2 : 3 ;
-			//showAllowed = showSingles = (dif === 1); // eliminar showSingles
-			
-			//$('#panelMsg').prop('hidden', false);
-			//$('#message').prop('hidden',false);
-			//$('#message').text('Juego Nuevo');
-				
-			$('#size').text(val + ((val == '9x9')? " " + aux : ""));
-			if(timer.isRunning()){				
-				timer.stop();
-				timer.start("00:00:00");
-				$('#pauseButton').prop('disabled', true);
-			}else{
-				timer.start("00:00:00");
-				$('#pauseButton').prop('disabled', false);
-			}
-			
-			game.board.setString(txt);
-			game.updateCanvas();
-		};
-	</script>
-
   </body>
 </html>

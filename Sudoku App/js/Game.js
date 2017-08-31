@@ -23,16 +23,20 @@ class Game {
 			this.stack.push(this.board.clone());
 		}
 		/* UI methods */
-		drawGrid() { // se puede optimizar
+		drawGrid() { 
 			let con = this.canvas.getContext('2d'); 
 			con.strokeStyle = '#808080';
+			
 			for (var i = 0; i <= this.BoardSize; i++) {
+				let val1 = i * this.CellSize + 0.5;
+				let val2 = this.BoardSize * this.CellSize + 0.5; 				
+				
 				con.beginPath();
 				con.lineWidth = (i%3) ? 1 : 2;
-				con.moveTo(i * this.CellSize + 0.5, 0.5);
-				con.lineTo(i * this.CellSize + 0.5, this.BoardSize * this.CellSize + 0.5);
-				con.moveTo(0.5, i * this.CellSize + 0.5);
-				con.lineTo(this.BoardSize * this.CellSize + 0.5, i * this.CellSize + 0.5);
+				con.moveTo(val1, 0.5 );
+				con.lineTo(val1, val2);
+				con.moveTo(0.5 , val1);
+				con.lineTo(val2, val1);
 				con.stroke();
 			}
 		}
@@ -131,6 +135,21 @@ class Game {
 			this.updateCanvas();
 		}
 		
+		setDigitInCell(digit) {
+			var cel = this.board.getCell(new Location(this.selRow, this.selCol));
+			console.log(cel);
+			if (cel.isGiven())
+				return;
+			if (digit != 0 && !cel.isAllowed(digit)) {
+				message.innerHTML = "Digit not allowed";
+				return;
+			}
+			this.pushBoard();
+			cel.setValue(digit);
+			this.board.updateAllowed();
+			this.updateCanvas();
+		}
+		
 		/* GAME METHODS*/
 		clearGame() {
 			this.stack = new Array();
@@ -167,3 +186,4 @@ class Game {
 		}
 		
 	}
+		
