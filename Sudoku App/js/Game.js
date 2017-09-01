@@ -66,9 +66,8 @@ class Game {
 								let subCol = Math.floor((e - 1) % 3) - 1;
 								x += subCol * this.SubCellSize;
 								y += subRow * this.SubCellSize;
-								let hiddenSingle = values.length != 1 && e == cel.getAnswer();
 								con.fillStyle = "#aaaaaa"
-								if (e == cel.getAnswer())
+								if (values.length == 1 && e == cel.getAnswer())
 									con.fillStyle = "#ff143c";
 								con.fillText(e, x, y);
 							});
