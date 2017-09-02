@@ -1,0 +1,10 @@
+.dropdown-menu {
+    width: 250px !important;
+}
+.form-group{
+    margin: 5px;
+}
+
+.form #btnLogin{
+    margin: 5px;
+}
