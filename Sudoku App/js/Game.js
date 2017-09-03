@@ -103,26 +103,11 @@ class Game {
 			this.canvas.getContext('2d').clearRect(0, 0, this.canvas.width, this.canvas.height);
 			this.drawGrid();
 			this.drawCells();
-			message.innerHTML = (!this.board._isValid)? "Incorrecto" : (this.board._isSolved)? "Resuelto" : "";
+			//message.innerHTML = (!this.board._isValid)? "Incorrecto" : (this.board._isSolved)? "Resuelto" : "";
 		}
 		selectCell(row, col) {
 			this.selRow = row;
 			this.selCol = col;
-			this.updateCanvas();
-		}
-		
-		setDigitInCell(digit) {
-			var cel = this.board.getCell(new Location(this.selCol, this.selRow));
-			//message.innerHTML = "";
-			if (cel.isGiven())
-				return;
-			if (digit != 0 && !cel.isAllowed(digit)) {
-				//message.innerHTML = "Digit not allowed";
-				return;
-			}
-			this.pushBoard();
-			cel.setValue(digit);
-			this.board.updateAllowed();
 			this.updateCanvas();
 		}
 		
@@ -140,7 +125,7 @@ class Game {
 			if (cel.isGiven())
 				return;
 			if (digit != 0 && !cel.isAllowed(digit)) {
-				message.innerHTML = "Digit not allowed";
+				//message.innerHTML = "Digit not allowed";
 				return;
 			}
 			this.pushBoard();
@@ -155,14 +140,7 @@ class Game {
 			this.board.clear();
 			this.updateCanvas();
 		}
-		
-		acceptPossibles() { 
-			this.pushBoard();
-			this.board.acceptPossibles();
-			this.board.updateAllowed();
-			this.updateCanvas();
-		}
-		
+				
 		hint() { // codigo basura
 			solution = board.clone();
 			if(solution.trySolve(Location.empty, 0)){
