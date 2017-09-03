@@ -10,9 +10,14 @@ class Grid{
 	map(f){
 		return this.matrix.map(elem => elem.map(elem => f(elem)));
 	}
-	
+	reduceX(f,v){
+		return this.matrix.reduce((z,e)=>z+f(e.reduce((z,e)=>z+f(e),v)),v)
+	}
 	get(loc){
 		return matrix[loc.row][loc.col];
+	}
+	toString(){
+		return reduceX(x=>x.getValue()||'.', '');
 	}
 }
 
