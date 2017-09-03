@@ -1,6 +1,7 @@
 class Grid{
 	constructor(size){
-		this.matrix = (new Array(size)).fill([(new Array(size).fill(new Cell()))]);
+		this.matrix = (new Array(size)).fill(new Array(size).fill(new Cell()));
+		console.log(this.matrix);
 	}
 	
 	clone(){
@@ -14,13 +15,9 @@ class Grid{
 		return this.matrix.reduce((z,e)=>z+f(e.reduce((z,e)=>z+f(e),v)),v)
 	}
 	get(loc){
-		return matrix[loc.row][loc.col];
+		return this.matrix[loc.row][loc.col];
 	}
 	toString(){
-		return reduceX(x=>x.getValue()||'.', '');
+		return this.reduceX(x=>x.getValue()||'.', '');
 	}
-}
-
-module.exports = {
-	Grid
 }

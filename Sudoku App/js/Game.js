@@ -4,12 +4,11 @@ class Game {
 			this.CellSize = 60;
 			this.SubCellSize = 18;
 			this.canvas = document.getElementById("canvas");
-			this.board = new Board();
+			this.board = new Board(9);
 			this.selRow = 0;
 			this.selCol = 0;
 			this.showAllowed = showAllowed;
 			this.stack = new Array();
-			this.BoardSize = 9; //quitar
 		}
 		/* stack methods */
 		undo () {
@@ -27,9 +26,9 @@ class Game {
 			let con = this.canvas.getContext('2d'); 
 			con.strokeStyle = '#808080';
 			
-			for (var i = 0; i <= this.BoardSize; i++) {
+			for (var i = 0; i <= this.board.size; i++) {
 				let val1 = i * this.CellSize + 0.5;
-				let val2 = this.BoardSize * this.CellSize + 0.5; 				
+				let val2 = this.board.size * this.CellSize + 0.5; 				
 				
 				con.beginPath();
 				con.lineWidth = (i%3) ? 1 : 2;
@@ -41,7 +40,7 @@ class Game {
 			}
 		}
 		
-		drawCells() { //Nota : cambiar  los isAssigned
+		drawCells() { //Nota : cambiar  los isNotAssigned
 			let con = this.canvas.getContext('2d'); 
 			con.font = "12pt Calibri"; 
 			con.textAlign = "center";
@@ -53,10 +52,10 @@ class Game {
 			con.fillStyle = "#999999"; 
 
 			if (this.showAllowed){
-				for (var row = 0; row < this.BoardSize; row++){
-					for (var col = 0; col < this.BoardSize; col++) {
+				for (var row = 0; row < this.board.size; row++){
+					for (var col = 0; col < this.board.size; col++) {
 						let cel = this.board.getCell(new Location(row, col));
-						if (!cel.isAssigned()) { 
+						if (cel.isNotAssigned()) { 
 							var values = cel._allowed.allowedValuesArray();
 							
 							values.forEach ( (e) => {
@@ -82,8 +81,8 @@ class Game {
 			con.textBaseline = "middle";
 			con.fillStyle = "#191929";
 			
-			for (var row = 0; row < this.BoardSize; row++)
-				for (var col = 0; col < this.BoardSize; col++) {
+			for (var row = 0; row < this.board.size; row++)
+				for (var col = 0; col < this.board.size; col++) {
 					let cel = this.board.getCell(new Location(row, col));
 					let x = (col + 0.5) * this.CellSize; 
 					let y = (row + 0.5) * this.CellSize;

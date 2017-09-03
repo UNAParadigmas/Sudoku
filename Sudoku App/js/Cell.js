@@ -21,7 +21,7 @@ class Cell{
 	}
 	
 	setAnswer(n){
-		(n<0||n>9)?throw "Illegal value not in the range 1..9.":this.answer=n;
+		if(n<0||n>9) throw "Illegal value not in the range 1..9.";  else this.answer=n;
 	}
 	setAllowedValues(values){
 		this.mask=values;
@@ -87,7 +87,7 @@ class Cell{
 				ret.push(i);
 		return ret;
 	}
-	isNotAssigned = function () {
+	isNotAssigned () {
 		return this.value == 0;
 	}
 	getAnswer(){

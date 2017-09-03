@@ -368,8 +368,9 @@ font-size: 0.7em;
 			}
 			return a;
 		}
-
+	
 		this._digits = MultiDimArray(BoardSize, BoardSize);
+		console.log(this._digits);
 		this._isSolved = false;
 		this._isValid = false;
 
@@ -409,6 +410,7 @@ font-size: 0.7em;
 			for (var j = 0; j < BoardSize; j++)
 				this._digits[i][j].clear();
 		this.updateAllowed();
+		console.log(this._digits);
 	};
 
 	Board.prototype.reset = function () {// return Baord to only the givens

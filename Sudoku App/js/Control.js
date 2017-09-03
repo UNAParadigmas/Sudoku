@@ -93,17 +93,18 @@ $.fn.creaCanvas = function(txt,val,time = false){
 };
 
 $.fn.evaluaTxt = function (txt){
-	console.log(txt);
-	console.log(txt.lenght);
-	if(Array.from(txt).lenght === 81){
-		console.log((new Array(81)).fill(0).map((e,i) => txt.charAt(i)));
+	var a = Array.from(txt);
+	console.log(a);
+	console.log(Array.from(txt).lenght);
+	if(a === 81){
+		//console.log((new Array(81)).fill(0).map((e,i) => txt.charAt(i)));
 	}
 	return false;
 }
 
 $('#loadGame').click( () =>{
 	let txt = $('#sudokuText').val();
-	//console.log($().evaluaTxt(txt));
+	console.log($().evaluaTxt(txt));
 	$().creaCanvas(txt,$('#sel1 option:selected').text(),true);
 	$('#load-modal').modal('toggle');
 });

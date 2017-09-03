@@ -1,4 +1,3 @@
-const {Grid} = require('./Grid')
 class Board{
 	constructor(size) {
 		this.size=size;
@@ -49,7 +48,7 @@ class Board{
 			return false;
 		return true;
 	}
-	Board.prototype.findCellWithFewestChoices = function () {
+	findCellWithFewestChoices() {
 		return locs.reduce((z,e)=>this.getCell(e).isAssigned()?z:[z[0]=Math.min(z[0],this.getCell(e).count()),z[1]=e],[9,new Location(-1,-1)])[1];
 	};
 	checkForHiddenSingles(loc, st) {
@@ -153,13 +152,13 @@ class Board{
 		let boardC = this.clone();
 		return cell.allowedValuesArray()
 			   .reduce((z,e)=>z?z:boardC.trySolve(locChoice,val)
-							   ?(boardC.copyTo(this),true):z,false))
+							   ?(boardC.copyTo(this),true):z,false)
 
 	}
 	setString (value) { 
-		if (value.length != (size * size))
+		if (Array.from(value).length != (size * size))
 			return false; 
-		Array.from(value).forEach((e,i)=>this.digits[i%9][Math.floor(i/9)].setGiven(isNaN(e)?0:e))
+		Array.from(value).forEach((e,i)=>this.digits[i%9][Math.floor(i/9)].setGiven(isNaN(e)?0:parseInt(e)))
 		this.updateAllowed();
 		return true;
 	}
