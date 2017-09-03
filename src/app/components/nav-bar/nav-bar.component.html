@@ -1,22 +1,68 @@
-<nav class="navbar navbar-light bg-light">
+<nav class="navbar navbar-expand-md navbar-dark bg-primary px-5 mx-3 my-2">
   <h1>Sudoku</h1>
-  <div class="dropdown">
-    <button class="btn btn-primary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"
-      aria-expanded="false">
+
+  <div class="navbar-collapse collapse">
+    <ul class="navbar-nav ml-auto">
+
+      <!--Dropdown iniciar sesion-->
+      <li class="nav-item">
+        <div class="dropdown">
+          <button class="btn btn-light dropdown-toggle navbar-btn" type="button" id="dropdownLoginButton" data-toggle="dropdown" aria-haspopup="true"
+            aria-expanded="false">
           Iniciar Sesion
-        </button>
-    <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-      <form>
-        <div class="form-group">
-          <label for="exampleInputEmail1">Usuario</label>
-          <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" placeholder="usuario">
+          </button>
+          <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownLoginButton">
+            <form>
+              <div class="form-group">
+                <label for="loginUser">Usuario</label>
+                <input type="text" class="form-control" id="loginUser" placeholder="usuario">
+              </div>
+              <div class="form-group">
+                <label for="loginPass">Password</label>
+                <input type="password" class="form-control" id="loginPass" placeholder="Password">
+              </div>
+              <button type="submit" class="btn btn-primary" id="btnLogin" style="margin: 5px;">Login</button>
+            </form>
+          </div>
         </div>
-        <div class="form-group">
-          <label for="exampleInputPassword1">Password</label>
-          <input type="password" class="form-control" id="exampleInputPassword1" placeholder="Password">
+      </li>
+
+      <li class="nav-item">
+        <div class="dropdown">
+          <button class="btn btn-light dropdown-toggle navbar-btn" type="button" id="dropdownRegisterButton" data-toggle="dropdown" aria-haspopup="true"
+            aria-expanded="false">
+          Registrarse
+          </button>
+          <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownRegisterButton">
+            <form>
+              <div class="form-group">
+                <label for="registerName">Nombre</label>
+                <input type="text" class="form-control" id="registerName"  placeholder="Nombre">
+              </div>
+              <div class="form-group">
+                <label for="registerUser">Usuario</label>
+                <input type="text" class="form-control" id="registerUser"  placeholder="usuario">
+              </div>
+              <div class="form-group">
+                <label for="registerPass">Password</label>
+                <input type="password" class="form-control" id="registerPass" placeholder="Password">
+              </div>
+              <button type="submit" class="btn btn-primary" id="btnRegister" style="margin: 5px;">Registrarse</button>
+            </form>
+          </div>
         </div>
-        <button type="submit" class="btn btn-primary" id="btnLogin" style="margin: 5px;">Login</button>
-      </form>
-    </div>
+      </li>
+
+      <li class="nav-item hidden">
+        <button class="btn btn-success navbar-btn">Guardar Partida</button>
+      </li>
+      
+      <li class="nav-item hidden">
+        <button class="btn btn-light navbar-btn">Cargar Partida</button>
+      </li>
+
+    </ul>
   </div>
+
+
 </nav>

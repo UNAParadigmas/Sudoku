@@ -8,3 +8,11 @@
 .form #btnLogin{
     margin: 5px;
 }
+
+.nav-item{
+    padding-right: 5px; 
+}
+
+.hide{
+  display:none;  
+}

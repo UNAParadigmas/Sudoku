@@ -2,11 +2,12 @@ var mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 
 var UsuarioSchema = new Schema({
-	id: { type: String, required: true, max: 35 }, //usuario
+	nombre: { type: String, max: 35 },
+	usuario: { type: String, required: true, max: 35 }, //usuario
 	pass: { type: String, required: true, max: 35 }, //contraseña
 	partida: { //El sudoku
-		tam: {type: Number, required: true, min:4}, //tamaño del sudoku
-		dificultad: {type: Number, required: true}, //Nivel de  dificultad
+		tam: Number, //tamaño del sudoku
+		dificultad: Number, //Nivel de  dificultad
 		sudoku: [
 			Number //la cuadricula del sudoku
 		]

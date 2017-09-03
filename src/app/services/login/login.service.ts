@@ -4,7 +4,7 @@ import { Http } from '@angular/http';
 @Injectable()
 export class LoginService {
 
-  constructor(public http:Http) { 
+  constructor(http:Http) { 
     console.log('Login service corriendo')
   }
 
