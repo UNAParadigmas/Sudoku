@@ -56,7 +56,7 @@ class Game {
 					for (var col = 0; col < this.board.size; col++) {
 						let cel = this.board.getCell(new Location(row, col));
 						if (cel.isNotAssigned()) { 
-							var values = cel._allowed.allowedValuesArray();
+							var values = cel.allowedValuesArray();
 							
 							values.forEach ( (e) => {
 								let x = (col + 0.5) * this.CellSize; 

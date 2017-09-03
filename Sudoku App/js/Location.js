@@ -37,13 +37,15 @@ class Location{
 	}
 	// Enumerator for locations of all cells
 	getGrid() {
-		return (new Array(81)).fill(0).reduce((z,e,i)=>z.concat(new Location(i%9,Math.floor(i/9))),new Array());
-
+		let a = (new Array(81)).fill(0).reduce((z,e,i)=>z.concat(new Location(i%9,Math.floor(i/9))),new Array());
+		console.log(a);
+		return a;
+		
 	}
 	// Enumerator for locations of cell siblings in the same row
 	rowSibs() {
 		let locs = new Array();
-		for (let i = 0; i < BoardSize; i++)
+		for (let i = 0; i < 9; i++)
 			if (i != this.col)
 				locs.push(new Location(this.row, i));
 		return locs;
@@ -51,7 +53,7 @@ class Location{
 	// Enumerator for locations of cell siblings in the same column
 	colSibs() {
 		let locs = new Array();
-		for (let i = 0; i < BoardSize; i++)
+		for (let i = 0; i < 9; i++)
 			if (i != this.row)
 				locs.push(new Location(i, this.col));
 		return locs;
@@ -61,9 +63,9 @@ class Location{
 		let locs = new Array();
 		let baseRow = 3 * Math.floor(this.row / 3); // this is how to convert float to an "int" - Javascript doesn't have ints!
 		let baseCol = 3 * Math.floor(this.col / 3);
-		for (let i = 0; i < SquareSize; i++) {
+		for (let i = 0; i < 3; i++) {
 			let r = baseRow + i;
-			for (let j = 0; j < SquareSize; j++) {
+			for (let j = 0; j < 3; j++) {
 				let c = baseCol + j;
 				if (r != this.row || c != this.col)
 					locs.push(new Location(r, c));

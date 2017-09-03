@@ -33,7 +33,7 @@ timer.addEventListener('started', function (e) {
 
 $('#nuevoJuego').click(function () {
 	var val = $('#sel1 option:selected').text();
-	$().creaCanvas("6.81..........72.............3.5..615....4..........8.47....5.....63.....2.......",val,true);
+	$().creaCanvas("6.81..........72.............3.5..615....4..........8.47....5.....63.....2......1",val,true);
 });
 
 

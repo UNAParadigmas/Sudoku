@@ -2,8 +2,10 @@ class Board{
 	constructor(size) {
 		this.size=size;
 		this.digits = new Grid(size);
+		this.locs=(new Location(-1,-1)).getGrid();
 		this.isSolved = false;
 		this.isValid = false;
+		this.answer = this.getAnswer(this.locs);
 	}
 	clone() {
 		var clone = new Board();
@@ -49,17 +51,16 @@ class Board{
 		return true;
 	}
 	findCellWithFewestChoices() {
-		return locs.reduce((z,e)=>this.getCell(e).isAssigned()?z:[z[0]=Math.min(z[0],this.getCell(e).count()),z[1]=e],[9,new Location(-1,-1)])[1];
+		return this.locs.reduce((z,e)=>this.getCell(e).isAssigned()?z:[z[0]=Math.min(z[0],this.getCell(e).count()),z[1]=e],[9,new Location(-1,-1)])[1];
 	};
 	checkForHiddenSingles(loc, st) {
 		// Check each cell - if not assigned and has no answer then check its siblings
 		// get all its allowed then remove all the allowed
 		let cell = this.getCell(loc);
-		if (!cell.isAssigned() && !cell.hasAnswer()) 
+		if (cell.isNotAssigned() && !cell.hasAnswer()) 
 			cell = loc.getSibs(st).reduce((z,elem)=>this.getCell(elem)
-														.isAssigned()?z:
-																	  z.removeValuesMask(this.getCell(elem)
-																							 .getAllowedValuesMask()),this.getCell(loc));
+														.isNotAssigned()?z.removeValuesMask(this.getCell(elem)
+																							 .getAllowedValuesMask()):z,this.getCell(loc));
 			// if there is only one allowed value left (i.e. this cell is the only one amonsgt its sibs with this allowed value)
 			// then apply it as the answer. Note getSingle will return 0 (i.e. no anser) if the number of allowed values is not exactly one
 		if (cell.getMaskValue() != 0) {
@@ -69,25 +70,25 @@ class Board{
 		return false;
 	}
 	getValueMask(loc){
-		return this.getCell(loc).valueMask();
+		return this.getCell(loc).getValueMask();
 	}
 	getAnswer(locs){
 		// cols = 0;
 		// rows = 1;
 		// squares = 2;
-		return locs.reduce((z,e)=>[z[0][e.row]|=this.getValueMask(e),
-								   z[1][e.col]|=this.getValueMask(e),
-								   z[2][e.getSquare()]|=this.getValueMask(e)],(new Array(3)).fill(new Array(size)));
+		return locs.reduce((z,e)=>(z[0][e.col]|=this.getValueMask(e),
+								   z[1][e.row]|=this.getValueMask(e),
+								   z[2][e.getSquare()]|=this.getValueMask(e),z),(new Array(3)).fill((new Array(this.size)).fill(0)));
 	}
 	updating(loc, answer){
-		let contains = answer[0][loc.row] | answer[1][loc.col] | answer[2][loc.getSquare()];
+		let contains = this.answer[1][loc.row] | this.answer[0][loc.col] | answer[2][loc.getSquare()];
 		let cell = this.getCell(loc);
 		cell.setAllowed(~contains); // set allowed values to what values are not already set in this row, col or square
 		cell.setAnswer(0); //clear any previous answers
 		// As an extra step look for "naked singles", i.e. cells that have only one allowed value, and use
 		// that to set the answer (note this is different from the "value" as this can only be assigned
 		// by the user or any auto solve functions like "accept singles"
-		if (!cell.isAssigned()) {
+		if (cell.isNotAssigned()) {
 			this.isSolved = false;
 			var count = cell.count();
 			if (count == 0)
@@ -106,19 +107,17 @@ class Board{
 		// Updates the allowed values for each cell based on existing digits
 		// entered in a cell's row, col or square
 		// First aggregate assigned values to answer
-		var locs = Location.grid();//debería ser global
-		let Answer = getAnswer(locs);//debería ser global
 		// For each cell, aggregate the values already set in that row, col and square.
 		// Since the aggregate is a bitmask, the bitwise inverse of that is therefore the allowed values.
 		this.isValid = true;
 		this.isSolved = true;
-		locs.forEach(e=>this.updating(e,answer));
+		this.locs.forEach(e=>this.updating(e,this.answer));
 
 		// Step 2: Look for "hidden singles".
 		// For each row, col, square, count number of times each digit appears.
 		// If any appear once then set that as the answer for that cell.
 		// Count in rows
-		locs.forEach(e=>this.update(e));
+		this.locs.forEach(e=>this.update(e));
 		// TO DO: Add code here to detect naked/hidden doubles/triples/quads
 	}
 	trySolve(loc, value) {// empty Location allowed
@@ -156,10 +155,7 @@ class Board{
 
 	}
 	setString (value) { 
-		if (Array.from(value).length != (size * size))
-			return false; 
-		Array.from(value).forEach((e,i)=>this.digits[i%9][Math.floor(i/9)].setGiven(isNaN(e)?0:parseInt(e)))
+		Array.from(value).forEach((e,i)=>this.getCell(new Location(i%9,Math.floor(i/9))).setGiven(isNaN(e)?0:parseInt(e)))
 		this.updateAllowed();
-		return true;
 	}
 }

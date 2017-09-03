@@ -56,7 +56,7 @@ class Cell{
 	}
 	getMaskValue(){
 		let single = 0;
-		for (let i = 1; i <= BoardSize; i++)
+		for (let i = 1; i <= 9; i++)
 			if ((this._mask & (1 << i)) != 0) {
 				if(single)
 					return 0
@@ -71,18 +71,15 @@ class Cell{
 		this.mask=n;
 	}
 	count(){
-		let count = 0;
-		for(let i=1; i<10;i++)
-			if(this.mask & 1<<i != 0)
-				count++;
-		return count
+		return (new Array(9)).fill(0).reduce(z=>this.mask & 1 << z[0] != 0?[z[0]++,z[1]++]:[z[0]++,z[1]],[1,0])[1];
 	}
 	removeValuesMask(msk){
 		this.mask &= ~msk;
+		return this;
 	}
 	allowedValuesArray(){
 		var ret = new Array();
-		for (var i = 1; i <= BoardSize; i++)
+		for (var i = 1; i <= 9; i++)
 			if (((1 << i) & this._mask) != 0)
 				ret.push(i);
 		return ret;

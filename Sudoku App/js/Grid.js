@@ -1,7 +1,7 @@
 class Grid{
 	constructor(size){
-		this.matrix = (new Array(size)).fill(new Array(size).fill(new Cell()));
-		console.log(this.matrix);
+		this.matrix = Array.from(new Array(size)).reduce(z=>z.concat([Array.from(new Array(size)).reduce(z=>z.concat(new Cell()), new Array())]), new Array());
+		//console.log(this.matrix);
 	}
 	
 	clone(){
