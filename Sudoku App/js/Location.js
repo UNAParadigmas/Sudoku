@@ -37,11 +37,8 @@ class Location{
 	}
 	// Enumerator for locations of all cells
 	getGrid() {
-		let locs = new Array();
-		for (let i = 0; i < BoardSize; i++)
-			for (let j = 0; j < BoardSize; j++)
-				locs.push(new Location(i, j));
-		return locs;
+		return (new Array(81)).fill(0).reduce((z,e,i)=>z.concat(new Location(i%9,Math.floor(i/9))),new Array());
+
 	}
 	// Enumerator for locations of cell siblings in the same row
 	rowSibs() {
@@ -78,9 +75,9 @@ class Location{
 		switch (type) {
 			case 1:
 				return this.rowSibs();
-			case 2:
+			case 0:
 				return this.colSibs();
-			case 3:
+			case 2:
 				return this.squareSibs();
 		}
 	}

@@ -67,10 +67,13 @@ class Cell{
 	setMask(n){
 		this.mask=1<<n;
 	}
+	setAllowed(n){
+		this.mask=n;
+	}
 	count(){
 		let count = 0;
 		for(let i=1; i<10;i++)
-			if(mask & 1<<i != 0)
+			if(this.mask & 1<<i != 0)
 				count++;
 		return count
 	}
@@ -89,5 +92,11 @@ class Cell{
 	}
 	getAnswer(){
 		return this.answer;
+	}
+	hasAnswer() {
+		return this.answer != 0;
+	};
+	getAllowedValuesMask(){
+		return this.mask;
 	}
 }
