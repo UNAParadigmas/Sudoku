@@ -16,7 +16,7 @@ export class NavBarComponent implements OnInit {
     
   }
 
-  onRegister(empForm: any, e: Event) {
+  onRegister(e: Event) {
     e.preventDefault();
     this.newUsuario={
       nombre: e.target[0].value,
@@ -28,7 +28,7 @@ export class NavBarComponent implements OnInit {
 
   }
 
-  onLogin(empForm: any, e: Event) {
+  onLogin(e: Event) {
     e.preventDefault();
     console.log("Login form", event);
   }

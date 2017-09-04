@@ -12,7 +12,7 @@
           Iniciar Sesion
           </button>
           <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownLoginButton">
-            <form (ngSubmit)="onLogin(formLogin, $event)">
+            <form (ngSubmit)="onLogin($event)">
               <div class="form-group">
                 <label for="loginUser">Usuario</label>
                 <input type="text" class="form-control" id="loginUser" placeholder="usuario" required maxlength="35">
@@ -33,7 +33,7 @@
           Registrarse
           </button>
           <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownRegisterButton">
-            <form (ngSubmit)="onRegister(empForm, $event)">
+            <form (ngSubmit)="onRegister($event)">
               <div class="form-group">
                 <label for="registerName">Nombre</label>
                 <input type="text" class="form-control" id="registerName" placeholder="Nombre" required maxlength="35">
