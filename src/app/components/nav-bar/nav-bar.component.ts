@@ -9,41 +9,57 @@ import { Usuario } from '../../usuario';
 })
 export class NavBarComponent implements OnInit {
 
-  usuario: Usuario;
-  nombreUsuario: String;
+  usuario = new Usuario();
+  errorMessage: String;
+  logueado = false;
 
   constructor(private loginService: LoginService) { }
 
-  ngOnInit() { 
-    this.usuario=new Usuario();
+  ngOnInit() {
   }
 
-  onRegister(e: Event): void {
+  onRegister(e: Event) {
 
     e.preventDefault();
 
-    this.usuario={
+    this.usuario = {
       nombre: e.target[0].value,
       usuario: e.target[1].value,
-      pass: e.target[2].value
+      pass: e.target[2].value,
+      partida: null
     }
     console.log("Register form", this.usuario);
 
     this.loginService.registrarUsuario(this.usuario)
-      .then(user => {
+      .subscribe(user => {
         console.log("Usuario Registrado: ", user.nombre);
-        this.usuario=user;
+        this.errorMessage = null;
+        this.usuario = user;
+        this.logueado = true;
       },
-      error => console.log("Error al registrar"));
+      error => this.errorMessage = <any>error);
 
-      console.log("Usuario que viene del post: ",Usuario);
+    console.log("Usuario que viene del post: ", this.usuario);
   }
 
 
-  onLogin(e: Event) {
+  onLogin(e: Event): void {
     e.preventDefault();
-    console.log("Login form", event);
+
+
+    this.usuario = {
+      nombre: "",
+      usuario: e.target[0].value,
+      pass: e.target[1].value,
+      partida: null
+    }
+
+    this.loginService.loginUsuario(this.usuario)
+      .subscribe(user => { this.usuario = user; this.logueado = true; },
+      error => this.errorMessage = <any>error);
+
   }
+
 
 }
 

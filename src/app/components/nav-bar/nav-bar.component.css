@@ -9,10 +9,23 @@
     margin: 5px;
 }
 
-.nav-item{
-    padding-right: 5px; 
+.btn{
+    margin-right: 5px; 
 }
 
 .hide{
   display:none;  
+}
+
+.success{
+    color: green;
+    font-size: 20px;
+}
+.error{
+    color: red;
+    font-size: 20px;
+} 
+
+.modal{
+    padding-top: 80px;
 }
