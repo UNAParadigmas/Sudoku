@@ -4,6 +4,10 @@ class Cell{
 		this.allowed=0x3e;//bitmask que tiene como 1 los lugares de las potencias del 2 que concuerdan con 1<<n
 		this.answer=0;//sin respuesta
 		this.given=false;//por el usuario
+		this.siblings = new Map();
+	}
+	setSiblings(locs, grid){
+		this.siblings = locs.reduce((z,e)=>z.set(grid.get(e), true), new Map())
 	}
 	clone(){
 		let clone = new Cell();
@@ -20,6 +24,10 @@ class Cell{
 		return this.value;
 	}
 	
+	getSiblings(){
+		return this.siblings;
+	}
+	
 	setAnswer(n){
 		if(n<0||n>9) throw "Illegal value not in the range 1..9.";  else this.answer=n;
 	}
@@ -27,7 +35,7 @@ class Cell{
 		this.mask=values;
 	}
 	isAllowed(n){
-		return n > 0 && n < 10 && (this.mask & (1 << n)) != 0;
+		return n > 0 && n < 10 && (~this.mask & (1 << n)) != 0;
 	}
 	setValue(n){
 		if(n<0||n>9)
@@ -36,13 +44,15 @@ class Cell{
 			throw "not allowed";
 		this.value=n;
 		this.given=false;
+		document.dispatchEvent(new CustomEvent('updateCell', {detail:this}));
 	}
 	setGiven(n){
 		if (n <0||n>9)
 			throw "Illegal value not in the range 1..9.";
 		this.value = n;
 		this.given = n != 0;
-		this.answer = 0;
+		this.setMask(n);
+		document.dispatchEvent(new CustomEvent('updateCell', {detail:this}));
 	}
 	isGiven(){
 		return this.given;
@@ -71,7 +81,8 @@ class Cell{
 		this.mask=n;
 	}
 	count(){
-		return (new Array(9)).fill(0).reduce(z=>this.mask & 1 << z[0] != 0?[z[0]++,z[1]++]:[z[0]++,z[1]],[1,0])[1];
+		return (new Array(9)).fill(0).reduce(z=>this.mask & 1 << z[0] != 0?[z[0]++,z[1]++]
+																		  :[z[0]++,z[1]],[1,0])[1];
 	}
 	removeValuesMask(msk){
 		this.mask &= ~msk;

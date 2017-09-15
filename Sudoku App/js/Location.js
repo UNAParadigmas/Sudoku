@@ -37,10 +37,7 @@ class Location{
 	}
 	// Enumerator for locations of all cells
 	getGrid() {
-		let a = (new Array(81)).fill(0).reduce((z,e,i)=>z.concat(new Location(i%9,Math.floor(i/9))),new Array());
-		console.log(a);
-		return a;
-		
+		return (new Array(81)).fill(0).reduce((z,e,i)=>z.concat(new Location(i%9,Math.floor(i/9))),new Array());
 	}
 	// Enumerator for locations of cell siblings in the same row
 	rowSibs() {
@@ -73,12 +70,29 @@ class Location{
 		}
 		return locs;
 	}
+	squareSibs2() {
+		let locs = new Array();
+		let baseRow = 3 * Math.floor(this.row / 3); // this is how to convert float to an "int" - Javascript doesn't have ints!
+		let baseCol = 3 * Math.floor(this.col / 3);
+		for (let i = 0; i < 3; i++) {
+			let r = baseRow + i;
+			for (let j = 0; j < 3; j++) {
+				let c = baseCol + j;
+				if (r != this.row && c != this.col)
+					locs.push(new Location(r, c));
+			}
+		}
+		return locs;
+	}
+	getAllSibs(){
+		return this.rowSibs().concat(this.colSibs().concat(this.squareSibs2()));
+	}
 	getSibs(type) {
 		switch (type) {
-			case 1:
-				return this.rowSibs();
 			case 0:
 				return this.colSibs();
+			case 1:
+				return this.rowSibs();
 			case 2:
 				return this.squareSibs();
 		}

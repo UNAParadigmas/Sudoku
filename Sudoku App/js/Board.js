@@ -3,16 +3,23 @@ class Board{
 		this.size=size;
 		this.digits = new Grid(size);
 		this.locs=(new Location(-1,-1)).getGrid();
+		this.setSiblingsDigits();
 		this.isSolved = false;
 		this.isValid = false;
 		this.answer = this.getAnswer(this.locs);
 	}
 	clone() {
-		var clone = new Board();
+		var clone = new Board(this.size);
 		clone.isSolved = this.isSolved;
 		clone.isValid = this.isValid;
 		clone.digits = this.digits.clone();
 		return clone;
+	}
+	setSiblingsDigits(){
+		this.locs.forEach(e=>this.setCellSiblings(e))
+	}
+	setCellSiblings(loc){
+		this.digits.get(loc).setSiblings(loc.getAllSibs(), this.digits)
 	}
 	copyTo(target) {
 		target.isSolved = this.isSolved;
@@ -78,7 +85,7 @@ class Board{
 		// squares = 2;
 		return locs.reduce((z,e)=>(z[0][e.col]|=this.getValueMask(e),
 								   z[1][e.row]|=this.getValueMask(e),
-								   z[2][e.getSquare()]|=this.getValueMask(e),z),(new Array(3)).fill((new Array(this.size)).fill(0)));
+								   z[2][e.getSquare()]|=this.getValueMask(e),z),(new Array(3)).fill(0).reduce(z=>z.concat([(new Array(9)).fill(0)]),new Array()));
 	}
 	updating(loc, answer){
 		let contains = this.answer[1][loc.row] | this.answer[0][loc.col] | answer[2][loc.getSquare()];

@@ -20,6 +20,24 @@ $( document ).on('keydown', function(e){
 			if (digit >= 0 && digit <= 9) game.setDigitInCell(digit);
 	}	
 });
+ $.fn.relMouseCoords = event => {
+		var totalOffsetX = 0;
+		var totalOffsetY = 0;
+		var canvasX = 0;
+		var canvasY = 0;
+		var currentElement = /*$('#canvas')*/document.getElementById('canvas');
+
+		do {
+			totalOffsetX += currentElement.offsetLeft;
+			totalOffsetY += currentElement.offsetTop;
+		}
+		while (currentElement = currentElement.offsetParent)
+
+		canvasX = event.pageX - totalOffsetX;
+		canvasY = event.pageY - totalOffsetY;
+
+		return { x: canvasX, y: canvasY }
+	}
 
 /*TIMER CONTROL*/
 
@@ -42,7 +60,7 @@ $('#nuevoJuego').click(function () {
 $('#canvas').on('mousedown', function(e){
 	var x = e.pageX - this.offsetLeft;
 	var y = e.pageY - this.offsetTop;
-	var coords = this.relMouseCoords(e);
+	var coords = $().relMouseCoords(e);
 	game.selectCell(Math.floor(coords.y / game.CellSize), Math.floor(coords.x / game.CellSize));
 });
 
