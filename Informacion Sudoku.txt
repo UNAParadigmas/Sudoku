@@ -1,5 +1,0 @@
-http://garethrees.org/2007/06/10/zendoku-generation/ Sudoku Generator
-
-- Login
-- 1 partida por usuario
--  
