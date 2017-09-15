@@ -27,8 +27,8 @@
 		  <li><a href="#">Estadística</a></li>		  
 		</ul>
 		<ul class="nav navbar-nav">
-		  <li><a href="#">Instrucciones</a></li>
-		  <li><a href="#">Ayuda</a></li>	  		  
+		  <li><a  class="btn btn-lg" role="button" data-toggle="modal" data-target="#instruccion-modal"href="" ><span class="glyphicon glyphicon-list-alt" ></span> Instrucciones</a></li>
+		  <li><a  class="btn btn-lg" role="button" data-toggle="modal" data-target="#ayuda-modal"href="" ><span class="glyphicon glyphicon-question-sign" ></span> Ayuda</a></li>	  		  
 		</ul>
 		<ul class="nav navbar-nav navbar-right notlogged">
 		  <li><a  class="btn btn-lg" role="button" data-toggle="modal" data-target="#login-modal" href="" ><span class="glyphicon glyphicon-log-in" ></span> Ingresa</a></li>
@@ -198,6 +198,82 @@
 			</div>
 		</div>	
 	</div>
+	<!--Modal para Instrucciones ***Manuel***-->
+	<div class="modal fade" id="instruccion-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+    	<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header" align="center">
+					<img id="img_logo" src="img/icon.png">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+					</button>
+				</div>
+                
+                <div class="container">
+				  <h2>Como jugar SUDOKU</h2>
+				  <!--<p>Despliegue las instrucciones.</p>-->
+				  <button type="button" class="btn btn-info" data-toggle="collapse" data-target="#info">Reglas del sudoku</button>
+				  <button type="button" class="btn btn-regla1" data-toggle="collapse" data-target="#regla1">Regla 1</button>
+				  <button type="button" class="btn btn-regla2" data-toggle="collapse" data-target="#regla2">Regla 2</button>
+				  <button type="button" class="btn btn-regla3" data-toggle="collapse" data-target="#regla3">Regla 3</button>
+				  <button type="button" class="btn btn-regla4" data-toggle="collapse" data-target="#regla4">Regla 4</button>
+				  <button type="button" class="btn btn-regla5" data-toggle="collapse" data-target="#regla5">Regla 5</button>
+				  <div id="info" class="collapse">
+					<br><p>Este juego está compuesto por una cuadrícula de 9x9 casillas,</p>
+					<p>dividida en regiones de 3x3 casillas.</p>
+					<p>Partiendo de algunos números ya dispuestos en algunas de las </p>
+					<p>casillas, hay que completar las casillas vacías con dígitos </p>
+					<p>del 1 al 9, sin que se repitan por fila, columna o región.</p>
+				  </div>
+				  <div id="regla1" class="collapse">
+					<br><p>1. Hay que completar las casillas vacías con un solo número del 1 al 9.</p>
+				  </div>
+				  <div id="regla2" class="collapse">
+					<br><p>2. En una misma fila no puede haber números repetidos.</p>
+				  </div>
+				  <div id="regla3" class="collapse">
+					<br><p>3. En una misma columna no puede haber números repetidos.</p>
+				  </div>
+				  <div id="regla4" class="collapse">
+					<br><p>4. En una misma región no puede haber números repetidos.</p>
+				  </div>
+				  <div id="regla5" class="collapse">
+					<br><p>5. La solución de un sudoku es única.</p>
+				  </div>
+				</div>
+            </div>
+		</div>
+	</div>
+	<!--Modal para Ayuda ***Manuel***-->
+	<div class="modal fade" id="ayuda-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+    	<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header" align="center">
+					<img id="img_logo" src="img/icon.png">
+					<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+						<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+					</button>
+				</div>
+                
+                <div class="container">
+				  <h2>Funciones de cada boton</h2>
+				  <!--<p>Despliegue las instrucciones.</p>-->
+				  <button type="button" class="btn btn-info" data-toggle="popover" data-trigger="hover" data-content="Elimina del tablero el ultimo numero que digito.">Limpia</button>
+				  <button type="button" class="btn btn-carga" data-toggle="popover" data-trigger="hover" data-content="Carga una partida guardada o crea un nuevo juego.">Carga</button>
+				  <button type="button" class="btn btn-info" data-toggle="popover" data-trigger="hover" data-content="Establece los valores del tablero a su estado inicial.">Reset</button>
+				  <button type="button" class="btn btn-resuelve" data-toggle="popover" data-trigger="hover" data-content="Muestra la solución del juego actual.">Resuelve</button>
+				  <button type="button" class="btn btn-info" data-toggle="popover" data-trigger="hover" data-content="Acepta posibilidades.">Acepta</button>
+				  <button type="button" class="btn btn-pista" data-toggle="popover" data-trigger="hover" data-content="Le brinda al jugador una pista de la partida actual.">Pista</button>
+				  <button type="button" class="btn btn-info" data-toggle="popover" data-trigger="hover" data-content="Se devuelve a la jugada anterior.">Atras</button>
+				</div>
+            </div>
+		</div>
+	</div>
+	<script>
+		$(document).ready(function(){
+			$('[data-toggle="popover"]').popover();   
+		});
+	</script>
 	<script src="js/timer.js"></script>
 	<script src="js/Location.js"></script>
 	<script src="js/Cell.js"></script>
