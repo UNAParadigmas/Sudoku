@@ -9,21 +9,23 @@ const Usuario = require("../model/usuario");
 //ejemplo ARC= http://localhost:8080/api/registro
 //{"nombre" : "Juan","usuario" : "vite0150","pass" : "123"}
 router.post('/registro', function (req, res, next) {
-
-    console.log("registro de usuario");
     let data = req.body;
+    console.log("registro de usuario, nombre: ",data.nombre);
+    
 
     let newuser= new Usuario({
         nombre: data.nombre,
-        usuario: data.usuario,
+        usuario: data.user,
         pass: data.pass
     });
 
     
 
     newuser.save((err, usuario) => {
-        if (err)
+        if (err){
+            console.log(err);
             res.send(err);
+        }
         else {
             console.log("usuario creado: ",usuario);
             res.status(200).json(usuario);

@@ -12,7 +12,8 @@
     "express": "^4.15.4",
     "mongoose": "^4.11.9",
     "popper": "^1.0.0",
-    "zone.js": "^0.8.14"
+    "zone.js": "^0.8.14",
+    "ejs": "^2.5.7"
   },
   "devDependencies": {
     "@types/node": "~6.0.60",

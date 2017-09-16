@@ -5,12 +5,15 @@ const Usuario = require("../model/usuario");
 
 //login usuario
 //ejemplo ARC= http://localhost:8080/api/login/vite0150/123
-router.get('/login/:usuario/:pass', function (req, res, next) {
+router.post('/login', function (req, res, next) {
 
-    console.log("Login, data recibida: ", req.params.usuario +  req.params.pass)
+    let data = req.body;
+    console.log("Login, data recibida: ", data.user +  data.pass)
+    
+
     Usuario.findOne({
-        usuario: req.params.usuario,
-        pass: req.params.pass
+        usuario: data.user,
+        pass: data.pass
     }, (err, usuario) => {
         if (err) {
             res.status(500).send(err);
