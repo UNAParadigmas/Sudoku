@@ -32,7 +32,7 @@ mongoose.connect(process.env.MONGODB_URI || 'mongodb://admin:0150@ds141242.mlab.
     app.use('/api', login);
     app.use('/api', registro);
     app.get('*', (req, res) => {
-        res.render('index Nuevo.html');
+        res.render('index.html');
     });
     var server = app.listen(process.env.PORT || 8080, () => {
         var port = server.address().port;
