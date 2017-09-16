@@ -135,3 +135,7 @@
 .form-control {
   border-radius: 0px;
 }
+
+.preLogin{
+    visibility: hidden;
+}

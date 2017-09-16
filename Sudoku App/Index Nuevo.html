@@ -1,78 +1,90 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    
+
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
 	<link href="lib/css/bootstrap.min.css" rel="stylesheet">
-    <link href="css/Login.css" rel="stylesheet">
-	
+	<link href="css/Login.css" rel="stylesheet">
+
 	<script src="lib/js/jquery.min.js"></script>
 	<script src="lib/js/bootstrap.min.js"></script>
 	<script src="js/Login.js"></script>
-    
-	
+
+
 	<!-- Angular 2 -->
-  </head>
-  <body>
-	<nav class="navbar navbar-inverse bg-inverse" >
-	  <div class="container-fluid">
-		<div class="navbar-header">
-		  <a class="navbar-left">
+</head>
+
+<body>
+	<nav class="navbar navbar-inverse bg-inverse">
+		<div class="container-fluid">
+			<div class="navbar-header">
+				<a class="navbar-left">
 		  <img src="img/icon.png" width="150" height="50"></a>
+			</div>
+			<ul class="nav navbar-nav logged">
+				<li><a href="#">Datos de Partidas</a></li>
+				<li><a href="#">Estadística</a></li>
+			</ul>
+			<ul class="nav navbar-nav">
+				<li><a href="#">Instrucciones</a></li>
+				<li><a href="#">Ayuda</a></li>
+			</ul>
+			<ul class="nav navbar-nav navbar-right notlogged">
+				<li><a class="btn btn-lg" id="loginBtn" role="button" data-toggle="modal" data-target="#login-modal" href=""><span class="glyphicon glyphicon-log-in" ></span> Ingresa</a></li>
+			</ul>
+			<ul class="nav navbar-nav navbar-right">
+				<li><a class="btn btn-lg preLogin" id="logoutBtn" role="button" href=""><span class="glyphicon glyphicon-log-out" ></span> Logout</a></li>
+			</ul>
+			<ul class="nav navbar-nav navbar-right">
+				<li><a class="btn btn-lg preLogin" id="guardarBtn" role="button" href=""><span class="glyphicon glyphicon-floppy-disk" ></span> Guardar</a></li>
+			</ul>
+			<ul class="nav navbar-nav navbar-right">
+				<li><a class="btn btn-lg preLogin" id="cargarBtn" role="button" href=""><span class="glyphicon glyphicon-download-alt" ></span> Cargar</a></li>
+			</ul>
 		</div>
-		<ul class="nav navbar-nav logged">
-		  <li><a href="#">Datos de Partidas</a></li>
-		  <li><a href="#">Estadística</a></li>		  
-		</ul>
-		<ul class="nav navbar-nav">
-		  <li><a href="#">Instrucciones</a></li>
-		  <li><a href="#">Ayuda</a></li>	  		  
-		</ul>
-		<ul class="nav navbar-nav navbar-right notlogged">
-		  <li><a  class="btn btn-lg" role="button" data-toggle="modal" data-target="#login-modal" href="" ><span class="glyphicon glyphicon-log-in" ></span> Ingresa</a></li>
-		</ul>
-	  </div>
 	</nav>
-		
+
 	<div class="container">
-		<div class="row">	
+		<div class="row">
 			<div class="col-md-9">
-				<div class = "row">
+				<div class="row">
 					<div class="col-md-10">
 						<div class="col-sm-3">
-						<div class="panel panel-success " align="center">
-							<div class="panel-heading" id="size"></div>
-						</div>		
-						</div>						
+							<div class="panel panel-success " align="center">
+								<div class="panel-heading" id="size"></div>
+							</div>
+						</div>
 						<div class="btn-group col-sm-offset-1">
-							<button type="button" class="btn btn-default" style="background-color:#eafaea" id="btnLoad" title='Carga sudoku a partir de texto.' data-toggle="modal" data-target="#load-modal">Carga</button>
+							<button type="button" class="btn btn-default" style="background-color:#eafaea" id="btnLoad" title='Carga sudoku a partir de texto.'
+							 data-toggle="modal" data-target="#load-modal">Carga</button>
 							<button type="button" class="btn btn-default" style="background-color:#eafaea" id="btnClear" onclick="clearGame()" title='Deja el sudoku vacio.'>Limpia</button>
 							<button type="button" class="btn btn-default" style="background-color:#eafaea" id="btnReset" onclick="reset()" title='Reinicia sudoku al estado original.'>Reset</button>
-							<button type="button" class="btn btn-default" style="background-color:#eafaea" id="btnSolve" onclick="solve()" title='If possible, it will solve the problem. The amount of time taken to solve is displayed below.' >Resuelve</button>
-							<button type="button" class="btn btn-default" id="btnHint" onclick="hint()" title='Pista en el espacio seleccionado' >Pista</button>
+							<button type="button" class="btn btn-default" style="background-color:#eafaea" id="btnSolve" onclick="solve()" title='If possible, it will solve the problem. The amount of time taken to solve is displayed below.'>Resuelve</button>
+							<button type="button" class="btn btn-default" id="btnHint" onclick="hint()" title='Pista en el espacio seleccionado'>Pista</button>
 							<button type="button" class="btn btn-default" id="btnUndo" onclick="undo()" title='Devolverse un movimiento'>Atras</button>
 						</div>
-					</div>	
+					</div>
 				</div>
 				<br>
-				<div class="row"> 
+				<div class="row">
 					<div id='sudoku' align="center">
 						<div id='main'>
 							<table>
 								<tr>
-								<td>
-									<canvas id='canvas' width='541' height='541'>Canvas is not supported by this browser.</canvas>
-								</td>
+									<td>
+										<canvas id='canvas' width='541' height='541'>Canvas is not supported by this browser.</canvas>
+									</td>
 								</tr>
-							</table><br><br>						
+							</table><br><br>
 						</div>
 					</div>
-				</div>				
+				</div>
 				<br>
 			</div>
-			<div class="col-lg-3" >
+			<div class="col-lg-3">
 				<div class="panel panel-success" align="center">
 					<div class="panel-heading">Cronometro</div>
 					<div class="panel-body">
@@ -87,31 +99,31 @@
 				<div class="panel panel-success" align="center">
 					<div class="panel-heading">Nuevo Juego</div>
 					<div class="panel-body">
-					<div class="form-group">
-					  <label for="sel1">Seleccione:</label>
-						<select class="form-control" id="sel1">
+						<div class="form-group">
+							<label for="sel1">Seleccione:</label>
+							<select class="form-control" id="sel1">
 							<option>4x4</option>
 							<option>9x9</option>
 							<option>JUMBO</option>
 						</select>
-					</div>
-					<div class="form-group" id="dificultad">
-					  <label for="sel2">Dificultad:</label>
-						<select class="form-control" id="sel2">
+						</div>
+						<div class="form-group" id="dificultad">
+							<label for="sel2">Dificultad:</label>
+							<select class="form-control" id="sel2">
 							<option>Fácil</option>
 							<option>Normal</option>
 							<option>Difícil</option>
 						</select>
+						</div>
+						<button type="button" class="btn btn-success" id="nuevoJuego">Crear Juego</button>
 					</div>
-					<button type="button" class="btn btn-success" id="nuevoJuego">Crear Juego</button>
-					</div>
-				</div>				
+				</div>
 			</div>
 		</div>
 	</div>
-	
+
 	<div class="modal fade" id="login-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
-    	<div class="modal-dialog">
+		<div class="modal-dialog">
 			<div class="modal-content">
 				<div class="modal-header" align="center">
 					<img id="img_logo" src="img/icon.png">
@@ -119,57 +131,54 @@
 						<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
 					</button>
 				</div>
-                
-                <div id="div-forms">
+
+				<div id="div-forms">
+
 					<!-- Login Form -->
-                    <form id="login-form">
-		                <div class="modal-body">
-				    		<div id="div-login-msg">
-                                <div id="icon-login-msg" class="glyphicon glyphicon-chevron-right"></div>
-                                <span id="text-login-msg">Ingrese su nombre de usuario y contraseña.</span>
-                            </div>
-				    		<input id="login_username" class="form-control" type="text" placeholder="Nombre de Usuario" required>
-				    		<input id="login_password" class="form-control" type="password" placeholder="Contraseña" required>
-                            <div class="checkbox">
-                                <label>
-                                    <input type="checkbox"> Remember me
-                                </label>
-                            </div>
-        		    	</div>
-				        <div class="modal-footer">
-                            <div>
-                                <button type="submit" class="btn btn-success btn-lg btn-block">Login</button>
-                            </div>
-				    	    <div>
-                                <button id="login_register_btn" type="button" class="btn btn-link">Register</button>
-                            </div>
-				        </div>
-                    </form>
-                     <!-- Register Form -->
-                    <form id="register-form" style="display:none;">
-            		    <div class="modal-body">
-		    				<div id="div-register-msg">
-                                <div id="icon-register-msg" class="glyphicon glyphicon-chevron-right"></div>
-                                <span id="text-register-msg">Resgistro de usuario.</span>
-                            </div>
-		    				<input id="register_username" class="form-control" type="text" placeholder="Nombre Usuario" required>
-                            <input id="register_email" class="form-control" type="text" placeholder="Correo Electrónico" required>
-                            <input id="register_password" class="form-control" type="password" placeholder="Contraseña" required>
-            			</div>
-		    		    <div class="modal-footer">
-                            <div>
-                                <button type="submit" class="btn btn-success btn-lg btn-block">Register</button>
-                            </div>
-                            <div>
-                                <button id="register_login_btn" type="button" class="btn btn-link">Log In</button>
-                            </div>
-		    		    </div>
-                    </form>
-                </div>
-            </div>
+					<form id="login-form">
+						<div class="modal-body">
+							<div id="div-login-msg">
+								<div id="icon-login-msg" class="glyphicon glyphicon-chevron-right"></div>
+								<span id="text-login-msg">Ingrese su nombre de usuario y contraseña.</span>
+							</div>
+							<input id="login_username" class="form-control" type="text" placeholder="Nombre de Usuario" required>
+							<input id="login_password" class="form-control" type="password" placeholder="Contraseña" required>
+						</div>
+						<div class="modal-footer">
+							<div>
+								<button type="submit" class="btn btn-success btn-lg btn-block">Login</button>
+							</div>
+							<div>
+								<button id="login_register_btn" type="button" class="btn btn-link">Register</button>
+							</div>
+						</div>
+					</form>
+
+					<!-- Register Form -->
+					<form id="register-form" style="display:none;">
+						<div class="modal-body">
+							<div id="div-register-msg">
+								<div id="icon-register-msg" class="glyphicon glyphicon-chevron-right"></div>
+								<span id="text-register-msg">Resgistro de usuario.</span>
+							</div>
+							<input id="register_name" class="form-control" type="text" placeholder="Nombre" required>
+							<input id="register_username" class="form-control" type="text" placeholder="Nombre Usuario" required>
+							<input id="register_password" class="form-control" type="password" placeholder="Contraseña" required>
+						</div>
+						<div class="modal-footer">
+							<div>
+								<button type="submit" class="btn btn-success btn-lg btn-block">Register</button>
+							</div>
+							<div>
+								<button id="register_login_btn" type="button" class="btn btn-link">Log In</button>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
 		</div>
 	</div>
-	
+
 	<div class="modal fade" id="load-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
 		<div class="modal-dialog">
 			<div class="modal-content">
@@ -182,29 +191,30 @@
 				<div class="modal-body">
 					<div class="form-group">
 						<div id="div-register-msg">
-                                <div id="icon-register-msg" class="glyphicon glyphicon-chevron-right"></div>
-                                <span id="text-register-msg">Ingrese el Sudoku pre-generado.</span>
-                        </div>
-		    			<textarea class="form-control" rows="5" id="sudokuText"></textarea>
+							<div id="icon-register-msg" class="glyphicon glyphicon-chevron-right"></div>
+							<span id="text-register-msg">Ingrese el Sudoku pre-generado.</span>
+						</div>
+						<textarea class="form-control" rows="5" id="sudokuText"></textarea>
 					</div>
 					<div align="center">
-						<label >Si selecciona juego nuevo, el progreso no será guardado</label><br>
-						<label >y se tomará como juego perdido en caso de estar incompleto.</label>
+						<label>Si selecciona juego nuevo, el progreso no será guardado</label><br>
+						<label>y se tomará como juego perdido en caso de estar incompleto.</label>
 					</div>
 				</div>
 				<div class="modal-footer">
-                    <button id="loadGame" type="button" class="btn btn-success btn-lg btn-block">Juego Nuevo</button>
-                </div>
+					<button id="loadGame" type="button" class="btn btn-success btn-lg btn-block">Juego Nuevo</button>
+				</div>
 			</div>
-		</div>	
+		</div>
 	</div>
 	<script src="js/timer.js"></script>
 	<script src="js/Location.js"></script>
 	<script src="js/Cell.js"></script>
 	<script src="js/Grid.js"></script>
 	<script src="js/Board.js"></script>
-	<script src="js/Game.js"></script>	
-	<script src="js/Control.js"></script>	
+	<script src="js/Game.js"></script>
+	<script src="js/Control.js"></script>
 
-  </body>
+</body>
+
 </html>
