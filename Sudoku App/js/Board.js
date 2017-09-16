@@ -3,10 +3,10 @@ class Board{
 		this.size=size;
 		this.digits = new Grid(size);
 		this.locs=(new Location(-1,-1)).getGrid();
-		this.setSiblingsDigits();
+		//this.setSiblingsDigits();
 		this.isSolved = false;
 		this.isValid = false;
-		this.answer = this.getAnswer(this.locs);
+		this.answer = []
 	}
 	clone() {
 		var clone = new Board(this.size);
@@ -67,25 +67,23 @@ class Board{
 		if (cell.isNotAssigned() && !cell.hasAnswer()) 
 			cell = loc.getSibs(st).reduce((z,elem)=>this.getCell(elem)
 														.isNotAssigned()?z.removeValuesMask(this.getCell(elem)
-																							 .getAllowedValuesMask()):z,this.getCell(loc));
+																							 .getMask()):z,this.getCell(loc));
 			// if there is only one allowed value left (i.e. this cell is the only one amonsgt its sibs with this allowed value)
 			// then apply it as the answer. Note getSingle will return 0 (i.e. no anser) if the number of allowed values is not exactly one
-		if (cell.getMaskValue() != 0) {
-			cell.setAnswer(answer);
+		if (cell.setAnswer(cell.getMaskValue()))
 			return true; // no need to check others sibling collections
-		}
 		return false;
 	}
-	getValueMask(loc){
-		return this.getCell(loc).getValueMask();
+	getMask(loc){
+		return this.getCell(loc).getMask();
 	}
 	getAnswer(locs){
 		// cols = 0;
 		// rows = 1;
 		// squares = 2;
-		return locs.reduce((z,e)=>(z[0][e.col]|=this.getValueMask(e),
-								   z[1][e.row]|=this.getValueMask(e),
-								   z[2][e.getSquare()]|=this.getValueMask(e),z),(new Array(3)).fill(0).reduce(z=>z.concat([(new Array(9)).fill(0)]),new Array()));
+		return locs.reduce((z,e)=>(z[0][e.col]|=this.getMask(e),
+								   z[1][e.row]|=this.getMask(e),
+								   z[2][e.getSquare()]|=this.getMask(e),z),(new Array(3)).fill(0).reduce(z=>z.concat([(new Array(9)).fill(0)]),new Array()));
 	}
 	updating(loc, answer){
 		let contains = this.answer[1][loc.row] | this.answer[0][loc.col] | answer[2][loc.getSquare()];
@@ -101,7 +99,7 @@ class Board{
 			if (count == 0)
 				this.isValid = false;
 			else if (count == 1)
-				cell.setAnswer(mask.getSingle());
+				cell.setAnswer(cell.getMaskValue());
 		}
 	}
 	update(loc){
@@ -157,12 +155,20 @@ class Board{
 		var cell = this.getCell(locChoice);
 		let boardC = this.clone();
 		return cell.allowedValuesArray()
-			   .reduce((z,e)=>z?z:boardC.trySolve(locChoice,val)
+			   .reduce((z,e)=>z?z:boardC.trySolve(locChoice,e)
 							   ?(boardC.copyTo(this),true):z,false)
 
 	}
+	getString (){
+		return this.digits.toString();
+	}
 	setString (value) { 
-		Array.from(value).forEach((e,i)=>this.getCell(new Location(i%9,Math.floor(i/9))).setGiven(isNaN(e)?0:parseInt(e)))
-		this.updateAllowed();
+		Array.from(value).forEach((e,i)=>this.getCell(new Location(Math.floor(i/9),i%9)).setGiven(isNaN(e)?0:parseInt(e)))
+		
+		this.answer=this.getAnswer(this.locs);
+		var c=this.answer[0].reduce((z,e)=>z|e,0),
+			r=this.answer[1].reduce((z,e)=>z|e,0),
+			s=this.answer[2].reduce((z,e)=>z|e,0);
+		console.log((~c).toString(2),(~r).toString(2),(~s).toString(2))
 	}
 }

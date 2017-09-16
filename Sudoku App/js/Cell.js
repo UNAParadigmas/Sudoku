@@ -1,7 +1,7 @@
 class Cell{
-	constructor(value){
+	constructor(value=0){
 		this.value=value;//sin asignar
-		this.allowed=0x3e;//bitmask que tiene como 1 los lugares de las potencias del 2 que concuerdan con 1<<n
+		this.mask=0;//bitmask que tiene como 1 los lugares de las potencias del 2 que concuerdan con 1<<n
 		this.answer=0;//sin respuesta
 		this.given=false;//por el usuario
 		this.siblings = new Map();
@@ -17,9 +17,6 @@ class Cell{
 		clone.given=this.given;
 		return clone;
 	}
-	getValueMask(){
-		return this.value?1<<this.value:0;
-	}
 	getValue(){
 		return this.value;
 	}
@@ -29,13 +26,12 @@ class Cell{
 	}
 	
 	setAnswer(n){
-		if(n<0||n>9) throw "Illegal value not in the range 1..9.";  else this.answer=n;
-	}
-	setAllowedValues(values){
-		this.mask=values;
+		if(n<0||n>9) throw "Illegal value not in the range 1..9.";  else this.answer=n
+		return n?true:false;
 	}
 	isAllowed(n){
-		return n > 0 && n < 10 && (~this.mask & (1 << n)) != 0;
+		var a = n > 0 && n < 10 && (this.mask & (1 << n)) != 0;
+		return a
 	}
 	setValue(n){
 		if(n<0||n>9)
@@ -47,19 +43,16 @@ class Cell{
 		document.dispatchEvent(new CustomEvent('updateCell', {detail:this}));
 	}
 	setGiven(n){
-		if (n <0||n>9)
-			throw "Illegal value not in the range 1..9.";
 		this.value = n;
 		this.given = n != 0;
 		this.setMask(n);
-		document.dispatchEvent(new CustomEvent('updateCell', {detail:this}));
 	}
 	isGiven(){
 		return this.given;
 	}
 	clear(){
 		this.value = 0; // means unassigned
-		this.allowed = new AllowedValues(0x3E); // all possible
+		this.mask = 0; // all possible
 		this.answer = 0;
 		this.given = 0;
 		return this;
@@ -67,7 +60,7 @@ class Cell{
 	getMaskValue(){
 		let single = 0;
 		for (let i = 1; i <= 9; i++)
-			if ((this._mask & (1 << i)) != 0) {
+			if ((this.mask & (1 << i)) != 0) {
 				if(single)
 					return 0
 				single = i;
@@ -75,17 +68,17 @@ class Cell{
 		return single;
 	}
 	setMask(n){
+		if(n)
 		this.mask=1<<n;
 	}
-	setAllowed(n){
-		this.mask=n;
-	}
+
 	count(){
-		return (new Array(9)).fill(0).reduce(z=>this.mask & 1 << z[0] != 0?[z[0]++,z[1]++]
-																		  :[z[0]++,z[1]],[1,0])[1];
+		return (new Array(9)).fill(0).reduce(z=>(~this.mask) & 1 << z[0] != 0
+															 ? [z[0]++,z[1]++]
+															 : [z[0]++,z[1]],[1,0])[1];
 	}
-	removeValuesMask(msk){
-		this.mask &= ~msk;
+	removeValuesMask(n){
+		this.mask |= 1<<n;
 		return this;
 	}
 	allowedValuesArray(){
@@ -103,8 +96,8 @@ class Cell{
 	}
 	hasAnswer() {
 		return this.answer != 0;
-	};
-	getAllowedValuesMask(){
+	}
+	getMask(){
 		return this.mask;
 	}
 }

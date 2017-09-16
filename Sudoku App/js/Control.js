@@ -51,7 +51,7 @@ timer.addEventListener('started', function (e) {
 
 $('#nuevoJuego').click(function () {
 	var val = $('#sel1 option:selected').text();
-	$().creaCanvas("6.81..........72.............3.5..615....4..........8.47....5.....63.....2......1",val,true);
+	$().creaCanvas("7.8...3.....2.1...5..7..2...4.....263.948...7...1...9..9.6....4....7.5....5......",val,true);
 });
 
 
@@ -84,7 +84,7 @@ $.fn.initButtons = function() {
 	$('#btnReset').css({'background-color':'#FFFFFF'}).prop('disabled', true);
 	$('#btnSolve').css({'background-color':'#FFFFFF'}).prop('disabled', true);
 	$('#btnHint').css({'background-color':'#FFFFFF'}).prop('disabled', true);
-	$('#btnUndo').css({'background-color':'#FFFFFF'}).prop('disabled', true);
+	$('#btnUndo').css({'background-color':'#FFFFFF'})
 };
 
 $.fn.creaCanvas = function(txt,val,time = false){
@@ -105,8 +105,9 @@ $.fn.creaCanvas = function(txt,val,time = false){
 		timer.start("00:00:00");
 		$('#pauseButton').prop('disabled', false);
 	}
-			
+	console.log(game.board.digits.matrix);		
 	game.board.setString(txt);
+	console.log(game.board.digits.matrix);
 	game.updateCanvas();
 };
 

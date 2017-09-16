@@ -7,19 +7,23 @@ class Game {
 			this.board = new Board(9);
 			this.selRow = 0;
 			this.selCol = 0;
+			this.selRowBef = 0;
+			this.selColBef = 0;
 			this.showAllowed = showAllowed;
 			this.stack = new Array();
 		}
 		/* stack methods */
 		undo () {
 			if (this.stack.length) {
-				this.board = this.stack.pop();
+				this.board.setString(this.stack.pop());
 				this.update();
 			}
 		}
 		
 		pushBoard() {
-			this.stack.push(this.board.clone());
+			console.log(this.board.getString())
+			if(!this.beforeValEquals())
+				this.stack.push(this.board.getString());
 		}
 		/* UI methods */
 		drawGrid() { 
@@ -105,12 +109,23 @@ class Game {
 			//message.innerHTML = (!this.board._isValid)? "Incorrecto" : (this.board._isSolved)? "Resuelto" : "";
 		}
 		selectCell(row, col) {
+			this.updateBefore()
 			this.selRow = row;
 			this.selCol = col;
 			this.updateCanvas();
 		}
 		
+		beforeValEquals(){
+			return this.selColBef==this.selCol&&this.selRowBef==this.selRow
+		}
+		
+		updateBefore(){
+			this.selColBef=this.selCol;
+			this.selRowBef=this.selRow;
+		}
+		
 		moveSelection(row, col){
+			this.updateBefore();
 			let sRow = row + this.selRow ;
 			let sCol = col + this.selCol;		
 			this.selRow = (sRow < 0 )? 8 : (sRow > 8)? 0: sRow;
@@ -124,7 +139,7 @@ class Game {
 			if (cel.isGiven())
 				return;
 			if (digit != 0 && !cel.isAllowed(digit)) {
-				//message.innerHTML = "Digit not allowed";
+				//message.innerHTML = "Digit not allowed"
 				return;
 			}
 			this.pushBoard();
