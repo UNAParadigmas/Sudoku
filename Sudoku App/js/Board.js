@@ -1,41 +1,49 @@
 class Board{
+	
 	constructor(size) {
 		this.size=size;
 		this.digits = new Grid(size);
 		this.locs=(new Location(-1,-1)).getGrid();
 		//this.setSiblingsDigits();
-		this.isSolved = false;
-		this.isValid = false;
-		this.answer = []
+		this.isSolved = this.isValid = false;
+		this.answer = new Array();
 	}
+	/*
 	clone() {
 		var clone = new Board(this.size);
 		clone.isSolved = this.isSolved;
 		clone.isValid = this.isValid;
 		clone.digits = this.digits.clone();
 		return clone;
-	}
+	}*/
+	
 	setSiblingsDigits(){
 		this.locs.forEach(e=>this.setCellSiblings(e))
 	}
+	
 	setCellSiblings(loc){
 		this.digits.get(loc).setSiblings(loc.getAllSibs(), this.digits)
 	}
+	/*
 	copyTo(target) {
 		target.isSolved = this.isSolved;
 		target.isValid = this.isValid;
 		target.digits=this.digits.clone();
-	}
+	}*/
+	
 	getCell(loc) {
 		return this.digits.get(loc);
 	}
+	
 	setCell(loc, value) {
 		this.getCell(loc) = value;
 	}
+	
 	clear() {
-		this.digits = this.digits.map(x=>x.clear());
+		this.digits = this.digits.map(x=>x.clear());//malo
 		this.updateAllowed();
 	}
+	
 	reset() {// return Baord to only the givens
 		this.digits = digits.map(x=>x.isGiven()?x:x.clear());
 		this.updateAllowed();
