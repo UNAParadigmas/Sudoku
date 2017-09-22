@@ -1,29 +1,47 @@
 class Cell{
-	constructor(value=0){
-		this.value=value;//sin asignar
-		this.mask=0;//bitmask que tiene como 1 los lugares de las potencias del 2 que concuerdan con 1<<n
-		this.answer=0;//sin respuesta
-		this.given=false;//por el usuario
+	constructor(value = 0){
+		this.value = value;
+		this.mask = 0;
+		this.answer = 0;
+		this.given = false;
 		this.siblings = new Map();
 	}
-	setSiblings(locs, grid){
-		this.siblings = locs.reduce((z,e)=>z.set(grid.get(e), true), new Map())
-	}
-	clone(){
-		let clone = new Cell();
-		clone.value=this.value;
-		clone.mask=this.mask;
-		clone.answer=this.answer;
-		clone.given=this.given;
-		return clone;
-	}
+		
 	getValue(){
 		return this.value;
+	}
+	
+	getAnswer(){
+		return this.answer;
 	}
 	
 	getSiblings(){
 		return this.siblings;
 	}
+	
+	getMaskValue(){
+		for (let i = 1; i <= 9; i++)
+			if ((this.mask & (1 << i)) != 0) {
+				if(single)
+					return 0
+				single = i;
+			}
+		return single;
+	}
+	
+	getMask(){
+		return this.mask;
+	}
+	
+	getValueMask(){
+		return this.value ? 1 << this.value : 0;
+	}
+	
+	
+	setSiblings(locs, grid){
+		this.siblings = locs.reduce((z,e)=>z.set(grid.get(e), true), new Map())
+	}
+	
 	
 	setAnswer(n){
 		if(n<0||n>9) throw "Illegal value not in the range 1..9.";  else this.answer=n
@@ -51,53 +69,52 @@ class Cell{
 		return this.given;
 	}
 	clear(){
-		this.value = 0; // means unassigned
-		this.mask = 0; // all possible
+		this.value = 0;
+		this.mask = 0;
 		this.answer = 0;
 		this.given = 0;
+		//sibings
 		return this;
 	}
-	getMaskValue(){
-		let single = 0;
-		for (let i = 1; i <= 9; i++)
-			if ((this.mask & (1 << i)) != 0) {
-				if(single)
-					return 0
-				single = i;
-			}
-		return single;
-	}
+	
 	setMask(n){
 		if(n)
 		this.mask=1<<n;
 	}
-
+	
 	count(){
-		return (new Array(9)).fill(0).reduce(z=>(~this.mask) & 1 << z[0] != 0
-															 ? [z[0]++,z[1]++]
-															 : [z[0]++,z[1]],[1,0])[1];
+		return (new Array(9)).fill(0).reduce((z,e,i) => (~this.mask & (1 << i))? z + 1: z, 0);
 	}
+
 	removeValuesMask(n){
 		this.mask |= 1<<n;
 		return this;
 	}
+	
 	allowedValuesArray(){
-		var ret = new Array();
+		/*var ret = new Array();
 		for (var i = 1; i <= 9; i++)
 			if (((1 << i) & this._mask) != 0)
 				ret.push(i);
-		return ret;
+		return ret;*/
+		let f = (i, vec) => { 
+			if(i <= 9){ 
+				return vec
+			}else{
+				if((1 << i) & this._mask){
+					vec.push(i)
+				}
+				return f(i + 1, vec)
+			}
+		}
+		return f(1, new Array());
 	}
+	
 	isNotAssigned () {
 		return this.value == 0;
 	}
-	getAnswer(){
-		return this.answer;
-	}
+	
 	hasAnswer() {
 		return this.answer != 0;
-	}
-	getMask(){
-		return this.mask;
 	}
 }
