@@ -1,5 +1,6 @@
 
 class Game {
+	
 		constructor(showAllowed = true) {
 			this.CellSize = 60;
 			this.SubCellSize = 18;

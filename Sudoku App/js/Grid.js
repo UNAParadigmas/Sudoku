@@ -7,12 +7,24 @@ class Grid {
 		return (new Array(size)).fill(null).reduce( z => f(z), new Array());
 	}
 	
-	fillMatrix(size){
+	fillMatrix(size) {
 		return this.fill( x => x.concat([this.fill(x => x.concat(new Cell()), size)]), size);
 	}
 	
-	get(loc){
+	get(loc) {
 		return this.matrix[loc.row][loc.col];
+	}
+	
+	clearAll(){
+		this.matrix.forEach(e => e.forEach(cell => cell.clear()))
+	}
+	
+	map(f) {
+		return this.matrix.map(e => e.map(f));
+	}
+	
+	forEach(f) {
+		return this.matrix.forEach(e => e.forEach(f));
 	}
 	
 	toString(){

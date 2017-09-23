@@ -74,7 +74,6 @@ class Cell{
 		this.answer = 0;
 		this.given = 0;
 		//sibings
-		return this;
 	}
 	
 	setMask(n){
@@ -83,7 +82,7 @@ class Cell{
 	}
 	
 	count(){
-		return (new Array(9)).fill(0).reduce((z,e,i) => (~this.mask & (1 << i))? z + 1: z, 0);
+		return Array.from({length: 9}).reduce((z,e,i) => (~this.mask & (1 << i + 1))? z + 1: z, 0);
 	}
 
 	removeValuesMask(n){
@@ -92,22 +91,7 @@ class Cell{
 	}
 	
 	allowedValuesArray(){
-		/*var ret = new Array();
-		for (var i = 1; i <= 9; i++)
-			if (((1 << i) & this._mask) != 0)
-				ret.push(i);
-		return ret;*/
-		let f = (i, vec) => { 
-			if(i <= 9){ 
-				return vec
-			}else{
-				if((1 << i) & this._mask){
-					vec.push(i)
-				}
-				return f(i + 1, vec)
-			}
-		}
-		return f(1, new Array());
+		return Array.from({length:9}).reduce((z,e,i) => ((1 << i+1) & this._mask)? z.concat(i+1) : z, [])
 	}
 	
 	isNotAssigned () {

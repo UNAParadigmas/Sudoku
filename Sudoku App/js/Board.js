@@ -1,21 +1,16 @@
 class Board{
 	
-	constructor(size) {
-		this.size=size;
-		this.digits = new Grid(size);
-		this.locs=(new Location(-1,-1)).getGrid();
+	constructor() {
+		this.digits = new Grid(9);
+		this.locs = this.createGrid();
 		//this.setSiblingsDigits();
 		this.isSolved = this.isValid = false;
 		this.answer = new Array();
 	}
-	/*
-	clone() {
-		var clone = new Board(this.size);
-		clone.isSolved = this.isSolved;
-		clone.isValid = this.isValid;
-		clone.digits = this.digits.clone();
-		return clone;
-	}*/
+	
+	createGrid() {
+		return Array.from({length:81}).reduce((z,e,i) => z.concat(new Location(i % 9, Math.floor(i / 9))), []);
+	}
 	
 	setSiblingsDigits(){
 		this.locs.forEach(e=>this.setCellSiblings(e))
@@ -24,12 +19,12 @@ class Board{
 	setCellSiblings(loc){
 		this.digits.get(loc).setSiblings(loc.getAllSibs(), this.digits)
 	}
-	/*
+	
 	copyTo(target) {
 		target.isSolved = this.isSolved;
 		target.isValid = this.isValid;
 		target.digits=this.digits.clone();
-	}*/
+	}
 	
 	getCell(loc) {
 		return this.digits.get(loc);
@@ -40,17 +35,20 @@ class Board{
 	}
 	
 	clear() {
-		this.digits = this.digits.map(x=>x.clear());//malo
+		this.digits = this.digits.map(x=>x.clear());
 		this.updateAllowed();
 	}
+	/*
+	reset() {
+		this.digits = digits.map(x => x.clear());
+		this.updateAllowed();
+	}*/
 	
-	reset() {// return Baord to only the givens
-		this.digits = digits.map(x=>x.isGiven()?x:x.clear());
-		this.updateAllowed();
-	}
 	checkIsValidSibs (digit, locs) {
+		return locs.
 		return checkGeneral(x=>this.getCell(x).getAnswer()==digit, locs) != 0;
 	}
+	
 	checkGeneral(f, locs){
 		return locs.reduce((z,elem)=>f(elem)?z+1:z);
 	}

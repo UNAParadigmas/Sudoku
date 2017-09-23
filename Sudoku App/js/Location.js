@@ -30,10 +30,10 @@ class Location{
 	getSquare() {
 		return 3 * Math.floor(this.row / 3) + Math.floor(this.col / 3);
 	}
-	
+	/*
 	getGrid() {
-		return Array.from({length:81}).reduce((z,e,i) => z.concat(new Location(i % 9, Math.floor(i / 9))), new Array());
-	}
+		return Array.from({length:81}).reduce((z,e,i) => z.concat(new Location(i % 9, Math.floor(i / 9))), []);
+	}*/
 	
 	
 	getAllSibs(){
@@ -51,7 +51,6 @@ class Location{
 		}
 	}
 
-	
 	// location methods
 	
 	modulo(n){
@@ -75,31 +74,23 @@ class Location{
 	}
 	
 	rowSibs() {
-		return Array.from({length:9}).reduce((z,e,i) => i != this.col ? z.concat(new Location(this.row, i)) : z, new Array());
+		return Array.from({length:9}).reduce((z,e,i) => i != this.col ? z.concat(new Location(this.row, i)) : z, []);
 	}
 	
 	colSibs() {
-		return Array.from({length:9}).reduce((z,e,i) => i != this.row ? z.concat(new Location(i, this.col)) : z, new Array());
+		return Array.from({length:9}).reduce((z,e,i) => i != this.row ? z.concat(new Location(i, this.col)) : z, []);
 	}
 	
-	squareSibs(f) {
-		
+	squareSibs(f) {		
 		let baseCol = 3 * Math.floor(this.col / 3)
 		let baseRow = 3 * Math.floor(this.row / 3);
 				
-		let filter =  (z, _row, _col){
-			return f(_row,_col)? z.concat(new Location(_row, _col)) : z	
-		}
+		let filter =  (z, _row, _col) => f(_row,_col)? z.concat(new Location(_row, _col)) : z
 		
-		let f = (_z,_e,_i) => 
-		{
-			return _z.concat(filter(z, baseCol + Math.floor(i/3), baseCol + i%3))
-				
-		}
+		let f = (_z,_e,_i) => _z.concat(filter(z, baseCol + Math.floor(i/3), baseCol + i%3))		
 		
-		return Array.from({length:9}).reduce(f, new Array());
+		return Array.from({length:9}).reduce(f, []);
 	}
-	
 	
 	toString(){
 		return "Row=" + String(this.row) + "Col=" + String(this.col);
