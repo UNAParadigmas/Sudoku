@@ -14,6 +14,7 @@ $( document ).on('keydown', function(e){
 		case 38: game.moveSelection(-1, 0); break;
 		case 39: game.moveSelection(0 , 1); break;
 		case 40: game.moveSelection(1 , 0); break;
+		case 8: case 46: game.setDigitInCell(0); break;
 		default:
 			var key = Number(e.keyCode);
 			var digit = key >= 96 ? key - 96 : key - 48;
