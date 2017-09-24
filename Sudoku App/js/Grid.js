@@ -13,10 +13,10 @@ class Grid{
 	}
 	
 	map(f){
-		return this.matrix.map(elem => elem.map(elem => f(elem)));
+		return this.matrix.map(elem => elem.map(f));
 	}
 	forEach(f){
-		this.matrix.forEach(e=>e.forEach(e=>f(e)));
+		this.matrix.forEach(e => e.forEach(f));
 	}
 	get(loc){
 		return this.matrix[loc.row][loc.col];

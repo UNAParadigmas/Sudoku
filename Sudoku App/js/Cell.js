@@ -1,8 +1,8 @@
 class Cell{
 	constructor(value = 0){
-		this.value=value;
-		this.mask = this.trueMask = this.answer = 0;
-		this.given=false;
+		this.value = value;
+		this.mask  = this.trueMask = this.answer = 0;
+		this.given = false;
 	}
 	
 	setSiblings(locs, grid){
@@ -62,10 +62,14 @@ class Cell{
 	}
 	
 	clear(){
-		this.value = 0; // means unassigned
-		this.mask = 0; // all possible
+		this.value = 0; 
+		this.mask = 0; 
 		this.answer = 0;
 		this.given = 0;
+	}
+	
+	reset(){
+		
 	}
 	
 	getMaskValue(){		
