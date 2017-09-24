@@ -1,6 +1,6 @@
 let timer = new Timer();
 let game = new Game();
-	
+window.game=game;	
 /* DOCUMENT CONTROL*/
 
 $( document ).ready(function() {
@@ -51,7 +51,7 @@ timer.addEventListener('started', function (e) {
 
 $('#nuevoJuego').click(function () {
 	var val = $('#sel1 option:selected').text();
-	$().creaCanvas("7.8...3.....2.1...5..7..2...4.....263.948...7...1...9..9.6....4....7.5....5......",val,true);
+	$().creaCanvas("7.8...3.....2.1...5..7..2...4.....263.948...7...1...9..9.6....4....7.5....5......",val,true,true);
 });
 
 
@@ -87,7 +87,7 @@ $.fn.initButtons = function() {
 	$('#btnUndo').css({'background-color':'#FFFFFF'})
 };
 
-$.fn.creaCanvas = function(txt,val,time = false){
+$.fn.creaCanvas = function(txt,val,time = false, init=false){
 	var aux = $('#sel2 option:selected').text();
 	var dif = (val !== '9x9' || aux === 'Fácil') ? 1 : (aux === 'Normal') ? 2 : 3 ;
 	showAllowed = dif === 1; 
@@ -105,25 +105,16 @@ $.fn.creaCanvas = function(txt,val,time = false){
 		timer.start("00:00:00");
 		$('#pauseButton').prop('disabled', false);
 	}
-	console.log(game.board.digits.matrix);		
-	game.board.setString(txt);
-	console.log(game.board.digits.matrix);
+	game.board.setString(txt,init);
 	game.updateCanvas();
 };
 
-$.fn.evaluaTxt = function (txt){
-	var a = Array.from(txt);
-	console.log(a);
-	console.log(Array.from(txt).lenght);
-	if(a === 81){
-		//console.log((new Array(81)).fill(0).map((e,i) => txt.charAt(i)));
-	}
+$.fn.evaluaTxt = function (txt){/////por implementar
 	return false;
 }
 
 $('#loadGame').click( () =>{
 	let txt = $('#sudokuText').val();
-	console.log($().evaluaTxt(txt));
 	$().creaCanvas(txt,$('#sel1 option:selected').text(),true);
 	$('#load-modal').modal('toggle');
 });

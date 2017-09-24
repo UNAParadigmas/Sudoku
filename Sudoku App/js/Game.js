@@ -1,6 +1,5 @@
 
 class Game {
-	
 		constructor(showAllowed = true) {
 			this.CellSize = 60;
 			this.SubCellSize = 18;
@@ -22,7 +21,6 @@ class Game {
 		}
 		
 		pushBoard() {
-			console.log(this.board.getString())
 			if(!this.beforeValEquals())
 				this.stack.push(this.board.getString());
 		}
@@ -135,18 +133,18 @@ class Game {
 		}
 		
 		setDigitInCell(digit) {
-			var cel = this.board.getCell(new Location(this.selRow, this.selCol));
-			console.log(cel);
+			var loc = new Location(this.selRow, this.selCol)
+			var cel = this.board.getCell(loc);
 			if (cel.isGiven())
 				return;
 			if (digit != 0 && !cel.isAllowed(digit)) {
-				//message.innerHTML = "Digit not allowed"
 				return;
 			}
 			this.pushBoard();
-			cel.setValue(digit);
+			cel.setValue(digit,loc);
 			this.board.updateAllowed();
 			this.updateCanvas();
+			console.log(this.board.digits.matrix)
 		}
 		
 		/* GAME METHODS*/
@@ -176,6 +174,8 @@ class Game {
 			this.board.trySolve(Location.empty, 0);
 			this.updateCanvas();
 		}
-		
+		update(target,loc,type){
+			this.board.updateDigits(target,loc,type);
+		}
 	}
 		
