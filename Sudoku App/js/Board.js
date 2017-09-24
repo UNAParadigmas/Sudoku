@@ -1,54 +1,51 @@
 class Board{
-	
-	constructor() {
-		this.digits = new Grid(9);
-		this.locs = this.createGrid();
-		//this.setSiblingsDigits();
-		this.isSolved = this.isValid = false;
-		this.answer = new Array();
+	constructor(size) {
+		this.size=size;
+		this.digits = new Grid(size);
+		this.locs=(new Location(-1,-1)).getGrid();
+		this.setSiblingsDigits();
+		this.isSolved = false;
+		this.isValid = false;
+		this.answer = []
 	}
-	
-	createGrid() {
-		return Array.from({length:81}).reduce((z,e,i) => z.concat(new Location(i % 9, Math.floor(i / 9))), []);
+	updateDigits(target,loc,type){
+		this.digits.update(target,loc,type);
 	}
-	
+	clone() {
+		var clone = new Board(this.size);
+		clone.isSolved = this.isSolved;
+		clone.isValid = this.isValid;
+		clone.digits = this.digits.clone();
+		return clone;
+	}
 	setSiblingsDigits(){
 		this.locs.forEach(e=>this.setCellSiblings(e))
 	}
-	
 	setCellSiblings(loc){
 		this.digits.get(loc).setSiblings(loc.getAllSibs(), this.digits)
 	}
-	
 	copyTo(target) {
 		target.isSolved = this.isSolved;
 		target.isValid = this.isValid;
 		target.digits=this.digits.clone();
 	}
-	
 	getCell(loc) {
 		return this.digits.get(loc);
 	}
-	
 	setCell(loc, value) {
 		this.getCell(loc) = value;
 	}
-	
 	clear() {
 		this.digits = this.digits.map(x=>x.clear());
-		this.updateAllowed();
+		//this.updateAllowed();
 	}
-	/*
-	reset() {
-		this.digits = digits.map(x => x.clear());
-		this.updateAllowed();
-	}*/
-	
+	reset() {// return Baord to only the givens
+		this.digits = digits.map(x=>x.isGiven()?x:x.clear());
+		//this.updateAllowed();
+	}
 	checkIsValidSibs (digit, locs) {
-		return locs.
 		return checkGeneral(x=>this.getCell(x).getAnswer()==digit, locs) != 0;
 	}
-	
 	checkGeneral(f, locs){
 		return locs.reduce((z,elem)=>f(elem)?z+1:z);
 	}
@@ -66,20 +63,24 @@ class Board{
 	findCellWithFewestChoices() {
 		return this.locs.reduce((z,e)=>this.getCell(e).isAssigned()?z:[z[0]=Math.min(z[0],this.getCell(e).count()),z[1]=e],[9,new Location(-1,-1)])[1];
 	};
-	checkForHiddenSingles(loc, st) {
+	/*checkForHiddenSingles(loc, st) {
 		// Check each cell - if not assigned and has no answer then check its siblings
 		// get all its allowed then remove all the allowed
 		let cell = this.getCell(loc);
+		let cellCopy = new Cell();
 		if (cell.isNotAssigned() && !cell.hasAnswer()) 
-			cell = loc.getSibs(st).reduce((z,elem)=>this.getCell(elem)
-														.isNotAssigned()?z.removeValuesMask(this.getCell(elem)
-																							 .getMask()):z,this.getCell(loc));
+			cellCopy = loc.getSibs(st).reduce((z,e)=>{return this.updateCell(z,e)},cell.clone());
 			// if there is only one allowed value left (i.e. this cell is the only one amonsgt its sibs with this allowed value)
 			// then apply it as the answer. Note getSingle will return 0 (i.e. no anser) if the number of allowed values is not exactly one
-		if (cell.setAnswer(cell.getMaskValue()))
+		if (cell.setAnswer(cellCopy.getMaskValue()))
 			return true; // no need to check others sibling collections
 		return false;
-	}
+	}*/
+	/*updateCell(z,e){
+		return this.getCell(e).isNotAssigned()?z.updateMask(this.getCell(e)
+																.getMask())
+											  :z
+	}*/
 	getMask(loc){
 		return this.getCell(loc).getMask();
 	}
@@ -89,12 +90,13 @@ class Board{
 		// squares = 2;
 		return locs.reduce((z,e)=>(z[0][e.col]|=this.getMask(e),
 								   z[1][e.row]|=this.getMask(e),
-								   z[2][e.getSquare()]|=this.getMask(e),z),(new Array(3)).fill(0).reduce(z=>z.concat([(new Array(9)).fill(0)]),new Array()));
+								   z[2][e.getSquare()]|=this.getMask(e),z),(new Array(3)).fill(0).reduce(z=>z.concat([(new Array(9)).fill(0)]),[]));
 	}
-	updating(loc, answer){
+	/*updating(loc, answer){
 		let contains = this.answer[1][loc.row] | this.answer[0][loc.col] | answer[2][loc.getSquare()];
 		let cell = this.getCell(loc);
-		cell.setAllowed(~contains); // set allowed values to what values are not already set in this row, col or square
+		if(!cell.isGiven())
+			cell.updateMask(contains); // set allowed values to what values are not already set in this row, col or square
 		cell.setAnswer(0); //clear any previous answers
 		// As an extra step look for "naked singles", i.e. cells that have only one allowed value, and use
 		// that to set the answer (note this is different from the "value" as this can only be assigned
@@ -108,11 +110,11 @@ class Board{
 				cell.setAnswer(cell.getMaskValue());
 		}
 	}
-	update(loc){
+	/*update(loc){
 		if (!this.checkForHiddenSingles(loc, 1))// first check row sibs for a hiddne single
 				if (!this.checkForHiddenSingles(loc, 0))// then check cols
 					this.checkForHiddenSingles(loc, 2); // then check square
-	}
+	}*/
 	updateAllowed() {
 		// Called whenever the user sets a value or via auto solve
 		// Updates the allowed values for each cell based on existing digits
@@ -122,13 +124,13 @@ class Board{
 		// Since the aggregate is a bitmask, the bitwise inverse of that is therefore the allowed values.
 		this.isValid = true;
 		this.isSolved = true;
-		this.locs.forEach(e=>this.updating(e,this.answer));
+		//this.locs.forEach(e=>this.updating(e,this.answer));
 
 		// Step 2: Look for "hidden singles".
 		// For each row, col, square, count number of times each digit appears.
 		// If any appear once then set that as the answer for that cell.
 		// Count in rows
-		this.locs.forEach(e=>this.update(e));
+		//this.locs.forEach(e=>this.update(e));
 		// TO DO: Add code here to detect naked/hidden doubles/triples/quads
 	}
 	trySolve(loc, value) {// empty Location allowed
@@ -137,11 +139,11 @@ class Board{
 			var cell = this.getCell(loc);
 			if (!cell.isAllowed(value))
 				throw "Internal error.";
-			cell.setValue(value);
+			cell.setValue(value,loc);
 		}
 
 		do {
-			this.updateAllowed();
+			//this.updateAllowed();
 			if (!this.isValid)
 				return false;
 		} while (this.acceptPossibles()); // keep doing deterministic answers
@@ -168,13 +170,13 @@ class Board{
 	getString (){
 		return this.digits.toString();
 	}
-	setString (value) { 
-		Array.from(value).forEach((e,i)=>this.getCell(new Location(Math.floor(i/9),i%9)).setGiven(isNaN(e)?0:parseInt(e)))
-		
+	setString (value, init) { 
+		let loc = new Location(-1,-1);
+		Array.from(value).forEach((e,i)=>this.getCell(loc.build(i))
+											 .setGiven(isNaN(e)?0:parseInt(e),loc.build(i)))//no modifica a l
+		if(init)
+			this.digits.updateListeners(this.locs);
 		this.answer=this.getAnswer(this.locs);
-		var c=this.answer[0].reduce((z,e)=>z|e,0),
-			r=this.answer[1].reduce((z,e)=>z|e,0),
-			s=this.answer[2].reduce((z,e)=>z|e,0);
-		console.log((~c).toString(2),(~r).toString(2),(~s).toString(2))
+		console.log(this.digits.matrix);
 	}
 }
