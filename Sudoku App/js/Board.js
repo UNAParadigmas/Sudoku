@@ -58,7 +58,27 @@ class Board{
 		console.log(this.digits.matrix);
 	}
 	
-	// ANALIZE DATA METHODS
+	// ANSWER METHODS
+	analyzeGrid(){
+		this.locs.reduce((z, loc) => 
+		
+	}
+	
+	chechForSingleAnswer(_loc, type){
+		let cell = this.getCell(_loc);
+		if(cell.is) 
+		let checkCell = (_cell) => if(_cell.isNotAssigned()) cell.removeValues(_cel.getMask());
+		
+		if(cel.isNotAssigned() && !cel.hasAnswer){
+			let locs = _loc.getSibs(type);
+			locs.forEach( loc => checkCell(this.getCell(loc)));
+		}
+		
+		if(cell.isSingle()){
+			this.answer.push(_loc);
+		}
+	}
+	
 	
 	// GAME METHODS
 	copyTo(target) {
