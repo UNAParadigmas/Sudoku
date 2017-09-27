@@ -8,7 +8,7 @@ const Usuario = require("../model/usuario");
 //registro usuario
 //ejemplo ARC= http://localhost:8080/api/registro
 //{"nombre" : "Juan","user" : "vite0150","pass" : "123"}
-router.post('/registro', function (req, res, next) {
+router.post('/registro', (req, res, next) => {
     let data = req.body;
     console.log("registro de usuario, nombre: ", data.nombre);
 
