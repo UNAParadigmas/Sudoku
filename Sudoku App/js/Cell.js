@@ -3,19 +3,12 @@ class Cell{
 	
 	constructor(value = 0){
 		this.value = value;
-		this.mask  = this.trueMask = this.answer = 0;
+		this.mask = new BitMask(0);
+		this.answer = 0;
 		this.given = false;
 	}
 	
 	// BOOLEAN METHODS
-	
-	isAllowed(n){
-		return (this.mask & (1 << n)) == 0;
-	}
-	
-	isNotAllowed(n){
-		return (this.mask & (1 << n)) != 0;
-	}
 	
 	isGiven(){
 		return this.given;
@@ -39,13 +32,6 @@ class Cell{
 		return this.answer;
 	}
 	
-	getMaskValue(){		
-		let loop 		= (s, i) => (i > 9)? s : checkMask(s, i);		
-		let checkMask 	= (s, i) => (this.mask & (1 << i) != 0)? checkSingle(s, i): loop(s, i+1);
-		let checkSingle = (s, i) => (s) ? 0 : loop(i, i+1);
-		
-		return loop(0,1);
-	}
 	
 	hasAnswer() {
 		return this.answer != 0;
@@ -80,7 +66,7 @@ class Cell{
 	
 	setGiven(n/*, loc*/){
 		this.value = n;
-		this.given = n != 0;
+		this.given = Boolean(n);
 	}
 		
 	setMask(n){
@@ -99,37 +85,15 @@ class Cell{
 		
 	}
 	
-	// MASK METHODS
 	
-	count(){
-		return Array.from({length: 9}).reduce((z,e,i) => (~this.mask & (1 << i + 1))? z + 1: z, 0);
-	}
-		
 	updateMask(n, given){
 		if(!this.given){
-			this.mask |= n
+			this.mask.or(n)
 			if(given)
-				this.trueMask|=n;
+				this.trueMask.or(n);
 			}
 		return this;
 	}
-
-	updateMaskNot(n){
-		this.mask = Math.max(~((~this.mask)|n),this.trueMask)
-	}
-
-	removeValuesMask(n){
-		if(!this.given)
-			this.mask |= 1 << n;
-		return this;
-	}
-	allowedValuesArray(){
-		return Array.from({length:9}).reduce((z,e,i) => ((1 << i+1) & this._mask)? z.concat(i+1) : z, [])
-	}
-	removeValues = function (mask) {
-		this.mask &= ~mask;
-	};
-
 	
 	// SIBS METHODS
 	

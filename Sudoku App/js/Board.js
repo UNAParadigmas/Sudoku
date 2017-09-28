@@ -60,13 +60,21 @@ class Board{
 	
 	// ANSWER METHODS
 	analyzeGrid(){
-		this.locs.reduce((z, loc) => 
-		
+		let finished = this.locs.reduce((z, loc) => z && chechForSingleAnswer(loc), true);
+		if(finished) throw "Game succesfully finished";
+		if(!finished && !this.answer.length) throw "Don't have solution";
+		if()
+			
+			
 	}
+	
+	show
 	
 	chechForSingleAnswer(_loc, type){
 		let cell = this.getCell(_loc);
-		if(cell.is) 
+		
+		if(cell.isGiven) return true; 
+		
 		let checkCell = (_cell) => if(_cell.isNotAssigned()) cell.removeValues(_cel.getMask());
 		
 		if(cel.isNotAssigned() && !cel.hasAnswer){
@@ -77,6 +85,8 @@ class Board{
 		if(cell.isSingle()){
 			this.answer.push(_loc);
 		}
+		
+		return false;
 	}
 	
 	
