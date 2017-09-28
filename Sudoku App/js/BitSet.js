@@ -1,4 +1,5 @@
 
+class BitSet {
 	constructor(n = 0){
 		this.mask = n;
 		this.trueMask = n;
