@@ -31,6 +31,6 @@ class Grid{
 		locs.forEach(e=>filter(this.get(e),e));
 	}
 	update(target,loc,type){
-		this.forEach(x=>x.update(target,loc,type));
+		this.forEach(x=>x.update(target,type));
 	}
 }

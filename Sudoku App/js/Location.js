@@ -6,6 +6,9 @@ class Location{
 		this.or =  (_col, _row) => (this.col != _col || this.row != _row);
 		this.and = (_col, _row) => (this.col != _col && this.row != _row);	
 	}
+	toString(){
+		return [row, col].toString();
+	}
 	
 	// boolean methods
 	

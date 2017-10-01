@@ -5,17 +5,18 @@ class Board{
 		this.digits = new Grid(size);
 		this.locs = this.createLocs();
 		this.isSolved = this.isValid = false;
-		this.answer = []
+		this.singles = []
 	}
 	
 	createLocs() {		
 		let _locs = Array.from({length:81},(e,i) => new Location(i % 9, Math.floor(i / 9)));
-		_locs.forEach(loc => this.digits.get(loc).setSiblings(loc.getAllSibs(), this.digits));
+		_locs.forEach(loc => (this.digits.get(loc).setLoc(loc),
+							  this.digits.get(loc).setSiblings(loc.getAllSibs(), this.digits)));
 		return _locs;
 	}
 	
-	updateDigits(target,loc,type){
-		this.digits.update(target,loc,type);
+	updateDigits(target,type){
+		this.digits.update(target,type);
 	}
 	
 	// GET METHODS
@@ -49,41 +50,39 @@ class Board{
 	
 	setString (value, init) { 
 		let loc = i => new Location(Math.floor(i/9),i%9);
-		let check(val) => isNaN(val)? 0 : parseInt(e);
+		let check =(val) => isNaN(val)? 0 : parseInt(val);
 		
-		Array.from(value).forEach((val, i) => this.getCell(loc(i)).setGiven(check(e), loc(i)))//no modifica a l
+		Array.from(value).forEach((val, i) => this.getCell(loc(i)).setGiven(check(val), loc(i)))//no modifica a l
 		if(init) this.digits.updateListeners(this.locs);
 		
-		this.answer = this.getAnswer(this.locs);
+		//this.answer = this.getAnswer(this.locs);
 		console.log(this.digits.matrix);
 	}
 	
 	// ANSWER METHODS
 	analyzeGrid(){
-		let finished = this.locs.reduce((z, loc) => z && chechForSingleAnswer(loc), true);
-		if(finished) throw "Game succesfully finished";
-		if(!finished && !this.answer.length) throw "Don't have solution";
-		if()
-			
-			
+		let finished = this.locs.reduce((z, loc) => z && chechForSingleAnswer(loc), 3);
+		if(finished) return true;
+		if(!finished && !this.singles.length) return false; // falta pairs
 	}
 	
-	show
-	
 	chechForSingleAnswer(_loc, type){
+		const checkCell = (_cell) => (_cell.isNotAssigned())? clone.removeValues(_cel.getMask()):0;
+		
 		let cell = this.getCell(_loc);
+		if(cell.isGiven() || cell.hasAnswer()) return true; 
+		let clone = cell.clone();
 		
-		if(cell.isGiven) return true; 
-		
-		let checkCell = (_cell) => if(_cell.isNotAssigned()) cell.removeValues(_cel.getMask());
-		
-		if(cel.isNotAssigned() && !cel.hasAnswer){
+		if(cell.isNotAssigned()){
 			let locs = _loc.getSibs(type);
 			locs.forEach( loc => checkCell(this.getCell(loc)));
 		}
 		
-		if(cell.isSingle()){
-			this.answer.push(_loc);
+		let single = clone.getSingle();
+		
+		if(!!single){
+			cell.setAnswer(single);
+			this.singles.push(_loc);
 		}
 		
 		return false;
@@ -112,7 +111,7 @@ class Board{
 	checkGeneral(f, locs){
 		return locs.reduce((z,elem)=>f(elem)?z+1:z);
 	}
-	
+	/*
 	checkIsValid (loc, digit) {
 		// Checks if the digit can go in that location by checking it doesn't
 		// exist in either the row, col or square siblings
@@ -162,7 +161,7 @@ class Board{
 			   .reduce((z,e)=>z?z:boardC.trySolve(locChoice,e)
 							   ?(boardC.copyTo(this),true):z,false)
 
-	}
+	}*/
 	
 }
 

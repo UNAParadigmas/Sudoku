@@ -3,9 +3,11 @@ class Cell{
 	
 	constructor(value = 0){
 		this.value = value;
-		this.mask = new BitMask(0);
+		this.mask = new BitSet(0);
+		this.trueMask = new BitSet(0);
 		this.answer = 0;
 		this.given = false;
+		this.loc=new Location(-1,-1);
 	}
 	
 	// BOOLEAN METHODS
@@ -15,7 +17,15 @@ class Cell{
 	}	
 	
 	isNotAssigned () {
-		return this.value == 0;
+		return !this.value;
+	}
+	
+	getSingle(){
+		return this.mask.getSingle();
+	}
+	
+	isNotAllowed(n){
+		this.mask.isNotAllowed();
 	}
 	
 	// GET METHODS
@@ -43,14 +53,19 @@ class Cell{
 	// SET METHODS
 	
 	setSiblings(locs, grid){
-		locs.forEach(e => $(this).on([e.row, e.col].toString(), (e, sib, param) => {
-			param ? e.target.updateMaskNot( 1 << sib.getValue())
-				  : e.target.updateMask( 1 << sib.getValue(), sib.isGiven());
-		}))
+		if(!this.given)
+			locs.forEach(e => $(this).on(e.toString(), (e, sib, param) => {
+				param ? e.target.updateMaskNot( 1 << sib.getValue())
+					  : e.target.updateMask( 1 << sib.getValue(), sib.isGiven());
+			}))
+	}
+	
+	setLoc(loc){
+		this.loc=loc;
 	}
 	
 	setAnswer(n){
-		this.answer=n
+		this.answer = n
 	}
 		
 	setValue(n, loc){
@@ -74,6 +89,14 @@ class Cell{
 	}
 	
 	// CELL METHODS
+	clone(){
+		let clone = new Cell(this.value);
+		this.mask = this.mask;
+		this.answer = this.answer;
+		this.given = this.given;
+		return clone
+	}
+	
 	clear(){
 		this.value = 0; 
 		this.mask = 0; 
@@ -94,16 +117,19 @@ class Cell{
 			}
 		return this;
 	}
+	updateMaskNot(n){
+		this.mask.updateMaskNot(n);
+	}
 	
 	// SIBS METHODS
 	
-	updateSiblings(loc,type=false){
+	updateSiblings(type=false){
 		if(this)
-			window.game.update(this,loc,type);
+			window.game.update(this,type);
 	}
 	
-	update(target,loc,type){
-		$(this).trigger([loc.row,loc.col].toString(),[target,type])
+	update(target,type){
+		$(this).trigger(this.loc.toString(),[target,type])
 	}
 	
 }

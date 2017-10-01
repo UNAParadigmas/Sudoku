@@ -59,7 +59,7 @@ class Game {
 					for (var col = 0; col < this.board.size; col++) {
 						let cel = this.board.getCell(new Location(row, col));
 						if (cel.isNotAssigned()) { 
-							var values = cel.allowedValuesArray();
+							var values = cel.mask.valuesArray();
 							
 							values.forEach ( (e) => {
 								let x = (col + 0.5) * this.CellSize; 
@@ -137,12 +137,11 @@ class Game {
 			var cel = this.board.getCell(loc);
 			if (cel.isGiven())
 				return;
-			if (digit != 0 && !cel.isAllowed(digit)) {
+			if (digit != 0 && cel.isNotAllowed(digit)) {
 				return;
 			}
 			this.pushBoard();
 			cel.setValue(digit,loc);
-			this.board.updateAllowed();
 			this.updateCanvas();
 			console.log(this.board.digits.matrix)
 		}
@@ -174,8 +173,8 @@ class Game {
 			this.board.trySolve(Location.empty, 0);
 			this.updateCanvas();
 		}
-		update(target,loc,type){
-			this.board.updateDigits(target,loc,type);
+		update(target,type){
+			this.board.updateDigits(target,type);
 		}
 	}
 		
