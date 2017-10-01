@@ -137,10 +137,12 @@ class Game {
 			var cel = this.board.getCell(loc);
 			if (cel.isGiven())
 				return;
-			if (digit != 0 && cel.isNotAllowed(digit)) {
+			if (!!digit&&cel.isNotAllowed(digit)) {
 				return;
 			}
 			this.pushBoard();
+			if(!!cel.getValue())
+				cel.setValue(0,loc);
 			cel.setValue(digit,loc);
 			this.updateCanvas();
 			console.log(this.board.digits.matrix)

@@ -8,11 +8,11 @@ class BitSet {
 	// BOOLEAN METHODS
 	
 	isAllowed(n){
-		return Boolean(~this.mask & (1 << n));
+		return !!(~this.mask & (1 << n));
 	}
 	
 	isNotAllowed(n){
-		return !Boolean(~this.mask & (1 << n));
+		return !!(this.mask & (1 << n));
 	}
 	
 	// BITMASK METHODS
@@ -22,8 +22,8 @@ class BitSet {
 		this.count = this.doCount();
 	}
 		
-	updateMaskNot(n){
-		this.mask = Math.max(~((~this.mask)|n),this.trueMask);
+	updateMaskNot(n,trueMask){
+		this.mask = Math.max(~((~this.mask)|n),trueMask.mask);
 		this.count = this.doCount();
 	}
 

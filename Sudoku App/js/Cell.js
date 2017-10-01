@@ -12,20 +12,20 @@ class Cell{
 	
 	// BOOLEAN METHODS
 	
-	isGiven(){
+	isGiven(){//returns the given state of this particular cell, it is true if it was a number that was set by the program (hints).
 		return this.given;
 	}	
 	
-	isNotAssigned () {
+	isNotAssigned () {//returns true if value is not 0.
 		return !this.value;
 	}
 	
-	getSingle(){
+	getSingle(){//returns the value of the single possible value given a not assigned cell, returns 0 if there is no single.
 		return this.mask.getSingle();
 	}
 	
-	isNotAllowed(n){
-		this.mask.isNotAllowed();
+	isNotAllowed(n){//returns true if a given number is not allowed in this particular cell, cheking if the BitSet(mask) contains the given number.
+		return this.mask.isNotAllowed(n);
 	}
 	
 	// GET METHODS
@@ -54,7 +54,7 @@ class Cell{
 	
 	setSiblings(locs, grid){
 		if(!this.given)
-			locs.forEach(e => $(this).on(e.toString(), (e, sib, param) => {
+			locs.forEach(loc => $(this).on(loc.toString1(), (e, sib, param) => {
 				param ? e.target.updateMaskNot( 1 << sib.getValue())
 					  : e.target.updateMask( 1 << sib.getValue(), sib.isGiven());
 			}))
@@ -62,6 +62,7 @@ class Cell{
 	
 	setLoc(loc){
 		this.loc=loc;
+		return this;
 	}
 	
 	setAnswer(n){
@@ -71,17 +72,21 @@ class Cell{
 	setValue(n, loc){
 		if(n != 0 && this.isNotAllowed(n))
 			throw "not allowed";
-		if(n)
-			this.value=n,
-			this.updateSiblings(loc)
+		if(n){
+			this.value=n
+			this.updateSiblings()
+		}
 		else
-			this.updateSiblings(loc,true)
+			this.updateSiblings(true)
 		this.value=n;
 	}
 	
 	setGiven(n/*, loc*/){
 		this.value = n;
-		this.given = Boolean(n);
+		this.given = !!n;
+		if(n)
+			return true;
+		return false;
 	}
 		
 	setMask(n){
@@ -118,7 +123,7 @@ class Cell{
 		return this;
 	}
 	updateMaskNot(n){
-		this.mask.updateMaskNot(n);
+		this.mask.updateMaskNot(n,this.trueMask);
 	}
 	
 	// SIBS METHODS
@@ -129,7 +134,7 @@ class Cell{
 	}
 	
 	update(target,type){
-		$(this).trigger(this.loc.toString(),[target,type])
+		$(this).trigger(target.loc.toString1(),[target,type]);
 	}
 	
 }

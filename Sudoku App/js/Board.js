@@ -10,13 +10,12 @@ class Board{
 	
 	createLocs() {		
 		let _locs = Array.from({length:81},(e,i) => new Location(i % 9, Math.floor(i / 9)));
-		_locs.forEach(loc => (this.digits.get(loc).setLoc(loc),
-							  this.digits.get(loc).setSiblings(loc.getAllSibs(), this.digits)));
+		_locs.forEach(loc => (this.digits.get(loc).setLoc(loc).setSiblings(loc.getAllSibs(), this.digits)));
 		return _locs;
 	}
 	
 	updateDigits(target,type){
-		this.digits.update(target,type);
+		target.loc.getAllSibs().forEach(e=>this.digits.get(e).update(target,type))
 	}
 	
 	// GET METHODS
@@ -38,7 +37,7 @@ class Board{
 								   z[2][e.getSquare()] |= this.getMask(e),z), Array.from({length: 3}, e => new Array(9)));
 	}
 	
-	getString (){
+	getString (){//gets the current state of the matrix in a format that this application understands
 		return this.digits.toString();
 	}
 	
@@ -52,8 +51,8 @@ class Board{
 		let loc = i => new Location(Math.floor(i/9),i%9);
 		let check =(val) => isNaN(val)? 0 : parseInt(val);
 		
-		Array.from(value).forEach((val, i) => this.getCell(loc(i)).setGiven(check(val), loc(i)))//no modifica a l
-		if(init) this.digits.updateListeners(this.locs);
+		let changes = Array.from(value).reduce((z, val, i) => this.getCell(loc(i)).setGiven(check(val), loc(i))?z.concat(loc(i)):z,[])//no modifica a l
+		if(init) changes.forEach(e=>this.digits.get(e).updateSiblings())
 		
 		//this.answer = this.getAnswer(this.locs);
 		console.log(this.digits.matrix);
