@@ -41,7 +41,7 @@ class BitSet {
 	
 	getSingle(){
 		let loop 		= (s, i) => (i > 9)? s : checkMask(s, i);		
-		let checkMask 	= (s, i) => (this.mask & (1 << i) != 0)? checkSingle(s, i): loop(s, i+1);
+		let checkMask 	= (s, i) => (~this.mask & (1 << i))? checkSingle(s, i): loop(s, i+1);
 		let checkSingle = (s, i) => (s) ? 0 : loop(i, i+1);
 		
 		return loop(0,1);
