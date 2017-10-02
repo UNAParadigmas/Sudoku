@@ -5,17 +5,17 @@ class Board{
 		this.digits = new Grid(size);
 		this.locs = this.createLocs();
 		this.isSolved = this.isValid = false;
-		this.answer = []
+		this.singles = []
 	}
 	
 	createLocs() {		
 		let _locs = Array.from({length:81},(e,i) => new Location(i % 9, Math.floor(i / 9)));
-		_locs.forEach(loc => this.digits.get(loc).setSiblings(loc.getAllSibs(), this.digits));
+		_locs.forEach(loc => (this.digits.get(loc).setLoc(loc).setSiblings(loc.getAllSibs(), this.digits)));
 		return _locs;
 	}
 	
-	updateDigits(target,loc,type){
-		this.digits.update(target,loc,type);
+	updateDigits(target,type){
+		target.loc.getAllSibs().forEach(e=>this.digits.get(e).update(target,type))
 	}
 	
 	// GET METHODS
@@ -37,7 +37,7 @@ class Board{
 								   z[2][e.getSquare()] |= this.getMask(e),z), Array.from({length: 3}, e => new Array(9)));
 	}
 	
-	getString (){
+	getString (){//gets the current state of the matrix in a format that this application understands
 		return this.digits.toString();
 	}
 	
@@ -49,16 +49,44 @@ class Board{
 	
 	setString (value, init) { 
 		let loc = i => new Location(Math.floor(i/9),i%9);
-		let check(val) => isNaN(val)? 0 : parseInt(e);
+		let check =(val) => isNaN(val)? 0 : parseInt(val);
 		
-		Array.from(value).forEach((val, i) => this.getCell(loc(i)).setGiven(check(e), loc(i)))//no modifica a l
-		if(init) this.digits.updateListeners(this.locs);
+		let changes = Array.from(value).reduce((z, val, i) => this.getCell(loc(i)).setGiven(check(val), loc(i))?z.concat(loc(i)):z,[])//no modifica a l
+		if(init) changes.forEach(e=>this.digits.get(e).updateSiblings())
 		
-		this.answer = this.getAnswer(this.locs);
+		//this.answer = this.getAnswer(this.locs);
 		console.log(this.digits.matrix);
 	}
 	
-	// ANALIZE DATA METHODS
+	// ANSWER METHODS
+	analyzeGrid(){
+		let finished = this.locs.reduce((z, loc) => z && chechForSingleAnswer(loc), 3);//malo
+		if(finished) return true;
+		if(!finished && !this.singles.length) return false; // falta pairs
+	}
+	
+	chechForSingleAnswer(_loc, type){
+		const checkCell = (_cell) => (_cell.isNotAssigned())? clone.removeValues(_cel.getMask()):0;
+		
+		let cell = this.getCell(_loc);
+		if(cell.isGiven() || cell.hasAnswer()) return true; 
+		let clone = cell.clone();
+		
+		if(cell.isNotAssigned()){
+			let locs = _loc.getSibs(type);
+			locs.forEach( loc => checkCell(this.getCell(loc)));
+		}
+		
+		let single = clone.getSingle();
+		
+		if(!!single){
+			cell.setAnswer(single);
+			this.singles.push(_loc);
+		}
+		
+		return false;
+	}
+	
 	
 	// GAME METHODS
 	copyTo(target) {
@@ -82,7 +110,7 @@ class Board{
 	checkGeneral(f, locs){
 		return locs.reduce((z,elem)=>f(elem)?z+1:z);
 	}
-	
+	/*
 	checkIsValid (loc, digit) {
 		// Checks if the digit can go in that location by checking it doesn't
 		// exist in either the row, col or square siblings
@@ -132,7 +160,7 @@ class Board{
 			   .reduce((z,e)=>z?z:boardC.trySolve(locChoice,e)
 							   ?(boardC.copyTo(this),true):z,false)
 
-	}
+	}*/
 	
 }
 

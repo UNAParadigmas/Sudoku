@@ -77,15 +77,17 @@ $('#pauseButton').click(function () {
 });
 
 $.fn.initButtons = function() {
-	$('#pauseButton').prop('disabled', true);			
 	$('.logged').prop('hidden', true);
+	
+	
+	$('#pauseButton').prop('disabled', true);			
 	$('#dificultad').prop('hidden', true);
-	$('#message').text('Para Jugar: Cree o Cargue Nuevo Juego');
+	
 	$('#btnClear').css({'background-color':'#FFFFFF'}).prop('disabled', true);
 	$('#btnReset').css({'background-color':'#FFFFFF'}).prop('disabled', true);
 	$('#btnSolve').css({'background-color':'#FFFFFF'}).prop('disabled', true);
 	$('#btnHint').css({'background-color':'#FFFFFF'}).prop('disabled', true);
-	$('#btnUndo').css({'background-color':'#FFFFFF'})
+	$('#btnUndo').css({'background-color':'#FFFFFF'});
 };
 
 $.fn.creaCanvas = function(txt,val,time = false, init=false){

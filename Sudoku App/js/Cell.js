@@ -1,64 +1,105 @@
+
 class Cell{
+	
 	constructor(value = 0){
 		this.value = value;
-		this.mask  = this.trueMask = this.answer = 0;
+		this.mask = new BitSet(0);
+		this.trueMask = new BitSet(0);
+		this.answer = 0;
 		this.given = false;
+		this.loc=new Location(-1,-1);
 	}
 	
-	setSiblings(locs, grid){
-		locs.forEach(e => $(this).on([e.row, e.col].toString(), (e, sib, param) => {
-			param ? e.target.updateMaskNot( 1 << sib.getValue())
-				  : e.target.updateMask( 1 << sib.getValue(), sib.isGiven());
-		}))
+	// BOOLEAN METHODS
+	
+	isGiven(){//returns the given state of this particular cell, it is true if it was a number that was set by the program (hints).
+		return this.given;
+	}	
+	
+	isNotAssigned () {//returns true if value is not 0.
+		return !this.value;
 	}
+	
+	getSingle(){//returns the value of the single possible value given a not assigned cell, returns 0 if there is no single.
+		return this.mask.getSingle();
+	}
+	
+	isNotAllowed(n){//returns true if a given number is not allowed in this particular cell, cheking if the BitSet(mask) contains the given number.
+		return this.mask.isNotAllowed(n);
+	}
+	
+	// GET METHODS
 	
 	getValue(){
 		return this.value;
-	}
-	
-	updateSiblings(loc,type=false){
-		if(this)
-			window.game.update(this,loc,type);
-	}
-	
-	update(target,loc,type){
-		$(this).trigger([loc.row,loc.col].toString(),[target,type])
 	}
 	
 	getSiblings(){
 		return this.siblings;
 	}
 	
+	getAnswer(){
+		return this.answer;
+	}
+	
+	
+	hasAnswer() {
+		return this.answer != 0;
+	}
+	getMask(){
+		return this.mask;
+	}
+	
+	// SET METHODS
+	
+	setSiblings(locs, grid){
+		if(!this.given)
+			locs.forEach(loc => $(this).on(loc.toString1(), (e, sib, param) => {
+				param ? e.target.updateMaskNot( 1 << sib.getValue())
+					  : e.target.updateMask( 1 << sib.getValue(), sib.isGiven());
+			}))
+	}
+	
+	setLoc(loc){
+		this.loc=loc;
+		return this;
+	}
+	
 	setAnswer(n){
-		this.answer=n
+		this.answer = n
 	}
-	
-	isAllowed(n){
-		return (this.mask & (1 << n)) == 0;
-	}
-	
-	isNotAllowed(n){
-		return (this.mask & (1 << n)) != 0;
-	}
-	
+		
 	setValue(n, loc){
 		if(n != 0 && this.isNotAllowed(n))
 			throw "not allowed";
-		if(n)
-			this.value=n,
-			this.updateSiblings(loc)
+		if(n){
+			this.value=n
+			this.updateSiblings()
+		}
 		else
-			this.updateSiblings(loc,true)
+			this.updateSiblings(true)
 		this.value=n;
 	}
 	
-	setGiven(n, loc){
+	setGiven(n/*, loc*/){
 		this.value = n;
-		this.given = n != 0;
+		this.given = !!n;
+		if(n)
+			return true;
+		return false;
+	}
+		
+	setMask(n){
+		if(n && !this.given) this.mask = 1 << n;
 	}
 	
-	isGiven(){
-		return this.given;
+	// CELL METHODS
+	clone(){
+		let clone = new Cell(this.value);
+		this.mask = this.mask;
+		this.answer = this.answer;
+		this.given = this.given;
+		return clone
 	}
 	
 	clear(){
@@ -72,51 +113,28 @@ class Cell{
 		
 	}
 	
-	getMaskValue(){		
-		let loop 		= (s, i) => (i > 9)? s : checkMask(s, i);		
-		let checkMask 	= (s, i) => (this.mask & (1 << i) != 0)? checkSingle(s, i): loop(s, i+1);
-		let checkSingle = (s, i) => (s) ? 0 : loop(i, i+1);
-		
-		return loop(0,1);
-	}
-	
-	setMask(n){
-		if(n && !this.given) this.mask = 1 << n;
-	}
 	
 	updateMask(n, given){
 		if(!this.given){
-			this.mask |= n
+			this.mask.or(n)
 			if(given)
-				this.trueMask|=n;
+				this.trueMask.or(n);
 			}
 		return this;
 	}
 	updateMaskNot(n){
-		this.mask = Math.max(~((~this.mask)|n),this.trueMask)
+		this.mask.updateMaskNot(n,this.trueMask);
 	}
-
-	count(){
-		return Array.from({length: 9}).reduce((z,e,i) => (~this.mask & (1 << i + 1))? z + 1: z, 0);
+	
+	// SIBS METHODS
+	
+	updateSiblings(type=false){
+		if(this)
+			window.game.update(this,type);
 	}
-	removeValuesMask(n){
-		if(!this.given)
-			this.mask |= 1 << n;
-		return this;
+	
+	update(target,type){
+		$(this).trigger(target.loc.toString1(),[target,type]);
 	}
-	allowedValuesArray(){
-		return Array.from({length:9}).reduce((z,e,i) => ((1 << i+1) & this._mask)? z.concat(i+1) : z, [])
-	}
-	isNotAssigned () {
-		return this.value == 0;
-	}
-	getAnswer(){
-		return this.answer;
-	}
-	hasAnswer() {
-		return this.answer != 0;
-	}
-	getMask(){
-		return this.mask;
-	}
+	
 }

@@ -6,6 +6,9 @@ class Location{
 		this.or =  (_col, _row) => (this.col != _col || this.row != _row);
 		this.and = (_col, _row) => (this.col != _col && this.row != _row);	
 	}
+	toString1(){
+		return [this.row, this.col].toString();
+	}
 	
 	// boolean methods
 	
@@ -56,7 +59,7 @@ class Location{
 		let baseCol = 3 * Math.floor(this.col / 3)
 		let baseRow = 3 * Math.floor(this.row / 3);
 				
-		let filter =  (z, _row, _col) => f(_row,_col)? z.concat(new Location(_row, _col)) : z
+		let filter =  (z, _row, _col) => f(_col,_row)? z.concat(new Location(_row, _col)) : z
 		
 		let foo = (z, e, i) => filter(z, baseRow + Math.floor(i/3), baseCol + i%3)		
 		
