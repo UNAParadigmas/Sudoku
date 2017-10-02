@@ -1,22 +1,20 @@
 $(function () {
 
-    var $formLogin = $('#login-form');
-    var $formLost = $('#lost-form');
-    var $formRegister = $('#register-form');
-    var $divForms = $('#div-forms');
-    var $modalAnimateTime = 300;
-    var $msgAnimateTime = 150;
-    var $msgShowTime = 2000;
+    let $formLogin = $('#login-form');
+    let $formLost = $('#lost-form');
+    let $formRegister = $('#register-form');
+    let $divForms = $('#div-forms');
+    let $modalAnimateTime = 300;
+    let $msgAnimateTime = 150;
+    let $msgShowTime = 2000;
 
     $("form").submit(function (e) {
         e.preventDefault();
         switch (this.id) {
             case "login-form":
 
-                var $lg_username = $('#login_username').val();
-                var $lg_password = $('#login_password').val();
-
-                console.log("usuario/pass del form: ", $lg_username + "/" + $lg_password);
+                let $lg_username = $('#login_username').val();
+                let $lg_password = $('#login_password').val();
 
                 $.ajax({
                     type: 'POST',
@@ -45,11 +43,17 @@ $(function () {
 
                 break;
             case "register-form":
-                var $rg_username = $('#register_username').val();
-                var $rg_name = $('#register_name').val();
-                var $rg_password = $('#register_password').val();
-                console.log("usuario a registrar: ", $rg_name+ ", usuario: "+ $rg_username + ", pass:" + $rg_password);
-                $.ajax({
+                let $rg_username = $('#register_username').val();
+                let $rg_email = $('#register_email').val();
+                let $rg_password = $('#register_password').val();
+				let $rg_password2 = $('#register_password2').val();
+             
+				if($rg_password !== $rg_password2){
+					 msgChange($('#div-register-msg'), $('#icon-register-msg'), $('#text-register-msg'), "error", "glyphicon-remove", "Passwords are not equals");
+					 break;
+				}
+
+			   $.ajax({
                     type: 'POST',
                     data: { "user": $rg_username, "pass": $rg_password, "nombre": $rg_name },
                     dataType: 'json',
@@ -72,7 +76,7 @@ $(function () {
                     }
 
                 }).catch(err => {
-                    msgChange($('#div-register-msg'), $('#icon-register-msg'), $('#text-register-msg'), "error", "glyphicon-remove", "Login error");
+                    msgChange($('#div-register-msg'), $('#icon-register-msg'), $('#text-register-msg'), "error", "glyphicon-remove", err);
                 });
 
                 break;
@@ -90,8 +94,8 @@ $(function () {
     $('#register_lost_btn').click(function () { modalAnimate($formRegister, $formLost); });
 
     function modalAnimate($oldForm, $newForm) {
-        var $oldH = $oldForm.height();
-        var $newH = $newForm.height();
+        let $oldH = $oldForm.height();
+        let $newH = $newForm.height();
         $divForms.css("height", $oldH);
         $oldForm.fadeToggle($modalAnimateTime, function () {
             $divForms.animate({ height: $newH }, $modalAnimateTime, function () {
@@ -107,7 +111,7 @@ $(function () {
     }
 
     function msgChange($divTag, $iconTag, $textTag, $divClass, $iconClass, $msgText) {
-        var $msgOld = $divTag.text();
+        let $msgOld = $divTag.text();
         msgFade($textTag, $msgText);
         $divTag.addClass($divClass);
         $iconTag.removeClass("glyphicon-chevron-right");
