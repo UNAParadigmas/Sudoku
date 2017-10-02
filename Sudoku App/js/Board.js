@@ -60,7 +60,7 @@ class Board{
 	
 	// ANSWER METHODS
 	analyzeGrid(){
-		let finished = this.locs.reduce((z, loc) => z && chechForSingleAnswer(loc), 3);
+		let finished = this.locs.reduce((z, loc) => z && chechForSingleAnswer(loc), 3);//malo
 		if(finished) return true;
 		if(!finished && !this.singles.length) return false; // falta pairs
 	}
