@@ -24,7 +24,23 @@ new Chart(document.getElementById("line-chart"), {
     title: {
       display: true,
       text: 'Time spent (minutes) in the last 10 games by difficulty.'
-    }
+    },
+	scales: {
+		xAxes:[{
+			display: true,
+			scaleLabel: {
+				display: true,
+				labelString: 'Games'
+			}
+		}],
+		yAxes:[{
+			display: true,
+			scaleLabel: {
+				display: true,
+				labelString: 'Minutes'
+			}
+		}]
+	}
   }
 });
 
@@ -48,3 +64,11 @@ new Chart(document.getElementById("pie-chart"), {
       }
     }
 });
+/*
+$.ajax({
+	type: 'get'
+	dataType: 'json'
+	url: 'api/chart??'
+}).done((result)=>{
+	//create chart
+}).catch(//Error message);*/

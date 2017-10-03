@@ -48,6 +48,7 @@ class BitSet {
 	
 	setMask(n){
 		this.mask = 1 << n;
+		this.count = this.doCount();
 	}
 	
 	valuesArray(){
