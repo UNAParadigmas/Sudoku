@@ -59,31 +59,47 @@ class Board{
 	}
 	
 	// ANSWER METHODS
+	acceptPossibles(){
+		console.log(this.singles);
+		const setAnswer = (cell) =>	cell.setValue(cell.getAnswer());
+		this.singles.forEach(loc => setAnswer(this.getCell(loc)));
+	}
+	
+	trySolve(){		
+		
+		this.singles = [];
+		if(this.analyzeGrid()){
+			this.acceptPossibles();
+			this.trySolve();
+		}
+		return this.isSolved;	
+	}
+	
 	analyzeGrid(){
-		let finished = this.locs.reduce((z, loc) => z && chechForSingleAnswer(loc), 3);//malo
-		if(finished) return true;
-		if(!finished && !this.singles.length) return false; // falta pairs
+		
+		this.isSolved = this.locs.reduce((z, loc) => z && (this.chechForSingleAnswer(loc, 0) || this.chechForSingleAnswer(loc, 1) || this.chechForSingleAnswer(loc, 2)));
+		if(!this.isSolved && !this.singles.length) return false; // falta pairs
+		return true;
 	}
 	
 	chechForSingleAnswer(_loc, type){
-		const checkCell = (_cell) => (_cell.isNotAssigned())? clone.removeValues(_cel.getMask()):0;
+		const checkCell = (_cell) => (_cell.isNotAssigned())? clone.mask.removeValues(_cell.getMask()) : 0;
 		
 		let cell = this.getCell(_loc);
 		if(cell.isGiven() || cell.hasAnswer()) return true; 
+		
 		let clone = cell.clone();
 		
-		if(cell.isNotAssigned()){
-			let locs = _loc.getSibs(type);
-			locs.forEach( loc => checkCell(this.getCell(loc)));
-		}
-		
+		let locs = _loc.getSibs(type);
+		locs.forEach( loc => checkCell(this.getCell(loc)));		
 		let single = clone.getSingle();
 		
-		if(!!single){
+		if(Boolean(single)){
+			console.log(single+' posicion '+_loc.row+','+_loc.col);
 			cell.setAnswer(single);
 			this.singles.push(_loc);
+			return true;
 		}
-		
 		return false;
 	}
 	

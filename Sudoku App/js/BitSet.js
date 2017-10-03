@@ -55,7 +55,7 @@ class BitSet {
 	}
 	
 	removeValues(bm) {
-		this.mask |= bm.mask;
+		this.mask &= ~bm.mask;
 		this.count = this.doCount();
 	}	
 	
