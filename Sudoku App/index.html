@@ -26,8 +26,8 @@
 			</div>
 			<ul class="nav navbar-nav logged">
 				<li>
-					<a class="btn btn-lg">
-						<span class="glyphicon glyphicon-list-alt" ></span> Data
+					<a class="btn btn-lg" id="dataBtn" role="button" data-toggle="modal" data-target="#data-modal" >
+						Data
 					</a>
 				</li>
 			</ul>
@@ -62,36 +62,8 @@
 	
 <!-- CONTAINER -->
 	<div class="container">
-		<div class="row">
-			<div class="col-md-9">
-				<div class="row">
-					<div class="col-md-10">
-						<div class="col-sm-3">
-							<div class="panel panel-success " align="center">
-								<div class="panel-heading" id="sizeTittle"></div>
-							</div>
-						</div>
-						<div class="col-sm-6 col-sm-offset-1" align="center">
-							<div class="btn-group">
-								<button type="button" class="btn btn-default" id="btnHint" onclick="hint()" title='Pista en el espacio seleccionado'>Accept Singles</button>
-								<button type="button" class="btn btn-default" id="btnHint" onclick="hint()" title='Pista en el espacio seleccionado'>Hint</button>
-								<button type="button" class="btn btn-default" style="background-color:#eafaea" id="btnSolve" onclick="solve()">Solve</button>
-							</div>
-						</div>
-						<div class="col-sm-2" align="center">
-							<button type="button" class="btn btn-default" style="background-color:#eafaea" id="btnUndo" onclick="undo()" title='Devolverse un movimiento'>Back</button>
-						</div>
-					</div>
-				</div>
-				<br>
-				<div class="row">
-					<div id='sudoku' align="center">
-						<canvas id='canvas' width='541' height='541'>Canvas is not supported by this browser.</canvas>
-					</div>
-				</div>
-				<br>
-			</div>
-			<div class="col-md-3">
+		<div class="row">		
+			<div class="col-md-2">
 				<div class="panel panel-success" align="center">
 					<div class="panel-heading">Chronometer</div>
 					<div class="panel-body">
@@ -103,23 +75,59 @@
 						</div>
 					</div>
 				</div>
-				<div class="panel panel-success" align="center">
-					<div class="panel-heading">Match</div>
-					<div class="panel-body" align="center">
-						<div class="btn-group">
-							<button type="button" class="btn btn-default" id="btnLoad" title='Carga sudoku a partir de texto.' data-toggle="modal" data-target="#load-modal">Save</button>
-							<button type="button" class="btn btn-default" id="btnLoad" title='Carga sudoku a partir de texto.' data-toggle="modal" data-target="#load-modal">Load</button>
-							<button type="button" class="btn btn-default" id="btnLoad" title='Carga sudoku a partir de texto.' data-toggle="modal" data-target="#load-modal">Restart</button>
+				<div class="panel panel-success " align="center">
+					<div class="panel-heading">Charity</div>
+					<div class="panel-body" >
+						<div class="btn-group-vertical">
+							<button type="button" class="btn btn-default" id="btnUndo" onclick="game.undo()">Back</button>
+							<button type="button" class="btn btn-default" id="btnAccept" onclick="hint()">Accept</button>
+							<button type="button" class="btn btn-default" id="btnHint" onclick="hint()">Hint</button>
+							<button type="button" class="btn btn-default" id="btnSolve" onclick="game.solve()">Solve</button>										
 						</div>
 					</div>
 				</div>
+			</div>
+			<div class="col-md-8">
+				<div class="row">
+					<div class="jumbotron" id="statusMsg">
+						<div id="onStart">
+							<h1>Start New Game</h1> 
+							<span style="display:block; height: 20px;"></span>
+							<h4> - Click on start game to play.</h4><br>
+							<h4> - Sign in for adicional options like:</h4>
+							<h4>&emsp; 1) Save the game.</h4>
+							<h4>&emsp; 2) Graphics about your performance.</h4>
+						</div>
+						<div id="onPause" align="center">
+							<h1>Game In Pause</h1> 
+							<span style="display:block; height: 20px;"></span>
+							<button type="button" class="btn btn-default" id="continueBtn">Continue</button>
+						</div>						
+					</div>
+					<div id='sudoku' align="center">
+						<canvas id='canvas' width='541' height='541'>Canvas is not supported by this browser.</canvas>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-2">
 				
+				<div class="panel panel-success" align="center">
+					<div class="panel-heading">Game</div>
+					<div class="panel-body" align="center">
+						<div class="btn-group-vertical">
+							<button type="button" class="btn btn-default" id="btnLoad" title='Carga sudoku a partir de texto.' data-toggle="modal" data-target="#load-modal">Save</button>
+							<button type="button" class="btn btn-default" id="btnLoad" title='Carga sudoku a partir de texto.' data-toggle="modal" data-target="#load-modal">Load</button>
+							<button type="button" class="btn btn-default" id="btnLoad" title='Carga sudoku a partir de texto.' data-toggle="modal" data-target="#load-modal">Restart</button>
+							<button type="button" class="btn btn-default" id="btnLoad" title='Carga sudoku a partir de texto.' data-toggle="modal" data-target="#load-modal">Give Up</button>
+						</div>
+					</div>
+				</div>
 				<div class="panel panel-success" align="center">
 					<div class="panel-heading">New Game</div>
 					<div class="panel-body">
 						<div class="form-group" id="difi">
 							<label for="sel">Level:</label>
-							<select class="form-control" id="sel">
+							<select class="form-control" id="level">
 								<option>Easy</option>
 								<option>Normal</option>
 								<option>Hard</option>
@@ -220,7 +228,31 @@
 		</div>
 	</div>
 	
+	<div class="modal fade" id="data-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+		<br><br>
+		<div class="col-md-6">
+			<div class="panel panel-success" align="center">
+					<div class="panel-heading">
+						Time-Level Graphic
+					</div>
+					<div class="panel-body">
+						<canvas id="line-chart" width="800" height="450"></canvas>
+					</div>
+			</div>		
+		</div>
+		<div class="col-md-6">
+			<div class="panel panel-success" align="center">
+					<div class="panel-heading">
+						Games Won Graphic
+					</div>
+					<div class="panel-body">
+						<canvas id="pie-chart" width="800" height="450"></canvas>
+					</div>
+			</div>		
+		</div>
 	
+	
+	</div>
 	
 	<script src="js/timer.js"></script>
 	<script src="js/BitSet.js"></script>
@@ -230,6 +262,8 @@
 	<script src="js/Board.js"></script>
 	<script src="js/Game.js"></script>
 	<script src="js/Control.js"></script>
+	<script src="js/ChartData.js"></script>
+	
 
 </body>
 

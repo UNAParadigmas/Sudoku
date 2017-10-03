@@ -137,4 +137,5 @@ class Cell{
 		$(this).trigger(target.loc.toString1(),[target,type]);
 	}
 	
+	
 }

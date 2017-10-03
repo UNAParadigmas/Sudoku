@@ -171,8 +171,14 @@ class Game {
 		}
 		
 		solve(){
+			let startTime = new Date().getTime();
 			this.pushBoard();
-			this.board.trySolve(Location.empty, 0);
+			if(this.board.trySolve()){
+				let totalTime = (newDate().getTime - startTime())
+				console.log('solved, time: '+totalTime+ 'seconds.');
+			}else{
+				//dont have answer
+			}
 			this.updateCanvas();
 		}
 		update(target,type){

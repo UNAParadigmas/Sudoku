@@ -3,9 +3,16 @@ let game = new Game();
 window.game=game;	
 /* DOCUMENT CONTROL*/
 
-$( document ).ready(function() {
-	$().creaCanvas(".................................................................................",'Bienvenido');
-	$().initButtons();
+$( document ).ready(function() {	
+	//$('.logged').hide();
+	$("#onPause").hide();
+	$("#sudoku").hide();
+	
+	$('#pauseButton').prop('disabled', true);			
+	$('#btnAccept').prop('disabled', true);
+	$('#btnSolve').prop('disabled', true);
+	$('#btnHint').prop('disabled', true);
+	$('#btnUndo').prop('disabled', true);
 });		
 
 $( document ).on('keydown', function(e){
@@ -21,6 +28,7 @@ $( document ).on('keydown', function(e){
 			if (digit >= 0 && digit <= 9) game.setDigitInCell(digit);
 	}	
 });
+
  $.fn.relMouseCoords = event => {
 		var totalOffsetX = 0;
 		var totalOffsetY = 0;
@@ -51,6 +59,9 @@ timer.addEventListener('started', function (e) {
 });
 
 $('#nuevoJuego').click(function () {
+	$("#sudoku").show();
+	$("#onStart").hide();
+	$("#statusMsg").hide();
 	var val = $('#sel1 option:selected').text();
 	$().creaCanvas("7.8...3.....2.1...5..7..2...4.....263.948...7...1...9..9.6....4....7.5....5......",val,true,true);
 });
@@ -71,27 +82,21 @@ $("#sel1").change(function(){
 
 $('#pauseButton').click(function () {
 	timer.pause();
-	$('#startButton').prop('disabled', false);
 	$('#pauseButton').prop('disabled', true);			
-	$('#grid').prop('hidden', true);
+	$('#sudoku').hide();
+	$("#onPause").show();
+	$("#statusMsg").show();
 });
 
-$.fn.initButtons = function() {
-	$('.logged').prop('hidden', true);
-	
-	
-	$('#pauseButton').prop('disabled', true);			
-	$('#dificultad').prop('hidden', true);
-	
-	$('#btnClear').css({'background-color':'#FFFFFF'}).prop('disabled', true);
-	$('#btnReset').css({'background-color':'#FFFFFF'}).prop('disabled', true);
-	$('#btnSolve').css({'background-color':'#FFFFFF'}).prop('disabled', true);
-	$('#btnHint').css({'background-color':'#FFFFFF'}).prop('disabled', true);
-	$('#btnUndo').css({'background-color':'#FFFFFF'});
-};
+$('#continueBtn').click(function () {
+	timer.start();
+	$('#pauseButton').prop('disabled', false);			
+	$('#sudoku').show();
+	$("#statusMsg").hide();
+});
 
 $.fn.creaCanvas = function(txt,val,time = false, init=false){
-	var aux = $('#sel2 option:selected').text();
+	var aux = $('#level option:selected').text();
 	var dif = (val !== '9x9' || aux === 'Fácil') ? 1 : (aux === 'Normal') ? 2 : 3 ;
 	showAllowed = dif === 1; 
 			
@@ -102,12 +107,10 @@ $.fn.creaCanvas = function(txt,val,time = false, init=false){
 	$('#size').text(val + ((val == '9x9')? " " + aux : ""));
 	if(time && timer.isRunning()){				
 		timer.stop();
-		timer.start("00:00:00");
-		$('#pauseButton').prop('disabled', true);
-	}else if(time){
-		timer.start("00:00:00");
-		$('#pauseButton').prop('disabled', false);
 	}
+	timer.start("00:00:00");
+	$('#pauseButton').prop('disabled', false);
+	
 	game.board.setString(txt,init);
 	game.updateCanvas();
 };
