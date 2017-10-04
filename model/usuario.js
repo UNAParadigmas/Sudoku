@@ -5,15 +5,14 @@ var UsuarioSchema = new Schema({
 	nombre: { type: String, max: 35 },
 	usuario: { type: String, required: true, max: 35 }, //usuario
 	pass: { type: String, required: true, max: 35 }, //contraseña
-	partida: { //El sudoku
-		tam: Number, //tamaño del sudoku
+	partida: { //Partida actual guardada en el perfil del usuario
 		dificultad: Number, //Nivel de  dificultad
-		sudoku: [
-			Number //la cuadricula del sudoku
-		]
+		sudoku: String
+	},
+	historial: {
+		tiempo: Number,
+		dificultad: Number
 	}
-
-
 });
 
 module.exports = mongoose.model('Usuario', UsuarioSchema);

@@ -49,9 +49,9 @@ class Board{
 	
 	setString (value, init) { 
 		let loc = i => new Location(Math.floor(i/9),i%9);
-		let check = (val) => isNaN(val)? 0 : parseInt(val);
+		let check = (val) => isNaN(val)? 0 : parseInt(e);
 		
-		Array.from(value).forEach((val, i) => this.getCell(loc(i)).setGiven(check(val), loc(i)))//no modifica a l
+		Array.from(value).forEach((val, i) => this.getCell(loc(i)).setGiven(check(e), loc(i)))//no modifica a l
 		if(init) this.digits.updateListeners(this.locs);
 		
 		this.answer = this.getAnswer(this.locs);
