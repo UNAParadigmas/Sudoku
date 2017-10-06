@@ -10,7 +10,7 @@ $( document ).ready(function() {
 	
 	$('#pauseButton').prop('disabled', true);			
 	$('#btnAccept').prop('disabled', true);
-	$('#btnSolve').prop('disabled', true);
+	//$('#btnSolve').prop('disabled', true);
 	$('#btnHint').prop('disabled', true);
 	$('#btnUndo').prop('disabled', true);
 });		

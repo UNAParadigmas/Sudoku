@@ -23,7 +23,8 @@ class BitSet {
 	}
 		
 	updateMaskNot(n,trueMask){
-		this.mask = Math.max(~((~this.mask)|n),trueMask.mask);
+		if(!(trueMask.mask & n))
+			this.mask = (~((~this.mask)|n))
 		this.count = this.doCount();
 	}
 
@@ -55,8 +56,8 @@ class BitSet {
 		return Array.from({length:9}).reduce((z,e,i) => ((1 << i+1) & ~this.mask)? z.concat(i+1) : z, [])
 	}
 	
-	removeValues(bm) {
-		this.mask &= ~bm.mask;
+	removeValuesMask(bs) {
+		this.mask |= bs;
 		this.count = this.doCount();
 	}	
 	

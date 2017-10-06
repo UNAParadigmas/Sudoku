@@ -5,6 +5,7 @@ class Board{
 		this.digits = new Grid(size);
 		this.locs = this.createLocs();
 		this.isSolved = this.isValid = false;
+		this.answer = [];
 		this.singles = []
 	}
 	
@@ -28,11 +29,11 @@ class Board{
 		return this.getCell(loc).getMask();
 	}
 	
-	getAnswer(locs){
+	getAnswer(){
 		// cols = 0;
 		// rows = 1;
 		// squares = 2;
-		return locs.reduce((z,e)=>(z[0][e.col] |= this.getMask(e),
+		return this.locs.reduce((z,e)=>(z[0][e.col] |= this.getMask(e),
 								   z[1][e.row] |= this.getMask(e),
 								   z[2][e.getSquare()] |= this.getMask(e),z), Array.from({length: 3}, e => new Array(9)));
 	}
@@ -54,15 +55,15 @@ class Board{
 		let changes = Array.from(value).reduce((z, val, i) => this.getCell(loc(i)).setGiven(check(val), loc(i))?z.concat(loc(i)):z,[])//no modifica a l
 		if(init) changes.forEach(e=>this.digits.get(e).updateSiblings())
 		
-		//this.answer = this.getAnswer(this.locs);
+		this.answer = this.getAnswer();
 		console.log(this.digits.matrix);
 	}
 	
 	// ANSWER METHODS
 	acceptPossibles(){
 		console.log(this.singles);
-		const setAnswer = (cell) =>	cell.setValue(cell.getAnswer());
-		this.singles.forEach(loc => setAnswer(this.getCell(loc)));
+		const acceptAnswer = (cell) =>	cell.setValue(cell.getAnswer());
+		this.singles.forEach(loc => acceptAnswer(this.getCell(loc)));
 	}
 	
 	trySolve(){		
@@ -77,26 +78,34 @@ class Board{
 	
 	analyzeGrid(){
 		
-		this.isSolved = this.locs.reduce((z, loc) => z && (this.chechForSingleAnswer(loc, 0) || this.chechForSingleAnswer(loc, 1) || this.chechForSingleAnswer(loc, 2)));
+		this.isSolved = this.locs.reduce((z, loc) => (this.chechForSingleAnswer(loc, 0) || this.chechForSingleAnswer(loc, 1) || this.chechForSingleAnswer(loc, 2))&&z,true);
 		if(!this.isSolved && !this.singles.length) return false; // falta pairs
 		return true;
 	}
 	
+	getAnswerLocation(loc, type){
+		return this.answer[type][loc.col]|this.answer[type][loc.row]|this.answer[type][loc.getSquare()];
+	}
+	
 	chechForSingleAnswer(_loc, type){
-		const checkCell = (_cell) => (_cell.isNotAssigned())? clone.mask.removeValues(_cell.getMask()) : 0;
+		//const checkCell = (_cell) => (_cell.isNotAssigned()&&!_cell.isGiven())? clone.mask.removeValuesMask(_cell.getMask()) : 0;
+		//const checkCell = (val) => (clone.isNotAssigned()&&!clone.isGiven())?  : 0;
 		
 		let cell = this.getCell(_loc);
 		if(cell.isGiven() || cell.hasAnswer()) return true; 
 		
 		let clone = cell.clone();
 		
-		let locs = _loc.getSibs(type);
-		locs.forEach( loc => checkCell(this.getCell(loc)));		
+		//let locs = _loc.getSibs(type);
+		let contains = this.getAnswerLocation(clone.loc,type);
+		if(clone.isNotAssigned()&&!clone.isGiven())
+			clone.mask.removeValuesMask(contains);
 		let single = clone.getSingle();
 		
-		if(Boolean(single)){
-			console.log(single+' posicion '+_loc.row+','+_loc.col);
+		if(!!(single)){
+			//console.log(single+' posicion '+_loc.row+','+_loc.col);
 			cell.setAnswer(single);
+			console.log(cell);
 			this.singles.push(_loc);
 			return true;
 		}

@@ -96,9 +96,10 @@ class Cell{
 	// CELL METHODS
 	clone(){
 		let clone = new Cell(this.value);
-		this.mask = this.mask;
-		this.answer = this.answer;
-		this.given = this.given;
+		clone.mask = this.mask;
+		clone.answer = this.answer;
+		clone.given = this.given;
+		clone.loc = this.loc;
 		return clone
 	}
 	
