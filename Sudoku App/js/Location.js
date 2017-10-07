@@ -16,10 +16,10 @@ class Location{
 		return this.row < 0;
 	}*/
 	
-	/*equals(a) {
+	equals(a) {
 		return a.row == this.row && a.col == this.col;
 	}
-
+	/*
 	notEquals(a) {
 		return !this.equals(a);
 	}

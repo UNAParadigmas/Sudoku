@@ -2,11 +2,15 @@ class Board{
 	
 	constructor(size) {
 		this.size=size;
+		this.stringInit='';
 		this.digits = new Grid(size);
 		this.locs = this.createLocs();
+		this.check = new Set();
 		this.isSolved = this.isValid = false;
+		this.minLoc = new Cell();
 		this.answer = [];
 		this.singles = []
+		this.stack = [];
 	}
 	
 	createLocs() {		
@@ -19,6 +23,15 @@ class Board{
 		target.loc.getAllSibs().forEach(e=>this.digits.get(e).update(target,type))
 	}
 	
+	updateMin(target){
+		if(target.isNotAssigned()&&((this.minLoc.mask.count>=target.mask.count)||this.minLoc.isAssigned()))
+			this.minLoc=target;
+		this.check.add(target.loc);
+	}
+	
+	findCellWithFewestChoices(){
+		this.locs.forEach(e=>this.updateMin(this.getCell(e)));
+	}
 	// GET METHODS
 	
 	getCell(loc) {
@@ -48,7 +61,7 @@ class Board{
 		this.getCell(loc) = value;
 	}
 	
-	setString (value, init) { 
+	setString (value, init=false) { 
 		let loc = i => new Location(Math.floor(i/9),i%9);
 		let check =(val) => isNaN(val)? 0 : parseInt(val);
 		
@@ -60,26 +73,68 @@ class Board{
 	}
 	
 	// ANSWER METHODS
-	acceptPossibles(){
-		console.log(this.singles);
-		const acceptAnswer = (cell) =>	cell.setValue(cell.getAnswer());
-		this.singles.forEach(loc => acceptAnswer(this.getCell(loc)));
+	acceptPossibles(){//cambiar nombre
+		return !this.singles.filter(cell => !cell.setValue(cell.getAnswer())).length;
 	}
 	
-	trySolve(){		
-		
+	trySolve(){	
+		//console.log(this.stack);
 		this.singles = [];
-		if(this.analyzeGrid()){
-			this.acceptPossibles();
-			this.trySolve();
+		let vec=this.detSolve()
+		this.push(vec);//deterministic case
+		if(vec[vec.lengt-1]==false)
+			return false;
+		if(!this.isSolved){//non deteministic case
+			this.push(this.minLoc);
+			return this.nonDetSolve(this.minLoc.mask.valuesArray(),0);
 		}
-		return this.isSolved;	
+		return true;
 	}
+	
+	detSolve(vec = []){
+		if(this.analyzeGrid()){
+			if(!this.acceptPossibles())//si no hay más singles
+				return vec.concat(this.singles.concat(false));
+			return this.detSolve(vec.concat(this.singles));
+		}
+		else
+			this.acceptPossibles()
+		return vec
+	}
+	
+	nonDetSolve(arr, i){
+		if(arr.length==i)
+			return false;
+		if(!this.minLoc.setValue(arr[i]))
+			return false
+		if(!this.trySolve()){
+			this.pop();
+			return this.nonDetSolve(arr, i+1);
+		}
+		return true;
+	}
+	
+	push(obj){
+		if(obj instanceof Cell && this.stack.length>=2 && this.stack[this.stack.length-2].equals(obj))
+			this.findCellWithFewestChoices()
+		this.stack.push(obj)
+	}
+	
+	pop(){
+		this.stack.pop();//siempre se mete un cell inecesariamente.... 
+		let array = this.stack.pop()
+		array=array.filter(x=>x).forEach(cell => cell.reset());
+		this.minLoc=this.stack[this.stack.length-1];
+		this.minLoc.reset();
+	}
+	
 	
 	analyzeGrid(){
-		
-		this.isSolved = this.locs.reduce((z, loc) => (this.chechForSingleAnswer(loc, 0) || this.chechForSingleAnswer(loc, 1) || this.chechForSingleAnswer(loc, 2))&&z,true);
+		this.singles = [];
+		this.isSolved = Array.from(this.check).reduce((z, loc) => (this.chechForSingleAnswer(loc, 0) || this.chechForSingleAnswer(loc, 1) || this.chechForSingleAnswer(loc, 2))&&z,true);
+		this.check=new Set();
 		if(!this.isSolved && !this.singles.length) return false; // falta pairs
+		if(this.isSolved) return false;
 		return true;
 	}
 	
@@ -92,7 +147,9 @@ class Board{
 		//const checkCell = (val) => (clone.isNotAssigned()&&!clone.isGiven())?  : 0;
 		
 		let cell = this.getCell(_loc);
-		if(cell.isGiven() || cell.hasAnswer()) return true; 
+		//cell.setAnswer(0);
+		if(cell.isGiven()||cell.hasAnswer()||cell.isAssigned()) 
+			return true; 
 		
 		let clone = cell.clone();
 		
@@ -105,8 +162,8 @@ class Board{
 		if(!!(single)){
 			//console.log(single+' posicion '+_loc.row+','+_loc.col);
 			cell.setAnswer(single);
-			console.log(cell);
-			this.singles.push(_loc);
+			//console.log(cell);
+			this.singles.push(cell);
 			return true;
 		}
 		return false;

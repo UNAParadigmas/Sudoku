@@ -63,7 +63,7 @@ $('#nuevoJuego').click(function () {
 	$("#onStart").hide();
 	$("#statusMsg").hide();
 	var val = $('#sel1 option:selected').text();
-	$().creaCanvas("7.8...3.....2.1...5..7..2...4.....263.948...7...1...9..9.6....4....7.5....5......",val,true,true);
+	$().creaCanvas("8.5.....2...9.1...3.........6.7..4..2...5...........6....38.....4....7...1.....9.",val,true,true);
 });
 
 
