@@ -3,12 +3,31 @@ var router = express.Router();
 
 const Usuario = require("../model/usuario");
 
+//login usuario
+//ejemplo ARC= http://localhost:8080/api/login/vite0150/123
+router.post('/login', function (req, res, next) {
+
+    let data = req.body;
+    console.log("Login, data recibida: ", data.user +  data.pass)
+    
+
+    Usuario.findOne({
+        usuario: data.user,
+        pass: data.pass
+    }, (err, usuario) => {
+        if (err) {
+            res.status(500).send(err);
+        }
+        console.log("Usuario encontrado: ", usuario);
+        res.status(200).json(usuario);
+    });
+});
 
 
 //registro usuario
 //ejemplo ARC= http://localhost:8080/api/registro
 //{"nombre" : "Juan","user" : "vite0150","pass" : "123"}
-router.post('/registro', function (req, res, next) {
+router.post('/registro', (req, res, next) => {
     let data = req.body;
     console.log("registro de usuario, nombre: ", data.nombre);
 
@@ -32,7 +51,7 @@ router.post('/registro', function (req, res, next) {
             newuser.save((err, usuario) => {
                 if (err) {
                     console.log(err);
-                    res.send(err);
+                    res.status(500).send(err);
                 }
                 else {
                     console.log("usuario creado: ", usuario);

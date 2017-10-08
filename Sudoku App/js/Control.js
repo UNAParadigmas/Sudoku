@@ -1,9 +1,11 @@
 let timer = new Timer();
 let game = new Game();
-window.game=game;	
+window.game=game;
 /* DOCUMENT CONTROL*/
 
+
 $( document ).ready(function() {	
+  $().cargaSudokus();
 	//$('.logged').hide();
 	$("#onPause").hide();
 	$("#sudoku").hide();
@@ -26,7 +28,7 @@ $( document ).on('keydown', function(e){
 			var key = Number(e.keyCode);
 			var digit = key >= 96 ? key - 96 : key - 48;
 			if (digit >= 0 && digit <= 9) game.setDigitInCell(digit);
-	}	
+	}
 });
 
  $.fn.relMouseCoords = event => {
@@ -42,11 +44,11 @@ $( document ).on('keydown', function(e){
 		}
 		while (currentElement = currentElement.offsetParent)
 
-		canvasX = event.pageX - totalOffsetX;
-		canvasY = event.pageY - totalOffsetY;
+	canvasX = event.pageX - totalOffsetX;
+	canvasY = event.pageY - totalOffsetY;
 
-		return { x: canvasX, y: canvasY }
-	}
+	return { x: canvasX, y: canvasY }
+}
 
 /*TIMER CONTROL*/
 
@@ -59,11 +61,23 @@ timer.addEventListener('started', function (e) {
 });
 
 $('#nuevoJuego').click(function () {
-	$("#sudoku").show();
+
+  $("#sudoku").show();
 	$("#onStart").hide();
 	$("#statusMsg").hide();
 	var val = $('#sel1 option:selected').text();
 	$().creaCanvas("8.5.....2...9.1...3.........6.7..4..2...5...........6....38.....4....7...1.....9.",val,true,true);
+  
+	/*$.ajax({
+		type: 'GET',
+		dataType: 'json',
+		url: "api/newSudoku"
+	}).done((result) => {
+		var val = $('#sel1 option:selected').text();
+		console.log("Nuevo sudoku: ", result.hilera);
+		$().creaCanvas(result.hilera, val, true, true);
+	});*/
+
 });
 
 
@@ -124,3 +138,25 @@ $('#loadGame').click( () =>{
 	$().creaCanvas(txt,$('#sel1 option:selected').text(),true);
 	$('#load-modal').modal('toggle');
 });
+
+/**
+ * Cargar la lista de sudokus del txt a la base de datos al inicio
+ */
+$.fn.cargaSudokus = () =>
+	$.ajax({
+		type: 'POST',
+		data: { "": "" },
+		dataType: 'json',
+		url: "api/import"
+	}).done((result) => {
+		if (result) {
+			console.log("Datos cargados: ", result);
+
+		}
+		else {
+			console.log("error al conectarse a la BD");
+		}
+
+	}).fail(err => {
+		console.log("error al conectarse al server: ", err);
+	});
