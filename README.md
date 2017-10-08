@@ -1,7 +1,7 @@
 
 # Sudoku
 
-Aplicacion web del juego sudoku, corriendo sobre el stack MEJSN
+Aplicacion web del juego sudoku, corriendo sobre el stack MEJSN con el paradigma de programacion funcional
 
 ### Instalacion
 
@@ -24,13 +24,6 @@ node server //o npm start
 ```
 
 4- En el navegador de internet ir a http://localhost:8080/
-
-
-## Built With
-
-* [Dropwizard](http://www.dropwizard.io/1.0.2/docs/) - The web framework used
-* [Maven](https://maven.apache.org/) - Dependency Management
-* [ROME](https://rometools.github.io/rome/) - Used to generate RSS Feeds
 
 
 ## Authors
