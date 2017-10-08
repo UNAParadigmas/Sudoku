@@ -65,18 +65,22 @@ $('#nuevoJuego').click(function () {
   $("#sudoku").show();
 	$("#onStart").hide();
 	$("#statusMsg").hide();
-	var val = $('#sel1 option:selected').text();
-	$().creaCanvas("8.5.....2...9.1...3.........6.7..4..2...5...........6....38.....4....7...1.....9.",val,true,true);
   
-	/*$.ajax({
+	$.ajax({
 		type: 'GET',
 		dataType: 'json',
 		url: "api/newSudoku"
-	}).done((result) => {
+	})
+		.done((result) => {
 		var val = $('#sel1 option:selected').text();
 		console.log("Nuevo sudoku: ", result.hilera);
 		$().creaCanvas(result.hilera, val, true, true);
-	});*/
+	})
+	.fail((err)=>{
+		console.log("error de conexion con backend: ");
+		var val = $('#sel1 option:selected').text();
+		$().creaCanvas("8.5.....2...9.1...3.........6.7..4..2...5...........6....38.....4....7...1.....9.",val,true,true);
+	});
 
 });
 
@@ -140,7 +144,7 @@ $('#loadGame').click( () =>{
 });
 
 /**
- * Cargar la lista de sudokus del txt a la base de datos al inicio
+ * Cargar la lista de sudokus del txt a la base de datos al inicio (primero verificando si ya existen)
  */
 $.fn.cargaSudokus = () =>
 	$.ajax({
