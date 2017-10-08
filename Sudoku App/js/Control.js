@@ -3,11 +3,19 @@ let game = new Game();
 window.game=game;
 /* DOCUMENT CONTROL*/
 
-$( document ).ready(function() {
-	$().cargaSudokus();
-	$().creaCanvas(".................................................................................", 'Bienvenido');
-	$().initButtons();
-});
+
+$( document ).ready(function() {	
+  $().cargaSudokus();
+	//$('.logged').hide();
+	$("#onPause").hide();
+	$("#sudoku").hide();
+	
+	$('#pauseButton').prop('disabled', true);			
+	$('#btnAccept').prop('disabled', true);
+	//$('#btnSolve').prop('disabled', true);
+	$('#btnHint').prop('disabled', true);
+	$('#btnUndo').prop('disabled', true);
+});		
 
 $( document ).on('keydown', function(e){
 	switch (e.keyCode) {
@@ -22,18 +30,19 @@ $( document ).on('keydown', function(e){
 			if (digit >= 0 && digit <= 9) game.setDigitInCell(digit);
 	}
 });
-$.fn.relMouseCoords = event => {
-	var totalOffsetX = 0;
-	var totalOffsetY = 0;
-	var canvasX = 0;
-	var canvasY = 0;
-	var currentElement = /*$('#canvas')*/document.getElementById('canvas');
 
-	do {
-		totalOffsetX += currentElement.offsetLeft;
-		totalOffsetY += currentElement.offsetTop;
-	}
-	while (currentElement = currentElement.offsetParent)
+ $.fn.relMouseCoords = event => {
+		var totalOffsetX = 0;
+		var totalOffsetY = 0;
+		var canvasX = 0;
+		var canvasY = 0;
+		var currentElement = /*$('#canvas')*/document.getElementById('canvas');
+
+		do {
+			totalOffsetX += currentElement.offsetLeft;
+			totalOffsetY += currentElement.offsetTop;
+		}
+		while (currentElement = currentElement.offsetParent)
 
 	canvasX = event.pageX - totalOffsetX;
 	canvasY = event.pageY - totalOffsetY;
@@ -52,7 +61,14 @@ timer.addEventListener('started', function (e) {
 });
 
 $('#nuevoJuego').click(function () {
-	$.ajax({
+
+  $("#sudoku").show();
+	$("#onStart").hide();
+	$("#statusMsg").hide();
+	var val = $('#sel1 option:selected').text();
+	$().creaCanvas("8.5.....2...9.1...3.........6.7..4..2...5...........6....38.....4....7...1.....9.",val,true,true);
+  
+	/*$.ajax({
 		type: 'GET',
 		dataType: 'json',
 		url: "api/newSudoku"
@@ -60,9 +76,8 @@ $('#nuevoJuego').click(function () {
 		var val = $('#sel1 option:selected').text();
 		console.log("Nuevo sudoku: ", result.hilera);
 		$().creaCanvas(result.hilera, val, true, true);
-	});
+	});*/
 
-	
 });
 
 
@@ -81,25 +96,21 @@ $("#sel1").change(function(){
 
 $('#pauseButton').click(function () {
 	timer.pause();
-	$('#startButton').prop('disabled', false);
 	$('#pauseButton').prop('disabled', true);			
-	$('#grid').prop('hidden', true);
+	$('#sudoku').hide();
+	$("#onPause").show();
+	$("#statusMsg").show();
 });
 
-$.fn.initButtons = function() {
-	$('#pauseButton').prop('disabled', true);			
-	$('.logged').prop('hidden', true);
-	$('#dificultad').prop('hidden', true);
-	$('#message').text('Para Jugar: Cree o Cargue Nuevo Juego');
-	$('#btnClear').css({'background-color':'#FFFFFF'}).prop('disabled', true);
-	$('#btnReset').css({'background-color':'#FFFFFF'}).prop('disabled', true);
-	$('#btnSolve').css({'background-color':'#FFFFFF'}).prop('disabled', true);
-	$('#btnHint').css({'background-color':'#FFFFFF'}).prop('disabled', true);
-	$('#btnUndo').css({'background-color':'#FFFFFF'})
-};
+$('#continueBtn').click(function () {
+	timer.start();
+	$('#pauseButton').prop('disabled', false);			
+	$('#sudoku').show();
+	$("#statusMsg").hide();
+});
 
 $.fn.creaCanvas = function(txt,val,time = false, init=false){
-	var aux = $('#sel2 option:selected').text();
+	var aux = $('#level option:selected').text();
 	var dif = (val !== '9x9' || aux === 'Fácil') ? 1 : (aux === 'Normal') ? 2 : 3 ;
 	showAllowed = dif === 1; 
 			
@@ -110,12 +121,10 @@ $.fn.creaCanvas = function(txt,val,time = false, init=false){
 	$('#size').text(val + ((val == '9x9')? " " + aux : ""));
 	if(time && timer.isRunning()){				
 		timer.stop();
-		timer.start("00:00:00");
-		$('#pauseButton').prop('disabled', true);
-	}else if(time){
-		timer.start("00:00:00");
-		$('#pauseButton').prop('disabled', false);
 	}
+	timer.start("00:00:00");
+	$('#pauseButton').prop('disabled', false);
+	
 	game.board.setString(txt,init);
 	game.updateCanvas();
 };
