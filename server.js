@@ -4,8 +4,7 @@ var bodyParser = require('body-parser');
 var mongoose = require("mongoose");
 
 var sudoku = require('./routes/sudoku');
-var login = require('./routes/login');
-var registro = require('./routes/registro');
+var sesion = require('./routes/sesion');
 
 var app = express();
 
@@ -25,18 +24,18 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 //mongoose.connect(process.env.MONGODB_URI || 'mongodb://admin:0150@ds141242.mlab.com:41242/sudoku_paradigmas', {
 mongoose.connect('mongodb://localhost/sudoku', {
-
-    useMongoClient:true
+    useMongoClient: true
 });
-    console.log("Conectado a la db");
+var db = mongoose.connection;
+db.on('error', console.log.bind(console, 'Error al conectar a la DB !!!!!'));
+db.once('open', console.log.bind(console, 'Conectado a la DB !!!!!'));
 
-    app.use('/api', sudoku);
-    app.use('/api', login);
-    app.use('/api', registro);
-    app.get('*', (req, res) => {
-        res.render('index.html');
-    });
-    var server = app.listen(process.env.PORT || 8080, () => {
-        var port = server.address().port;
-        console.log("App corriendo en puerto: ", port);
-    });
+app.use('/api', sudoku);
+app.use('/api', sesion);
+app.get('*', (req, res) => {
+    res.render('index.html');
+});
+var server = app.listen(process.env.PORT || 8080, () => {
+    var port = server.address().port;
+    console.log("App corriendo en puerto: ", port);
+});

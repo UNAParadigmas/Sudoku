@@ -7,11 +7,9 @@ var UsuarioSchema = new Schema({
 	pass: { type: String, required: true, max: 35 }, //contraseña
 	partida: { //Partida actual guardada en el perfil del usuario
 		dificultad: Number, //Nivel de  dificultad
-		sudoku: String
-	},
-	historial: {
-		tiempo: Number,
-		dificultad: Number
+		sudokuInicial: String,
+		sudokuGuardado: String,
+		sudokuUndo: [String]
 	}
 });
 

@@ -1,12 +1,13 @@
 let timer = new Timer();
 let game = new Game();
-window.game=game;	
+window.game=game;
 /* DOCUMENT CONTROL*/
 
 $( document ).ready(function() {
-	$().creaCanvas(".................................................................................",'Bienvenido');
+	$().cargaSudokus();
+	$().creaCanvas(".................................................................................", 'Bienvenido');
 	$().initButtons();
-});		
+});
 
 $( document ).on('keydown', function(e){
 	switch (e.keyCode) {
@@ -19,26 +20,26 @@ $( document ).on('keydown', function(e){
 			var key = Number(e.keyCode);
 			var digit = key >= 96 ? key - 96 : key - 48;
 			if (digit >= 0 && digit <= 9) game.setDigitInCell(digit);
-	}	
-});
- $.fn.relMouseCoords = event => {
-		var totalOffsetX = 0;
-		var totalOffsetY = 0;
-		var canvasX = 0;
-		var canvasY = 0;
-		var currentElement = /*$('#canvas')*/document.getElementById('canvas');
-
-		do {
-			totalOffsetX += currentElement.offsetLeft;
-			totalOffsetY += currentElement.offsetTop;
-		}
-		while (currentElement = currentElement.offsetParent)
-
-		canvasX = event.pageX - totalOffsetX;
-		canvasY = event.pageY - totalOffsetY;
-
-		return { x: canvasX, y: canvasY }
 	}
+});
+$.fn.relMouseCoords = event => {
+	var totalOffsetX = 0;
+	var totalOffsetY = 0;
+	var canvasX = 0;
+	var canvasY = 0;
+	var currentElement = /*$('#canvas')*/document.getElementById('canvas');
+
+	do {
+		totalOffsetX += currentElement.offsetLeft;
+		totalOffsetY += currentElement.offsetTop;
+	}
+	while (currentElement = currentElement.offsetParent)
+
+	canvasX = event.pageX - totalOffsetX;
+	canvasY = event.pageY - totalOffsetY;
+
+	return { x: canvasX, y: canvasY }
+}
 
 /*TIMER CONTROL*/
 
@@ -51,8 +52,17 @@ timer.addEventListener('started', function (e) {
 });
 
 $('#nuevoJuego').click(function () {
-	var val = $('#sel1 option:selected').text();
-	$().creaCanvas("7.8...3.....2.1...5..7..2...4.....263.948...7...1...9..9.6....4....7.5....5......",val,true,true);
+	$.ajax({
+		type: 'GET',
+		dataType: 'json',
+		url: "api/newSudoku"
+	}).done((result) => {
+		var val = $('#sel1 option:selected').text();
+		console.log("Nuevo sudoku: ", result.hilera);
+		$().creaCanvas(result.hilera, val, true, true);
+	});
+
+	
 });
 
 
@@ -119,3 +129,25 @@ $('#loadGame').click( () =>{
 	$().creaCanvas(txt,$('#sel1 option:selected').text(),true);
 	$('#load-modal').modal('toggle');
 });
+
+/**
+ * Cargar la lista de sudokus del txt a la base de datos al inicio
+ */
+$.fn.cargaSudokus = () =>
+	$.ajax({
+		type: 'POST',
+		data: { "": "" },
+		dataType: 'json',
+		url: "api/import"
+	}).done((result) => {
+		if (result) {
+			console.log("Datos cargados: ", result);
+
+		}
+		else {
+			console.log("error al conectarse a la BD");
+		}
+
+	}).fail(err => {
+		console.log("error al conectarse al server: ", err);
+	});
