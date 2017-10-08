@@ -174,7 +174,7 @@ class Game {
 			let startTime = new Date().getTime();
 			this.pushBoard();
 			if(this.board.trySolve()){
-				let totalTime = ((new Date()).getTime - startTime.getTim)/1000
+				let totalTime = ((new Date()).getTime() - startTime)/1000
 				console.log('solved, time: '+totalTime+ 'seconds.');
 			}else{
 				//dont have answer

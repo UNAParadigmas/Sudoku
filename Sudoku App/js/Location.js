@@ -4,7 +4,8 @@ class Location{
 		this.row = row;
 		this.col = col;
 		this.or =  (_col, _row) => (this.col != _col || this.row != _row);
-		this.and = (_col, _row) => (this.col != _col && this.row != _row);	
+		this.and = (_col, _row) => (this.col != _col && this.row != _row);
+		this.sibs = []
 	}
 	toString1(){
 		return [this.row, this.col].toString();
@@ -27,6 +28,11 @@ class Location{
 	// get methods
 	
 	getAllSibs(){
+		return this.sibs;
+	}
+	getSibsAll(){
+		if(this.row<0)
+			return []
 		return this.rowSibs().concat(this.colSibs().concat(this.squareSibs(this.and)));
 	}
 	
