@@ -3,6 +3,7 @@ class BitSet {
 	constructor(n = 0){
 		this.mask = 1 << n;
 		this.count = this.doCount();
+		this.backup = {};
 	}
 	
 	// BOOLEAN METHODS
@@ -18,12 +19,23 @@ class BitSet {
 	// BITMASK METHODS
 	
 	or(n){
+		if(this.backup[n])
+			this.backup[n]++;
+		else
+			this.backup[n]=1;
 		this.mask |= n;
 		this.count = this.doCount();
 	}
 		
 	updateMaskNot(n,trueMask){
-		this.mask = Math.max(~((~this.mask)|n),trueMask.mask);
+		if(!(trueMask.mask & n)){
+			if(this.backup[n]==1){
+				this.backup[n]--;
+				this.mask = (~((~this.mask)|n))
+			}
+			else
+				this.backup[n]--;
+		}
 		this.count = this.doCount();
 	}
 
@@ -48,14 +60,15 @@ class BitSet {
 	
 	setMask(n){
 		this.mask = 1 << n;
+		this.count = this.doCount();
 	}
 	
 	valuesArray(){
 		return Array.from({length:9}).reduce((z,e,i) => ((1 << i+1) & ~this.mask)? z.concat(i+1) : z, [])
 	}
 	
-	removeValues(bm) {
-		this.mask |= bm.mask;
+	removeValuesMask(bs) {
+		this.mask |= bs;
 		this.count = this.doCount();
 	}	
 	

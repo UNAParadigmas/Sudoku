@@ -1,11 +1,20 @@
 let timer = new Timer();
 let game = new Game();
-window.game=game;	
+window.game=game;
 /* DOCUMENT CONTROL*/
 
-$( document ).ready(function() {
-	$().creaCanvas(".................................................................................",'Bienvenido');
-	$().initButtons();
+
+$( document ).ready(function() {	
+  $().cargaSudokus();
+	//$('.logged').hide();
+	$("#onPause").hide();
+	$("#sudoku").hide();
+	
+	$('#pauseButton').prop('disabled', true);			
+	$('#btnAccept').prop('disabled', true);
+	//$('#btnSolve').prop('disabled', true);
+	$('#btnHint').prop('disabled', true);
+	$('#btnUndo').prop('disabled', true);
 });		
 
 $( document ).on('keydown', function(e){
@@ -19,8 +28,9 @@ $( document ).on('keydown', function(e){
 			var key = Number(e.keyCode);
 			var digit = key >= 96 ? key - 96 : key - 48;
 			if (digit >= 0 && digit <= 9) game.setDigitInCell(digit);
-	}	
+	}
 });
+
  $.fn.relMouseCoords = event => {
 		var totalOffsetX = 0;
 		var totalOffsetY = 0;
@@ -34,11 +44,11 @@ $( document ).on('keydown', function(e){
 		}
 		while (currentElement = currentElement.offsetParent)
 
-		canvasX = event.pageX - totalOffsetX;
-		canvasY = event.pageY - totalOffsetY;
+	canvasX = event.pageX - totalOffsetX;
+	canvasY = event.pageY - totalOffsetY;
 
-		return { x: canvasX, y: canvasY }
-	}
+	return { x: canvasX, y: canvasY }
+}
 
 /*TIMER CONTROL*/
 
@@ -51,8 +61,27 @@ timer.addEventListener('started', function (e) {
 });
 
 $('#nuevoJuego').click(function () {
-	var val = $('#sel1 option:selected').text();
-	$().creaCanvas("7.8...3.....2.1...5..7..2...4.....263.948...7...1...9..9.6....4....7.5....5......",val,true,true);
+
+  $("#sudoku").show();
+	$("#onStart").hide();
+	$("#statusMsg").hide();
+  
+	$.ajax({
+		type: 'GET',
+		dataType: 'json',
+		url: "api/newSudoku"
+	})
+		.done((result) => {
+		var val = $('#sel1 option:selected').text();
+		console.log("Nuevo sudoku: ", result.hilera);
+		$().creaCanvas(result.hilera, val, true, true);
+	})
+	.fail((err)=>{
+		console.log("error de conexion con backend: ");
+		var val = $('#sel1 option:selected').text();
+		$().creaCanvas("8.5.....2...9.1...3.........6.7..4..2...5...........6....38.....4....7...1.....9.",val,true,true);
+	});
+
 });
 
 
@@ -71,25 +100,21 @@ $("#sel1").change(function(){
 
 $('#pauseButton').click(function () {
 	timer.pause();
-	$('#startButton').prop('disabled', false);
 	$('#pauseButton').prop('disabled', true);			
-	$('#grid').prop('hidden', true);
+	$('#sudoku').hide();
+	$("#onPause").show();
+	$("#statusMsg").show();
 });
 
-$.fn.initButtons = function() {
-	$('#pauseButton').prop('disabled', true);			
-	$('.logged').prop('hidden', true);
-	$('#dificultad').prop('hidden', true);
-	$('#message').text('Para Jugar: Cree o Cargue Nuevo Juego');
-	$('#btnClear').css({'background-color':'#FFFFFF'}).prop('disabled', true);
-	$('#btnReset').css({'background-color':'#FFFFFF'}).prop('disabled', true);
-	$('#btnSolve').css({'background-color':'#FFFFFF'}).prop('disabled', true);
-	$('#btnHint').css({'background-color':'#FFFFFF'}).prop('disabled', true);
-	$('#btnUndo').css({'background-color':'#FFFFFF'})
-};
+$('#continueBtn').click(function () {
+	timer.start();
+	$('#pauseButton').prop('disabled', false);			
+	$('#sudoku').show();
+	$("#statusMsg").hide();
+});
 
 $.fn.creaCanvas = function(txt,val,time = false, init=false){
-	var aux = $('#sel2 option:selected').text();
+	var aux = $('#level option:selected').text();
 	var dif = (val !== '9x9' || aux === 'Fácil') ? 1 : (aux === 'Normal') ? 2 : 3 ;
 	showAllowed = dif === 1; 
 			
@@ -100,12 +125,10 @@ $.fn.creaCanvas = function(txt,val,time = false, init=false){
 	$('#size').text(val + ((val == '9x9')? " " + aux : ""));
 	if(time && timer.isRunning()){				
 		timer.stop();
-		timer.start("00:00:00");
-		$('#pauseButton').prop('disabled', true);
-	}else if(time){
-		timer.start("00:00:00");
-		$('#pauseButton').prop('disabled', false);
 	}
+	timer.start("00:00:00");
+	$('#pauseButton').prop('disabled', false);
+	
 	game.board.setString(txt,init);
 	game.updateCanvas();
 };
@@ -119,3 +142,25 @@ $('#loadGame').click( () =>{
 	$().creaCanvas(txt,$('#sel1 option:selected').text(),true);
 	$('#load-modal').modal('toggle');
 });
+
+/**
+ * Cargar la lista de sudokus del txt a la base de datos al inicio (primero verificando si ya existen)
+ */
+$.fn.cargaSudokus = () =>
+	$.ajax({
+		type: 'POST',
+		data: { "": "" },
+		dataType: 'json',
+		url: "api/import"
+	}).done((result) => {
+		if (result) {
+			console.log("Datos cargados: ", result);
+
+		}
+		else {
+			console.log("error al conectarse a la BD");
+		}
+
+	}).fail(err => {
+		console.log("error al conectarse al server: ", err);
+	});

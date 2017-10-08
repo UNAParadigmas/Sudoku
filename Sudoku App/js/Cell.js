@@ -20,12 +20,20 @@ class Cell{
 		return !this.value;
 	}
 	
+	isAssigned(){
+		return !!this.value;
+	}
+	
 	getSingle(){//returns the value of the single possible value given a not assigned cell, returns 0 if there is no single.
 		return this.mask.getSingle();
 	}
 	
 	isNotAllowed(n){//returns true if a given number is not allowed in this particular cell, cheking if the BitSet(mask) contains the given number.
 		return this.mask.isNotAllowed(n);
+	}
+	
+	equals(c){
+		return this.loc.equals(c.loc)
 	}
 	
 	// GET METHODS
@@ -67,11 +75,12 @@ class Cell{
 	
 	setAnswer(n){
 		this.answer = n
+		return this
 	}
 		
-	setValue(n, loc){
+	setValue(n){
 		if(n != 0 && this.isNotAllowed(n))
-			throw "not allowed";
+			return false
 		if(n){
 			this.value=n
 			this.updateSiblings()
@@ -79,6 +88,7 @@ class Cell{
 		else
 			this.updateSiblings(true)
 		this.value=n;
+		return true;
 	}
 	
 	setGiven(n/*, loc*/){
@@ -96,21 +106,22 @@ class Cell{
 	// CELL METHODS
 	clone(){
 		let clone = new Cell(this.value);
-		this.mask = this.mask;
-		this.answer = this.answer;
-		this.given = this.given;
+		clone.mask = this.mask;
+		clone.answer = this.answer;
+		clone.given = this.given;
+		clone.loc = this.loc;
 		return clone
 	}
-	
 	clear(){
-		this.value = 0; 
-		this.mask = 0; 
+		this.value = 0;
+		this.mask = new BitSet(0);
+		this.trueMask = new BitSet(0);
 		this.answer = 0;
-		this.given = 0;
 	}
 	
 	reset(){
-		
+		this.setValue(0);
+		this.answer=0;
 	}
 	
 	
@@ -119,7 +130,8 @@ class Cell{
 			this.mask.or(n)
 			if(given)
 				this.trueMask.or(n);
-			}
+			window.game.board.updateMin(this);
+		}
 		return this;
 	}
 	updateMaskNot(n){
@@ -136,5 +148,6 @@ class Cell{
 	update(target,type){
 		$(this).trigger(target.loc.toString1(),[target,type]);
 	}
+	
 	
 }

@@ -11,109 +11,127 @@
 
 	<script src="lib/js/jquery.min.js"></script>
 	<script src="lib/js/bootstrap.min.js"></script>
+	<script src="lib/js/chart.min.js"></script>
 	<script src="js/Login.js"></script>
-
-
-	<!-- Angular 2 -->
 </head>
 
 <body>
+<!-- NAV BAR-->
 	<nav class="navbar navbar-inverse bg-inverse">
-		<div class="container-fluid">
+		<div class="container-fluid" id="divNavBar">
 			<div class="navbar-header">
 				<a class="navbar-left">
-		  <img src="img/icon.png" width="150" height="50"></a>
+					<img src="img/icon.png" width="150" height="50">
+				</a>
 			</div>
 			<ul class="nav navbar-nav logged">
-				<li><a href="#">Datos de Partidas</a></li>
-				<li><a href="#">Estadística</a></li>
+				<li>
+					<a class="btn btn-lg" id="dataBtn" role="button" data-toggle="modal" data-target="#data-modal" >
+						Data
+					</a>
+				</li>
 			</ul>
-			<ul class="nav navbar-nav">
-				<li><a href="#">Instrucciones</a></li>
-				<li><a href="#">Ayuda</a></li>
+			<ul class="nav navbar-nav normal">
+				<li>
+					<a class="btn btn-lg">
+						How to Play
+					</a>
+				</li>
+				<li>
+					<a class="btn btn-lg">
+						Help
+					</a>
+				</li>
 			</ul>
 			<ul class="nav navbar-nav navbar-right notlogged">
-				<li><a class="btn btn-lg" id="loginBtn" role="button" data-toggle="modal" data-target="#login-modal" href=""><span class="glyphicon glyphicon-log-in" ></span> Ingresa</a></li>
+				<li>
+					<a class="btn btn-lg" id="loginBtn" role="button" data-toggle="modal" data-target="#login-modal" href="">
+						<span class="glyphicon glyphicon-user" ></span> Log In
+					</a>
+				</li>
 			</ul>
-			<ul class="nav navbar-nav navbar-right">
-				<li><a class="btn btn-lg preLogin" id="logoutBtn" role="button" href=""><span class="glyphicon glyphicon-log-out" ></span> Logout</a></li>
-			</ul>
-			<ul class="nav navbar-nav navbar-right">
-				<li><a class="btn btn-lg preLogin" id="guardarBtn" role="button" href=""><span class="glyphicon glyphicon-floppy-disk" ></span> Guardar</a></li>
-			</ul>
-			<ul class="nav navbar-nav navbar-right">
-				<li><a class="btn btn-lg preLogin" id="cargarBtn" role="button" href=""><span class="glyphicon glyphicon-download-alt" ></span> Cargar</a></li>
+			<ul class="nav navbar-nav navbar-right logged">
+				<li>
+					<a class="btn btn-lg" id="logoutBtn" role="button" href="">
+						<span class="glyphicon glyphicon-log-out" ></span> Log Out
+					</a>
+				</li>
 			</ul>
 		</div>
 	</nav>
-
+	
+<!-- CONTAINER -->
 	<div class="container">
-		<div class="row">
-			<div class="col-md-9">
-				<div class="row">
-					<div class="col-md-10">
-						<div class="col-sm-3">
-							<div class="panel panel-success " align="center">
-								<div class="panel-heading" id="size"></div>
-							</div>
-						</div>
-						<div class="btn-group col-sm-offset-1">
-							<button type="button" class="btn btn-default" style="background-color:#eafaea" id="btnLoad" title='Carga sudoku a partir de texto.'
-							 data-toggle="modal" data-target="#load-modal">Carga</button>
-							<button type="button" class="btn btn-default" style="background-color:#eafaea" id="btnClear" onclick="clearGame()" title='Deja el sudoku vacio.'>Limpia</button>
-							<button type="button" class="btn btn-default" style="background-color:#eafaea" id="btnReset" onclick="reset()" title='Reinicia sudoku al estado original.'>Reset</button>
-							<button type="button" class="btn btn-default" style="background-color:#eafaea" id="btnSolve" onclick="solve()" title='If possible, it will solve the problem. The amount of time taken to solve is displayed below.'>Resuelve</button>
-							<button type="button" class="btn btn-default" id="btnHint" onclick="hint()" title='Pista en el espacio seleccionado'>Pista</button>
-							<button type="button" class="btn btn-default" id="btnUndo" onclick="undo()" title='Devolverse un movimiento'>Atras</button>
-						</div>
-					</div>
-				</div>
-				<br>
-				<div class="row">
-					<div id='sudoku' align="center">
-						<div id='main'>
-							<table>
-								<tr>
-									<td>
-										<canvas id='canvas' width='541' height='541'>Canvas is not supported by this browser.</canvas>
-									</td>
-								</tr>
-							</table><br><br>
-						</div>
-					</div>
-				</div>
-				<br>
-			</div>
-			<div class="col-lg-3">
+		<div class="row">		
+			<div class="col-md-2">
 				<div class="panel panel-success" align="center">
-					<div class="panel-heading">Cronometro</div>
+					<div class="panel-heading">Chronometer</div>
 					<div class="panel-body">
 						<div>
 							<div class="well" id="values">00:00:00</div>
 							<div class="btn-group">
-								<button class="btn btn-default" id="pauseButton">Parar</button>
+								<button class="btn btn-default" id="pauseButton">Stop</button>
 							</div>
 						</div>
 					</div>
 				</div>
-				<div class="panel panel-success" align="center">
-					<div class="panel-heading">Nuevo Juego</div>
-					<div class="panel-body">
-						<div class="form-group">
-							<label for="sel1">Seleccione:</label>
-							<select class="form-control" id="sel1">
-							<option>4x4</option>
-							<option>9x9</option>
-							<option>JUMBO</option>
-						</select>
+				<div class="panel panel-success " align="center">
+					<div class="panel-heading">Charity</div>
+					<div class="panel-body" >
+						<div class="btn-group-vertical">
+							<button type="button" class="btn btn-default" id="btnUndo" onclick="game.undo()">Back</button>
+							<button type="button" class="btn btn-default" id="btnAccept" onclick="hint()">Accept</button>
+							<button type="button" class="btn btn-default" id="btnHint" onclick="hint()">Hint</button>
+							<button type="button" class="btn btn-default" id="btnSolve" onclick="game.solve()">Solve</button>										
 						</div>
-						<div class="form-group" id="dificultad">
-							<label for="sel2">Dificultad:</label>
-							<select class="form-control" id="sel2">
-							<option>Fácil</option>
-							<option>Normal</option>
-							<option>Difícil</option>
-						</select>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-8">
+				<div class="row">
+					<div class="jumbotron" id="statusMsg">
+						<div id="onStart">
+							<h1>Start New Game</h1> 
+							<span style="display:block; height: 20px;"></span>
+							<h4> - Click on start game to play.</h4><br>
+							<h4> - Sign in for adicional options like:</h4>
+							<h4>&emsp; 1) Save the game.</h4>
+							<h4>&emsp; 2) Graphics about your performance.</h4>
+						</div>
+						<div id="onPause" align="center">
+							<h1>Game In Pause</h1> 
+							<span style="display:block; height: 20px;"></span>
+							<button type="button" class="btn btn-default" id="continueBtn">Continue</button>
+						</div>						
+					</div>
+					<div id='sudoku' align="center">
+						<canvas id='canvas' width='541' height='541'>Canvas is not supported by this browser.</canvas>
+					</div>
+				</div>
+			</div>
+			<div class="col-md-2">
+				
+				<div class="panel panel-success" align="center">
+					<div class="panel-heading">Game</div>
+					<div class="panel-body" align="center">
+						<div class="btn-group-vertical">
+							<button type="button" class="btn btn-default" id="btnLoad" title='Carga sudoku a partir de texto.' data-toggle="modal" data-target="#load-modal">Save</button>
+							<button type="button" class="btn btn-default" id="btnLoad" title='Carga sudoku a partir de texto.' data-toggle="modal" data-target="#load-modal">Load</button>
+							<button type="button" class="btn btn-default" id="btnLoad" title='Carga sudoku a partir de texto.' data-toggle="modal" data-target="#load-modal">Restart</button>
+							<button type="button" class="btn btn-default" id="btnLoad" title='Carga sudoku a partir de texto.' data-toggle="modal" data-target="#load-modal">Give Up</button>
+						</div>
+					</div>
+				</div>
+				<div class="panel panel-success" align="center">
+					<div class="panel-heading">New Game</div>
+					<div class="panel-body">
+						<div class="form-group" id="difi">
+							<label for="sel">Level:</label>
+							<select class="form-control" id="level">
+								<option>Easy</option>
+								<option>Normal</option>
+								<option>Hard</option>
+							</select>
 						</div>
 						<button type="button" class="btn btn-success" id="nuevoJuego">Crear Juego</button>
 					</div>
@@ -122,6 +140,7 @@
 		</div>
 	</div>
 
+<!-- MODALS -->
 	<div class="modal fade" id="login-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
 		<div class="modal-dialog">
 			<div class="modal-content">
@@ -139,10 +158,10 @@
 						<div class="modal-body">
 							<div id="div-login-msg">
 								<div id="icon-login-msg" class="glyphicon glyphicon-chevron-right"></div>
-								<span id="text-login-msg">Ingrese su nombre de usuario y contraseña.</span>
+								<span id="text-login-msg">Enter your username and password.</span>
 							</div>
-							<input id="login_username" class="form-control" type="text" placeholder="Nombre de Usuario" required>
-							<input id="login_password" class="form-control" type="password" placeholder="Contraseña" required>
+							<input id="login_username" class="form-control" type="text" placeholder="Username" required>
+							<input id="login_password" class="form-control" type="password" placeholder="Password" required>
 						</div>
 						<div class="modal-footer">
 							<div>
@@ -159,11 +178,12 @@
 						<div class="modal-body">
 							<div id="div-register-msg">
 								<div id="icon-register-msg" class="glyphicon glyphicon-chevron-right"></div>
-								<span id="text-register-msg">Resgistro de usuario.</span>
+								<span id="text-register-msg">User Register.</span>
 							</div>
-							<input id="register_name" class="form-control" type="text" placeholder="Nombre" required>
-							<input id="register_username" class="form-control" type="text" placeholder="Nombre Usuario" required>
-							<input id="register_password" class="form-control" type="password" placeholder="Contraseña" required>
+							<input id="register_name" class="form-control" type="text" placeholder="Name" required>
+							<input id="register_username" class="form-control" type="text" placeholder="Username" required>
+							<input id="register_password" class="form-control" type="password" placeholder="Password" required>							
+							<input id="register_password2" class="form-control" type="password" placeholder="Confirm Password" required>
 						</div>
 						<div class="modal-footer">
 							<div>
@@ -207,6 +227,33 @@
 			</div>
 		</div>
 	</div>
+	
+	<div class="modal fade" id="data-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" style="display: none;">
+		<br><br>
+		<div class="col-md-6">
+			<div class="panel panel-success" align="center">
+					<div class="panel-heading">
+						Time-Level Graphic
+					</div>
+					<div class="panel-body">
+						<canvas id="line-chart" width="800" height="450"></canvas>
+					</div>
+			</div>		
+		</div>
+		<div class="col-md-6">
+			<div class="panel panel-success" align="center">
+					<div class="panel-heading">
+						Games Won Graphic
+					</div>
+					<div class="panel-body">
+						<canvas id="pie-chart" width="800" height="450"></canvas>
+					</div>
+			</div>		
+		</div>
+	
+	
+	</div>
+	
 	<script src="js/timer.js"></script>
 	<script src="js/BitSet.js"></script>
 	<script src="js/Location.js"></script>
@@ -215,6 +262,8 @@
 	<script src="js/Board.js"></script>
 	<script src="js/Game.js"></script>
 	<script src="js/Control.js"></script>
+	<script src="js/ChartData.js"></script>
+	
 
 </body>
 

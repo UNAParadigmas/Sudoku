@@ -2,10 +2,15 @@ class Board{
 	
 	constructor(size) {
 		this.size=size;
+		this.stringInit='';
 		this.digits = new Grid(size);
 		this.locs = this.createLocs();
+		this.check = new Set();
 		this.isSolved = this.isValid = false;
+		this.minLoc = new Cell();
+		this.answer = [];
 		this.singles = []
+		this.stack = [];
 	}
 	
 	createLocs() {		
@@ -18,6 +23,15 @@ class Board{
 		target.loc.getAllSibs().forEach(e=>this.digits.get(e).update(target,type))
 	}
 	
+	updateMin(target){
+		if(target.isNotAssigned()&&((this.minLoc.mask.count>=target.mask.count)||this.minLoc.isAssigned()))
+			this.minLoc=target;
+		this.check.add(target.loc);
+	}
+	
+	findCellWithFewestChoices(){
+		this.locs.forEach(e=>this.updateMin(this.getCell(e)));
+	}
 	// GET METHODS
 	
 	getCell(loc) {
@@ -28,11 +42,11 @@ class Board{
 		return this.getCell(loc).getMask();
 	}
 	
-	getAnswer(locs){
+	getAnswer(){
 		// cols = 0;
 		// rows = 1;
 		// squares = 2;
-		return locs.reduce((z,e)=>(z[0][e.col] |= this.getMask(e),
+		return this.locs.reduce((z,e)=>(z[0][e.col] |= this.getMask(e),
 								   z[1][e.row] |= this.getMask(e),
 								   z[2][e.getSquare()] |= this.getMask(e),z), Array.from({length: 3}, e => new Array(9)));
 	}
@@ -47,43 +61,111 @@ class Board{
 		this.getCell(loc) = value;
 	}
 	
-	setString (value, init) { 
+	setString (value, init=false) { 
 		let loc = i => new Location(Math.floor(i/9),i%9);
 		let check =(val) => isNaN(val)? 0 : parseInt(val);
 		
 		let changes = Array.from(value).reduce((z, val, i) => this.getCell(loc(i)).setGiven(check(val), loc(i))?z.concat(loc(i)):z,[])//no modifica a l
 		if(init) changes.forEach(e=>this.digits.get(e).updateSiblings())
 		
-		//this.answer = this.getAnswer(this.locs);
+		this.answer = this.getAnswer();
 		console.log(this.digits.matrix);
 	}
 	
 	// ANSWER METHODS
+	acceptPossibles(){//cambiar nombre
+		return !this.singles.filter(cell => !cell.setValue(cell.getAnswer())).length;
+	}
+	
+	trySolve(){	
+		//console.log(this.stack);
+		this.singles = [];
+		let vec=this.detSolve()
+		this.push(vec);//deterministic case
+		if(vec[vec.lengt-1]==false)
+			return false;
+		if(!this.isSolved){//non deteministic case
+			this.push(this.minLoc);
+			return this.nonDetSolve(this.minLoc.mask.valuesArray(),0);
+		}
+		return true;
+	}
+	
+	detSolve(vec = []){
+		if(this.analyzeGrid()){
+			if(!this.acceptPossibles())//si no hay más singles
+				return vec.concat(this.singles.concat(false));
+			return this.detSolve(vec.concat(this.singles));
+		}
+		else
+			this.acceptPossibles()
+		return vec
+	}
+	
+	nonDetSolve(arr, i){
+		if(arr.length==i)
+			return false;
+		if(!this.minLoc.setValue(arr[i]))
+			return false
+		if(!this.trySolve()){
+			this.pop();
+			return this.nonDetSolve(arr, i+1);
+		}
+		return true;
+	}
+	
+	push(obj){
+		if(obj instanceof Cell && this.stack.length>=2 && this.stack[this.stack.length-2].equals(obj))
+			this.findCellWithFewestChoices()
+		this.stack.push(obj)
+	}
+	
+	pop(){
+		this.stack.pop();//siempre se mete un cell inecesariamente.... 
+		let array = this.stack.pop()
+		array=array.filter(x=>x).forEach(cell => cell.reset());
+		this.minLoc=this.stack[this.stack.length-1];
+		this.minLoc.reset();
+	}
+	
+	
 	analyzeGrid(){
-		let finished = this.locs.reduce((z, loc) => z && chechForSingleAnswer(loc), 3);
-		if(finished) return true;
-		if(!finished && !this.singles.length) return false; // falta pairs
+		this.singles = [];
+		this.isSolved = Array.from(this.check).reduce((z, loc) => (this.chechForSingleAnswer(loc, 0) || this.chechForSingleAnswer(loc, 1) || this.chechForSingleAnswer(loc, 2))&&z,true);
+		this.check=new Set();
+		if(!this.isSolved && !this.singles.length) return false; // falta pairs
+		if(this.isSolved) return false;
+		return true;
+	}
+	
+	getAnswerLocation(loc, type){
+		return this.answer[type][loc.col]|this.answer[type][loc.row]|this.answer[type][loc.getSquare()];
 	}
 	
 	chechForSingleAnswer(_loc, type){
-		const checkCell = (_cell) => (_cell.isNotAssigned())? clone.removeValues(_cel.getMask()):0;
+		//const checkCell = (_cell) => (_cell.isNotAssigned()&&!_cell.isGiven())? clone.mask.removeValuesMask(_cell.getMask()) : 0;
+		//const checkCell = (val) => (clone.isNotAssigned()&&!clone.isGiven())?  : 0;
 		
 		let cell = this.getCell(_loc);
-		if(cell.isGiven() || cell.hasAnswer()) return true; 
+		//cell.setAnswer(0);
+		if(cell.isGiven()||cell.hasAnswer()||cell.isAssigned()) 
+			return true; 
+		
 		let clone = cell.clone();
 		
-		if(cell.isNotAssigned()){
-			let locs = _loc.getSibs(type);
-			locs.forEach( loc => checkCell(this.getCell(loc)));
-		}
-		
+		//let locs = _loc.getSibs(type);
+		let contains = this.getAnswerLocation(clone.loc,type);
+		if(clone.isNotAssigned()&&!clone.isGiven())
+			clone.mask.removeValuesMask(contains);
 		let single = clone.getSingle();
 		
-		if(!!single){
+		if(!!(single)){
+			//console.log(single+' posicion '+_loc.row+','+_loc.col);
 			cell.setAnswer(single);
-			this.singles.push(_loc);
+			//console.log(cell);
+			this.singles.push(cell);
+			return true;
 		}
-		
 		return false;
 	}
 	
