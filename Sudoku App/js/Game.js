@@ -1,9 +1,7 @@
 
 class Game {
 		constructor(showSingles = true, showAllowed = true) {
-			this.CellSize = 60;
-			this.SubCellSize = 18;
-			this.canvas = document.getElementById("canvas");
+			this.canvas = $("#canvas").get(0);
 			this.board = new Board(9);
 			this.selRow = 0;
 			this.selCol = 0;
@@ -38,7 +36,7 @@ class Game {
 			Array.from({length:10}).forEach((e,i)=>drawPath(i));			
 		}
 		
-		drawSingleCell(con, loc, selVal){
+		drawSingleCell(con, loc, selVal){ // draw a cell based on location
 			let cel = this.board.getCell(loc);
 				
 			if (this.showAllowed && cel.isNotAssigned()) { //Draw allowed
@@ -86,11 +84,11 @@ class Game {
 			this.canvas.getContext('2d').clearRect(0, 0, this.canvas.width, this.canvas.height);
 			this.drawGrid();
 			this.drawCells();
-			//message.innerHTML = (!this.board._isValid)? "Incorrecto" : (this.board._isSolved)? "Resuelto" : "";
 		}
 		
-		
+		//--------------------------------------------------------------------------------------------
 		/* stack methods */
+		
 		undo () {
 			if (this.stack.length) {
 				this.board.setString(this.stack.pop());
@@ -102,6 +100,8 @@ class Game {
 			if(!this.beforeValEquals())
 				this.stack.push(this.board.getString());
 		}
+		
+		//--------------------------------------------------------------------------------------------
 		
 		selectCell(row, col) {
 			this.updateBefore()

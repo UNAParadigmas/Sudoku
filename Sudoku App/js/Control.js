@@ -32,9 +32,7 @@ $( document ).on('keydown', function(e){
  $.fn.relMouseCoords = event => {
 		var totalOffsetX = 0;
 		var totalOffsetY = 0;
-		var canvasX = 0;
-		var canvasY = 0;
-		var currentElement = /*$('#canvas')*/document.getElementById('canvas');
+		var currentElement = /*$('#canvas').get(0);*/document.getElementById("canvas");
 
 		do {
 			totalOffsetX += currentElement.offsetLeft;
@@ -42,12 +40,15 @@ $( document ).on('keydown', function(e){
 		}
 		while (currentElement = currentElement.offsetParent)
 
-		canvasX = event.pageX - totalOffsetX;
-		canvasY = event.pageY - totalOffsetY;
-
-		return { x: canvasX, y: canvasY }
+		return { x: event.pageX - totalOffsetX, y: event.pageY - totalOffsetY }
 	}
 
+	
+	$('#canvas').on('mousedown', function(e){  // Calculate the position x-y of the canvas cell clicked.
+		var coords = $().relMouseCoords(e);
+		game.selectCell(Math.floor(coords.y / 60), Math.floor(coords.x / 60));//60 = cell size
+	});
+	
 /*TIMER CONTROL*/
 
 timer.addEventListener('secondsUpdated', function (e) {
@@ -69,12 +70,6 @@ $('#nuevoJuego').click(function () {
 
 /*CANVAS CONTROL*/
 
-$('#canvas').on('mousedown', function(e){
-	var x = e.pageX - this.offsetLeft;
-	var y = e.pageY - this.offsetTop;
-	var coords = $().relMouseCoords(e);
-	game.selectCell(Math.floor(coords.y / game.CellSize), Math.floor(coords.x / game.CellSize));
-});
 
 $("#sel1").change(function(){
 	$('#dificultad').prop('hidden',(this.value != '9x9'));
