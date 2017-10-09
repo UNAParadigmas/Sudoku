@@ -15,7 +15,9 @@ $( document ).ready(function() {
 	$('#btnUndo').prop('disabled', true);
 });		
 
-$( document ).on('keydown', function(e){
+/*CANVAS CELL SELECTION*/
+
+$( document ).on('keydown', function(e){ // Moves through canvas cell using arrows
 	switch (e.keyCode) {
 		case 37: game.moveSelection(0 ,-1); break;
 		case 38: game.moveSelection(-1, 0); break;
@@ -29,18 +31,13 @@ $( document ).on('keydown', function(e){
 	}	
 });
 
- $.fn.relMouseCoords = event => {
-		var totalOffsetX = 0;
-		var totalOffsetY = 0;
-		var currentElement = /*$('#canvas').get(0);*/document.getElementById("canvas");
+ $.fn.relMouseCoords = event => { // returns selected cell coord.
+		var currentElement = $('#canvas').get(0);
 
-		do {
-			totalOffsetX += currentElement.offsetLeft;
-			totalOffsetY += currentElement.offsetTop;
-		}
-		while (currentElement = currentElement.offsetParent)
-
-		return { x: event.pageX - totalOffsetX, y: event.pageY - totalOffsetY }
+		let loop = (_x, _y) => (currentElement = currentElement.offsetParent)? loop(_x + currentElement.offsetLeft, _y + currentElement.offsetTop) 
+								: {x: event.pageX - _x, y: event.pageY - _y } 
+								
+		return loop(currentElement.offsetLeft, currentElement.offsetTop);		
 	}
 
 	
@@ -68,7 +65,7 @@ $('#nuevoJuego').click(function () {
 });
 
 
-/*CANVAS CONTROL*/
+/*GAME CONTROL*/
 
 
 $("#sel1").change(function(){
