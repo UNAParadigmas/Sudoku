@@ -4,15 +4,12 @@ window.game=game;
 /* DOCUMENT CONTROL*/
 
 $( document ).ready(function() {	
-	//$('.logged').hide();
+	$('.logged').hide();
 	$("#onPause").hide();
 	$("#sudoku").hide();
 	
-	$('#pauseButton').prop('disabled', true);			
-	$('#btnAccept').prop('disabled', true);
-	//$('#btnSolve').prop('disabled', true);
-	$('#btnHint').prop('disabled', true);
-	$('#btnUndo').prop('disabled', true);
+	$('.inGame').find(':button').prop('disabled', true);
+	$('.inGame').prop('disabled', true);	
 });		
 
 /*CANVAS CELL SELECTION*/
@@ -64,25 +61,27 @@ $('#nuevoJuego').click(function () {
 	$().creaCanvas("4...3.......6..8..........1....5..9..8....6...7.2........1.27..5.3....4.9........",val,true,true);
 });
 
+$('#pauseButton').click(function () {
+	timer.pause();
+	$('.inGame').find(':button').prop('disabled', true);
+	$('.inGame').prop('disabled', true);
+	$('#sudoku').hide();
+	$("#onPause").show();	
+	$("#statusMsg").show();	
+;
+});
 
-/*GAME CONTROL*/
+/*BUTTONS ACTION*/
 
 
 $("#sel1").change(function(){
 	$('#dificultad').prop('hidden',(this.value != '9x9'));
 });		
 
-$('#pauseButton').click(function () {
-	timer.pause();
-	$('#pauseButton').prop('disabled', true);			
-	$('#sudoku').hide();
-	$("#onPause").show();
-	$("#statusMsg").show();
-});
-
 $('#continueBtn').click(function () {
 	timer.start();
-	$('#pauseButton').prop('disabled', false);			
+	$('.inGame').find(':button').prop('disabled', false);
+	$('.inGame').prop('disabled', false);
 	$('#sudoku').show();
 	$("#statusMsg").hide();
 });
@@ -92,16 +91,14 @@ $.fn.creaCanvas = function(txt,val,time = false, init=false){
 	var dif = (val !== '9x9' || aux === 'Fácil') ? 1 : (aux === 'Normal') ? 2 : 3 ;
 	showAllowed = dif === 1; 
 			
-	//$('#panelMsg').prop('hidden', false);
-	//$('#message').prop('hidden',false);
-	//$('#message').text('Juego Nuevo');
-				
+	$('.inGame').find(':button').prop('disabled', false);
+	$('.inGame').prop('disabled', false);	
+			
 	$('#size').text(val + ((val == '9x9')? " " + aux : ""));
-	/*if(time && timer.isRunning()){				
+	if(time && timer.isRunning()){				
 		timer.stop();
 	}
-	//timer.start("00:00:00");
-	$('#pauseButton').prop('disabled', false);*/
+	timer.start("00:00:00");
 	
 	game.board.setString(txt,init);
 	game.updateCanvas();
@@ -113,6 +110,6 @@ $.fn.evaluaTxt = function (txt){/////por implementar
 
 $('#loadGame').click( () =>{
 	let txt = $('#sudokuText').val();
-	$().creaCanvas(txt,$('#sel1 option:selected').text(),true);
+	$().creaCanvas(txt,$('#sel1 option:selected').text());
 	$('#load-modal').modal('toggle');
 });
