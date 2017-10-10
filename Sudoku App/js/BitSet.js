@@ -2,7 +2,7 @@
 class BitSet {
 	constructor(n = 0){
 		this.mask = 1 << n;
-		this.count = this.doCount();
+		this.count = 9;
 		this.backup = {};
 	}
 	
@@ -18,25 +18,29 @@ class BitSet {
 	
 	// BITMASK METHODS
 	
-	or(n){
-		if(this.backup[n])
-			this.backup[n]++;
-		else
-			this.backup[n]=1;
-		this.mask |= n;
-		this.count = this.doCount();
+	or(n, loc){
+		if(this.backup[n]&&this.backup[n].size){
+			if(this.backup[n].size<3)
+				this.backup[n].add(loc);
+		}
+		else{
+			this.backup[n]=new Set();
+			this.backup[n].add(loc);
+			this.mask |= n;
+			this.count--;
+		}
 	}
 		
-	updateMaskNot(n,trueMask){
-		if(!(trueMask.mask & n)){
-			if(this.backup[n]==1){
-				this.backup[n]--;
+	updateMaskNot(n,trueMask,loc){
+		if(!(trueMask.mask & n)&&n!=0){
+			if(this.backup[n].size==1){
+				this.backup[n].delete(loc);
 				this.mask = (~((~this.mask)|n))
+				this.count++;
 			}
 			else
-				this.backup[n]--;
+				this.backup[n].delete(loc);
 		}
-		this.count = this.doCount();
 	}
 
 	removeValue(n){
@@ -60,7 +64,7 @@ class BitSet {
 	
 	setMask(n){
 		this.mask = 1 << n;
-		this.count = this.doCount();
+		this.count--;
 	}
 	
 	valuesArray(){
@@ -69,7 +73,7 @@ class BitSet {
 	
 	removeValuesMask(bs) {
 		this.mask |= bs;
-		this.count = this.doCount();
+		//this.count = this.doCount();
 	}	
 	
 }

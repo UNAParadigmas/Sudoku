@@ -79,8 +79,10 @@ class Cell{
 	}
 		
 	setValue(n){
-		if(n != 0 && this.isNotAllowed(n))
+		if(n != 0 && this.isNotAllowed(n)){
 			return false
+			console.log('fuck')
+		}
 		if(n){
 			this.value=n
 			this.updateSiblings()
@@ -125,17 +127,17 @@ class Cell{
 	}
 	
 	
-	updateMask(n, given){
+	updateMask(n, given, loc){
 		if(!this.given){
-			this.mask.or(n)
+			this.mask.or(n, loc)
 			if(given)
-				this.trueMask.or(n);
+				this.trueMask.or(n, loc);
 			window.game.board.updateMin(this);
 		}
 		return this;
 	}
-	updateMaskNot(n){
-		this.mask.updateMaskNot(n,this.trueMask);
+	updateMaskNot(n, loc){
+		this.mask.updateMaskNot(n,this.trueMask, loc);
 	}
 	
 	// SIBS METHODS
@@ -146,7 +148,12 @@ class Cell{
 	}
 	
 	update(target,type){
-		$(this).trigger(target.loc.toString1(),[target,type]);
+		if(!this.given)
+			if(type)
+				this.updateMaskNot(1 << target.getValue(), target.loc)
+			else
+				this.updateMask(1 << target.getValue(), target.isGiven(), target.loc)
+		//$(this).trigger(target.loc.toString1(),[target,type]);
 	}
 	
 	

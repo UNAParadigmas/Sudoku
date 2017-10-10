@@ -1,7 +1,4 @@
-
-
 $(function () {
-
 	let $formLogin = $('#login-form');
 	let $formLost = $('#lost-form');
 	let $formRegister = $('#register-form');
@@ -167,7 +164,6 @@ $(function () {
 			$(this).text($msgText).fadeIn($msgAnimateTime);
 		});
 	}
-
 	function msgChange($divTag, $iconTag, $textTag, $divClass, $iconClass, $msgText) {
 		let $msgOld = $divTag.text();
 		msgFade($textTag, $msgText);
