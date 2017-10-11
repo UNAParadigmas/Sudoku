@@ -3,6 +3,7 @@ class Location{
 	constructor(row, col){
 		this.row = row;
 		this.col = col;
+		this.index = this.row*9+this.col;
 		this.or =  (_col, _row) => (this.col != _col || this.row != _row);
 		this.and = (_col, _row) => (this.col != _col && this.row != _row);
 		this.sibs = []
@@ -10,21 +11,18 @@ class Location{
 	toString1(){
 		return [this.row, this.col].toString();
 	}
+	fromJson(obj){
+		this.row =obj.row
+		this.col =obj.col
+		this.sibs=obj.sibs;
+	}
 	
 	// boolean methods
-	
-	/*isEmpty(){
-		return this.row < 0;
-	}*/
-	
+
 	equals(a) {
 		return a.row == this.row && a.col == this.col;
 	}
-	/*
-	notEquals(a) {
-		return !this.equals(a);
-	}
-	*/
+
 	// get methods
 	
 	getAllSibs(){
@@ -70,9 +68,5 @@ class Location{
 		let foo = (z, e, i) => filter(z, baseRow + Math.floor(i/3), baseCol + i%3)		
 		
 		return Array.from({length:9}).reduce(foo, []);
-	}
-		
-	toString(){
-		return "Row=" + String(this.row) + "Col=" + String(this.col);
 	}
 }

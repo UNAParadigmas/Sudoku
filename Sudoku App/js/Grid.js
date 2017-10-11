@@ -21,9 +21,9 @@ class Grid{
 	get(loc){//given a location, returns a cell
 		return this.matrix[loc.row][loc.col];
 	}
-	toString(){//returns a string of the values of all cells, if a cell is value 0, it replaces it for a '.'.
-		return this.map(e=>e.getValue()).toString()
-										.replace(/,/g,'')
-										.replace(/0/g,'.');
+	clone(){
+		let clone = new Grid(this.matrix.length)
+		clone.matrix = this.map(e=>e.clone())
+		return clone;
 	}
 }

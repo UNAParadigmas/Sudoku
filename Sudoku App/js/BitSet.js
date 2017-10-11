@@ -3,7 +3,7 @@ class BitSet {
 	constructor(n = 0){
 		this.mask = 1 << n;
 		this.count = 9;
-		this.backup = {};
+		this.backup = new Map();
 	}
 	
 	// BOOLEAN METHODS
@@ -19,61 +19,43 @@ class BitSet {
 	// BITMASK METHODS
 	
 	or(n, loc){
-		if(this.backup[n]&&this.backup[n].size){
-			if(this.backup[n].size<3)
-				this.backup[n].add(loc);
+		if(this.backup.get(n)&&this.backup.get(n).size){
+			if(this.backup.get(n).size<3)
+				this.backup.get(n).add(loc);
 		}
 		else{
-			this.backup[n]=new Set();
-			this.backup[n].add(loc);
+			this.backup.set(n, new Set())
+			this.backup.get(n).add(loc);
 			this.mask |= n;
-			this.count--;
+			this.count=9-this.backup.size;
 		}
+		this.hasSingle=this.backup.size==8
 	}
 		
 	updateMaskNot(n,trueMask,loc){
-		if(!(trueMask.mask & n)&&n!=0){
-			if(this.backup[n].size==1){
-				this.backup[n].delete(loc);
+		if(this.backup.get(n)&&!(trueMask.mask & n)&&n!=0){
+			if(this.backup.get(n).size==1){
+				this.backup.delete(n);
 				this.mask = (~((~this.mask)|n))
-				this.count++;
+				this.count=9-this.backup.size;
 			}
 			else
-				this.backup[n].delete(loc);
+				this.backup.get(n).delete(loc);
+			this.hasSingle=this.backup.size==8
 		}
-	}
-
-	removeValue(n){
-		this.mask |= 1 << n;
-		this.count = this.doCount();
 	}
 	
 	// VALUES METHODS
 	
-	doCount(){
-		return Array.from({length: 9}).reduce((z,e,i) => (~this.mask & (1 << i + 1))? z + 1: z, 0);
-	}	
-	
 	getSingle(){
-		let loop 		= (s, i) => (i > 9)? s : checkMask(s, i);		
-		let checkMask 	= (s, i) => (~this.mask & (1 << i))? checkSingle(s, i): loop(s, i+1);
-		let checkSingle = (s, i) => (s) ? 0 : loop(i, i+1);
-		
-		return loop(0,1);
-	}
-	
-	setMask(n){
-		this.mask = 1 << n;
-		this.count--;
+		let loop = i => (i < 10) ? (~this.mask & (1 << i)) ? i 
+														   : loop(i+1) 
+								 : 0;
+		return loop(1);
 	}
 	
 	valuesArray(){
 		return Array.from({length:9}).reduce((z,e,i) => ((1 << i+1) & ~this.mask)? z.concat(i+1) : z, [])
-	}
-	
-	removeValuesMask(bs) {
-		this.mask |= bs;
-		//this.count = this.doCount();
 	}	
 	
 }
