@@ -58,11 +58,10 @@ timer.addEventListener('started', function (e) {
 	$('#values').html(timer.getTimeValues().toString());
 });
 
-$('#nuevoJuego').click(() => {
+$('#nuevoJuego').click(function() {
 	$("#sudoku").show();
 	$("#onStart").hide();
 	$("#statusMsg").hide();
-  var val = $('#sel1 option:selected').text();
 	$.ajax({
 		type: 'GET',
 		dataType: 'json',
@@ -70,11 +69,11 @@ $('#nuevoJuego').click(() => {
 	})
 		.done(result => {
 			console.log("Nuevo sudoku: ", result.hilera);
-			$().creaCanvas(result.hilera, val, true, true);
+			$().creaCanvas([result.hilera], true);
 		})
 		.fail(err => {
 			console.log("error de conexion con backend: ");
-			$().creaCanvas("8.5.....2...9.1...3.........6.7..4..2...5...........6....38.....4....7...1.....9.", val, true, true);
+			$().creaCanvas(["8.5.....2...9.1...3.........6.7..4..2...5...........6....38.....4....7...1.....9."], true);
 		});
 });
 
@@ -132,7 +131,7 @@ $.fn.evaluaTxt = function (txt){/////por implementar
 
 $('#loadGame').click( () =>{
 	let txt = $('#sudokuText').val();
-	$().creaCanvas(txt,$('#sel1 option:selected').text(),true);
+	$().creaCanvas([txt],true);
 	$('#load-modal').modal('toggle');
 });
 
@@ -163,8 +162,29 @@ $.fn.loginUsuario = function(user){
 		
 	}
 	else { //es un usuario nuevo, sin partidas guardadas
-		usuario.partida.sudokuUndo=game.board.stringAct;
-		$().creaCanvas(usuario.partida.sudokuUndo, 0);
+		if(game.board.stringAct.length > 1){ //verificar si ya inicio un sudoku
+			usuario.partida.sudokuUndo=game.board.stringAct;
+			$().creaCanvas([usuario.partida.sudokuUndo], 0);
+		}
+		else{
+			$("#sudoku").show();
+			$("#onStart").hide();
+			$("#statusMsg").hide();
+			$.ajax({
+				type: 'GET',
+				dataType: 'json',
+				url: "api/sudoku/newSudoku"
+			})
+				.done(result => {
+					console.log("Nuevo sudoku: ", result.hilera);
+					$().creaCanvas([result.hilera], true);
+				})
+				.fail(err => {
+					console.log("error de conexion con backend: ");
+					$().creaCanvas(["8.5.....2...9.1...3.........6.7..4..2...5...........6....38.....4....7...1.....9."], true);
+				});
+		}
+		
 	}
 	$("#onStart").hide();
 	$("#statusMsg").hide();
@@ -180,6 +200,7 @@ $.fn.logoutUsuario = () => {
 $('#btnSave').click(() => {
 	usuario.partida.dificultad=level.selectedIndex;
 	usuario.partida.sudokuUndo=game.stack;
+	usuario.partida.sudokuUndo[usuario.partida.sudokuUndo.length]=game.board.stringAct;
 	let tiempo = timer.getTimeValues();
 	usuario.partida.tiempo = tiempo.seconds + tiempo.minutes * 60 + tiempo.hours * 3600;
 	console.log("GUARDANDO USUARIO: ", usuario);
@@ -241,5 +262,16 @@ $('#btnLoadRegistro').click(() => {
 		console.log("error al conectar con el server: ", err);
 	});
 
+});
+
+
+$(window).on('beforeunload', function(){
+	usuario.partida.dificultad=level.selectedIndex;
+	usuario.partida.sudokuUndo=game.stack;
+	usuario.partida.sudokuUndo[usuario.partida.sudokuUndo.length]=game.board.stringAct;
+	let tiempo = timer.getTimeValues();
+	usuario.partida.tiempo = tiempo.seconds + tiempo.minutes * 60 + tiempo.hours * 3600;
+	localStorage.removeItem('usuario');
+	localStorage.setItem('usuario', JSON.stringify(usuario));
 });
 

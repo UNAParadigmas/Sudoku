@@ -107,6 +107,7 @@ $(function () {
 
 	$("#logoutBtn").click(e => {
 		e.preventDefault();
+		console.log("LOGOUT");
 		$().logoutUsuario();
 		localStorage.removeItem('usuario');
 		$('#loginBtn').show();
