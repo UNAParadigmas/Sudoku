@@ -114,10 +114,14 @@ $.fn.creaCanvas = function(vec,seg){
 	if(timer.isRunning()){				
 		timer.stop();
 	}
+	game.stack=vec;
+	console.log("lenght VEC CREACANVAS: ", vec.length);
 	timer.start({precision: 'seconds', startValues: {seconds: seg}});
 	$('#pauseButton').prop('disabled', false);
-	game.board.setString(vec[0],true);
-	if(vec.length > 1) game.board.setString(vec[vec.length-1]);
+	
+	if(vec.length > 1) 
+		game.board.setString(vec[vec.length-1], true);
+	else game.board.setString(vec[0],true);
 	game.updateCanvas();
 };
 
@@ -148,51 +152,20 @@ $.fn.cargaSudokus = () => {
 	});
 }
 
-$.fn.loginUsuario = user => {
+$.fn.loginUsuario = function(user){
 	usuario = user;
-
-	let val = $('#sel1 option:selected').text();
-	if (usuario.partida.sudokuGuardado) {
-		console.log("sudoku a partir de Guardado");
-		$().creaCanvas(usuario.partida.sudokuGuardado, val, true, true);
+	localStorage.removeItem('usuario');
+	localStorage.setItem('usuario', JSON.stringify(usuario));
+	console.log("USER = ", usuario);
+	if (usuario.partida.sudokuUndo.length>0) {
+		console.log("CARGANDO SUDOKU DEL USUARIO LOGEADO");
+		$().creaCanvas(usuario.partida.sudokuUndo, usuario.partida.tiempo);
+		
 	}
-	else if (usuario.partida.sudokuUndo[usuario.partida.sudokuUndo.length - 1]) {
-		console.log("sudoku a partir de ultimo undo");
-		$().creaCanvas(usuario.partida.sudokuInicial, val, true, true);
+	else { //es un usuario nuevo, sin partidas guardadas
+		usuario.partida.sudokuUndo=game.board.stringAct;
+		$().creaCanvas(usuario.partida.sudokuUndo, 0);
 	}
-	else {
-		$.ajax({
-			type: 'GET',
-			dataType: 'json',
-			url: "api/sudoku/newSudoku"
-		})
-			.done(result => {
-				console.log("Nuevo sudoku: ", result.hilera);
-				$().creaCanvas(result.hilera, val, true, true);
-			})
-			.fail(err => {
-				console.log("error de conexion con backend: ");
-				$().creaCanvas("8.5.....2...9.1...3.........6.7..4..2...5...........6....38.....4....7...1.....9.", val, true, true);
-			});
-	}
-	
-	/*if (usuario.partida.tiempo) {
-		let tiempo = usuario.partida.tiempo;
-		let horas = Math.floor(tiempo / 3600);
-		let minutos = Math.floor(tiempo % 3600 / 60);
-		let segundos = Math.floor(tiempo % 3600 % 60);
-		timer.stop();
-		if(horas<10)
-			horas="0"+horas;
-		if(minutos<10)
-			minutos="0"+minutos;
-		if(segundos<10)
-			segundos="0"+segundos;
-		if(timer.isRunning()){				
-			timer.stop();
-		}
-		timer.start(horas+":"+minutos+":"+segundos);
-	}*/
 	$("#onStart").hide();
 	$("#statusMsg").hide();
 	$("#sudoku").show();
@@ -205,11 +178,13 @@ $.fn.logoutUsuario = () => {
 }
 
 $('#btnSave').click(() => {
-	console.log("saveGame presionado ", usuario);
-	usuario.partida.sudokuGuardado = game.board.getString();
+	usuario.partida.dificultad=level.selectedIndex;
+	usuario.partida.sudokuUndo=game.stack;
 	let tiempo = timer.getTimeValues();
 	usuario.partida.tiempo = tiempo.seconds + tiempo.minutes * 60 + tiempo.hours * 3600;
-	console.log("Despues de agregar sudoku ", usuario);
+	console.log("GUARDANDO USUARIO: ", usuario);
+	localStorage.removeItem('usuario');
+	localStorage.setItem('usuario', JSON.stringify(usuario));
 
 	$.ajax({
 		type: 'PUT',
@@ -219,8 +194,6 @@ $('#btnSave').click(() => {
 		url: "api/save"
 	}).done(result => {
 		console.log("Usuario actualizado, respuesta server: ", result);
-		usuario = result;
-		localStorage.setItem('usuario', result);
 	}).fail(err => {
 		console.log("error al conectar con el server: ", err);
 	});
@@ -232,7 +205,7 @@ $('#btnRegistro').click(() => {
 	let tiempo = timer.getTimeValues();
 	usuario.partida.tiempo=tiempo.seconds + tiempo.minutes * 60 + tiempo.hours * 3600;
 	let level=document.getElementById("level");
-	usuario.partida.dificultad=level.selectedIndex + 1;
+	usuario.partida.dificultad=level.selectedIndex;
 	$.ajax({
 		type: 'POST',
 		data: JSON.stringify(usuario),

@@ -22,7 +22,7 @@ $(function () {
 					contentType: 'application/json',
 					dataType: 'json',
 					url: "api/login"
-				}).done((result) => {
+				}).done(result => {
 					if (result == null) {
 						msgChange($('#div-login-msg'), $('#icon-login-msg'), $('#text-login-msg'), "error", "glyphicon-remove", "Login Incorrecto");
 					}
@@ -33,7 +33,6 @@ $(function () {
 						msgChange($('#div-login-msg'), $('#icon-login-msg'), $('#text-login-msg'), "succes", "glyphicon-ok", "Bienvenido " + result.nombre);
 						setTimeout(() => {
 							hideLogin();
-							localStorage.setItem('usuario', user);
 							$().loginUsuario(result);
 						}, 1000);
 					}
@@ -61,7 +60,7 @@ $(function () {
 					contentType: 'application/json',
 					dataType: 'json',
 					url: "api/registro"
-				}).done((result) => {
+				}).done(result => {
 
 					if (result == null) {
 						msgChange($('#div-register-msg'), $('#icon-register-msg'), $('#text-register-msg'), "error", "glyphicon-remove", "Error al registrar");
@@ -71,7 +70,6 @@ $(function () {
 						msgChange($('#div-register-msg'), $('#icon-register-msg'), $('#text-register-msg'), "succes", "glyphicon-ok", "Bienvenido " + result.nombre);
 						setTimeout(() => {
 							hideLogin();
-							localStorage.setItem('usuario', result);
 							$().loginUsuario(result);
 						}, 1000);
 					}
@@ -91,13 +89,15 @@ $(function () {
 		let data = localStorage.getItem('usuario');
 		if(data=="[object Object]"){
 			localStorage.removeItem('usuario');
-			console.log("No hay datos de usuario en el local storage");
+			console.log("Local storage Object object");
 		}
 		else if (data!==null ) {
 			data=JSON.parse(data);
 			console.log("usuario en local storage: ", data);
-			hideLogin();
-			$().loginUsuario(data);
+			setTimeout(() => {
+					hideLogin();
+					$().loginUsuario(data);
+			}, 50);
 		}
 		else {
 			console.log("No hay datos de usuario en el local storage");
@@ -123,12 +123,12 @@ $(function () {
 			.done(result => {
 				var val = $('#sel1 option:selected').text();
 				console.log("Nuevo sudoku: ", result.hilera);
-				$().creaCanvas(result.hilera, val, true, true);
+				$().creaCanvas([result.hilera], 0);
 			})
 			.fail(err => {
 				console.log("error de conexion con backend: ");
 				var val = $('#sel1 option:selected').text();
-				$().creaCanvas("8.5.....2...9.1...3.........6.7..4..2...5...........6....38.....4....7...1.....9.", val, true, true);
+				$().creaCanvas(["8.5.....2...9.1...3.........6.7..4..2...5...........6....38.....4....7...1.....9."], 0);
 			});
 
 	});
