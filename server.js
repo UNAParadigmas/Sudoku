@@ -2,9 +2,11 @@ var express = require('express');
 var path = require('path');
 var bodyParser = require('body-parser');
 var mongoose = require("mongoose");
+mongoose.Promise = global.Promise;
 
 var sudoku = require('./routes/sudoku');
 var sesion = require('./routes/sesion');
+var historial = require('./routes/historial');
 
 var app = express();
 
@@ -32,6 +34,7 @@ db.once('open', console.log.bind(console, 'Conectado a la DB !!!!!'));
 
 app.use('/api', sudoku);
 app.use('/api', sesion);
+app.use('/api', historial);
 app.get('*', (req, res) => {
     res.render('index.html');
 });

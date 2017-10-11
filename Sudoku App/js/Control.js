@@ -5,7 +5,7 @@ var usuario;
 window.game=game;	
 /* DOCUMENT CONTROL*/
 
-$( document ).ready(function() {	
+$( document ).ready(() => {	
   $().cargaSudokus();
 	$().checkSession();
 	$('.logged').hide();
@@ -18,7 +18,7 @@ $( document ).ready(function() {
 
 /*CANVAS CELL SELECTION*/
 
-$( document ).on('keydown', function(e){ // Moves through canvas cell using arrows
+$( document ).on('keydown', e => { // Moves through canvas cell using arrows
 	switch (e.keyCode) {
 		case 37: game.moveSelection(0, -1); break;
 		case 38: game.moveSelection(-1, 0); break;
@@ -43,7 +43,7 @@ $( document ).on('keydown', function(e){ // Moves through canvas cell using arro
 	}
 
 	
-	$('#canvas').on('mousedown', function(e){  // Calculate the position x-y of the canvas cell clicked.
+	$('#canvas').on('mousedown', e=>{  // Calculate the position x-y of the canvas cell clicked.
 		var coords = $().relMouseCoords(e);
 		game.selectCell(Math.floor(coords.y / 60), Math.floor(coords.x / 60));//60 = cell size
 	});
@@ -58,7 +58,7 @@ timer.addEventListener('started', function (e) {
 	$('#values').html(timer.getTimeValues().toString());
 });
 
-$('#nuevoJuego').click(function () {
+$('#nuevoJuego').click(() => {
 	$("#sudoku").show();
 	$("#onStart").hide();
 	$("#statusMsg").hide();
@@ -68,17 +68,17 @@ $('#nuevoJuego').click(function () {
 		dataType: 'json',
 		url: "api/sudoku/newSudoku"
 	})
-		.done((result) => {
+		.done(result => {
 			console.log("Nuevo sudoku: ", result.hilera);
 			$().creaCanvas(result.hilera, val, true, true);
 		})
-		.fail((err) => {
+		.fail(err => {
 			console.log("error de conexion con backend: ");
 			$().creaCanvas("8.5.....2...9.1...3.........6.7..4..2...5...........6....38.....4....7...1.....9.", val, true, true);
 		});
 });
 
-$('#pauseButton').click(function () {
+$('#pauseButton').click(() => {
 	timer.pause();
 	$('.inGame').find(':button').prop('disabled', true);
 	$('.inGame').prop('disabled', true);
@@ -90,12 +90,12 @@ $('#pauseButton').click(function () {
 
 /*BUTTONS ACTION*/
 
-$("#sel1").change(function () {
+$("#sel1").change(() => {
 	$('#dificultad').prop('hidden', (this.value != '9x9'));
 });
 
 
-$('#continueBtn').click(function () {
+$('#continueBtn').click(() => {
 	timer.start();
 	$('.inGame').find(':button').prop('disabled', false);
 	$('.inGame').prop('disabled', false);
@@ -103,7 +103,7 @@ $('#continueBtn').click(function () {
 	$("#statusMsg").hide();
 });
 
-$.fn.creaCanvas = function (txt, val, time = false, init = false) {
+$.fn.creaCanvas = (txt, val, time = false, init = false) => {
 	var aux = $('#level option:selected').text();
 
 	var dif = (val !== '9x9' || aux === 'Fácil') ? 1 : (aux === 'Normal') ? 2 : 3 ;
@@ -122,7 +122,7 @@ $.fn.creaCanvas = function (txt, val, time = false, init = false) {
 	game.updateCanvas();
 };
 
-$.fn.evaluaTxt = function (txt) {/////por implementar
+$.fn.evaluaTxt = (txt) => {/////por implementar
 	return false;
 }
 
@@ -140,7 +140,7 @@ $.fn.cargaSudokus = () => {
 		type: 'GET',
 		dataType: 'json',
 		url: "api/sudoku/import"
-	}).done((result) => {
+	}).done(result => {
 		console.log("Cargando sudokus a la base de datos: ", result);
 
 	}).fail(err => {
@@ -148,13 +148,12 @@ $.fn.cargaSudokus = () => {
 	});
 }
 
-$.fn.loginUsuario = (user) => {
+$.fn.loginUsuario = user => {
 	usuario = user;
 
 	let val = $('#sel1 option:selected').text();
 	if (usuario.partida.sudokuGuardado) {
 		console.log("sudoku a partir de Guardado");
-
 		$().creaCanvas(usuario.partida.sudokuGuardado, val, true, true);
 	}
 	else if (usuario.partida.sudokuUndo[usuario.partida.sudokuUndo.length - 1]) {
@@ -165,28 +164,38 @@ $.fn.loginUsuario = (user) => {
 		$.ajax({
 			type: 'GET',
 			dataType: 'json',
-			url: "api/newSudoku"
+			url: "api/sudoku/newSudoku"
 		})
-			.done((result) => {
-				console.log("No hay sudokus guardados, creando nuevo: ", result.hilera);
+			.done(result => {
+				console.log("Nuevo sudoku: ", result.hilera);
 				$().creaCanvas(result.hilera, val, true, true);
 			})
-			.fail((err) => {
+			.fail(err => {
 				console.log("error de conexion con backend: ");
 				$().creaCanvas("8.5.....2...9.1...3.........6.7..4..2...5...........6....38.....4....7...1.....9.", val, true, true);
 			});
 	}
-	/*let tiempo = usuario.partida.tiempo;
-	if (tiempo) {
+	
+	/*if (usuario.partida.tiempo) {
+		let tiempo = usuario.partida.tiempo;
 		let horas = Math.floor(tiempo / 3600);
-		let minutos = Math.floor(tiempo / 60);
-		let segundos = tiempo - (horas * 3600 + minutos * 60);
-		timer.start(`${horas}:${minutos}:${segundos}`);
+		let minutos = Math.floor(tiempo % 3600 / 60);
+		let segundos = Math.floor(tiempo % 3600 % 60);
+		timer.stop();
+		if(horas<10)
+			horas="0"+horas;
+		if(minutos<10)
+			minutos="0"+minutos;
+		if(segundos<10)
+			segundos="0"+segundos;
+		if(timer.isRunning()){				
+			timer.stop();
+		}
+		timer.start(horas+":"+minutos+":"+segundos);
 	}*/
-	$("#sudoku").show();
 	$("#onStart").hide();
 	$("#statusMsg").hide();
-	console.log("SUDOKU GUARDADO: ", "" + usuario.partida.sudokuGuardado);
+	$("#sudoku").show();
 }
 
 
@@ -208,12 +217,57 @@ $('#btnSave').click(() => {
 		contentType: 'application/json',
 		dataType: 'json',
 		url: "api/save"
-	}).done((result) => {
+	}).done(result => {
 		console.log("Usuario actualizado, respuesta server: ", result);
 		usuario = result;
 		localStorage.setItem('usuario', result);
-	}).fail((err) => {
+	}).fail(err => {
 		console.log("error al conectar con el server: ", err);
 	});
 
 });
+
+$('#btnRegistro').click(() => {
+	console.log("Registro presionado");
+	let tiempo = timer.getTimeValues();
+	usuario.partida.tiempo=tiempo.seconds + tiempo.minutes * 60 + tiempo.hours * 3600;
+	let level=document.getElementById("level");
+	usuario.partida.dificultad=level.selectedIndex + 1;
+	$.ajax({
+		type: 'POST',
+		data: JSON.stringify(usuario),
+		contentType: 'application/json',
+		dataType: 'json',
+		url: "api/historial"
+	}).done(result => {
+		console.log("Historial nuevo: ", result);
+	}).fail(err => {
+		console.log("error al conectar con el server: ", err);
+	});
+
+});
+
+$('#btnLoadRegistro').click(() => {
+	console.log("saveGame presionado ", usuario);
+	usuario.partida.sudokuGuardado = game.board.getString();
+	let tiempo = timer.getTimeValues();
+	usuario.partida.tiempo = tiempo.seconds + tiempo.minutes * 60 + tiempo.hours * 3600;
+	console.log("Despues de agregar sudoku ", usuario);
+
+	$.ajax({
+		type: 'PUT',
+		data: JSON.stringify(usuario),
+		contentType: 'application/json',
+		dataType: 'json',
+		url: "api/save"
+	}).done(result => {
+		console.log("Usuario actualizado, respuesta server: ", result);
+		usuario = result;
+		localStorage.setItem('usuario', result);
+	}).fail(err => {
+		console.log("error al conectar con el server: ", err);
+	});
+
+});
+
+

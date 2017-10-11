@@ -35,7 +35,6 @@ $(function () {
 							hideLogin();
 							localStorage.setItem('usuario', user);
 							$().loginUsuario(result);
-							//a.partida.nivel = "dificil"
 						}, 1000);
 					}
 
@@ -90,10 +89,15 @@ $(function () {
 
 	$.fn.checkSession = () => {
 		let data = localStorage.getItem('usuario');
-		if (data) {
-			console.log("data en local storage: ", data);
+		if(data=="[object Object]"){
+			localStorage.removeItem('usuario');
+			console.log("No hay datos de usuario en el local storage");
+		}
+		else if (data!==null ) {
+			data=JSON.parse(data);
+			console.log("usuario en local storage: ", data);
 			hideLogin();
-			$().loginUsuario(JSON.parse(data));
+			$().loginUsuario(data);
 		}
 		else {
 			console.log("No hay datos de usuario en el local storage");
@@ -101,7 +105,7 @@ $(function () {
 	}
 
 
-	$("#logoutBtn").click((e) => {
+	$("#logoutBtn").click(e => {
 		e.preventDefault();
 		$().logoutUsuario();
 		localStorage.removeItem('usuario');
@@ -116,12 +120,12 @@ $(function () {
 			dataType: 'json',
 			url: "api/sudoku/newSudoku"
 		})
-			.done((result) => {
+			.done(result => {
 				var val = $('#sel1 option:selected').text();
 				console.log("Nuevo sudoku: ", result.hilera);
 				$().creaCanvas(result.hilera, val, true, true);
 			})
-			.fail((err) => {
+			.fail(err => {
 				console.log("error de conexion con backend: ");
 				var val = $('#sel1 option:selected').text();
 				$().creaCanvas("8.5.....2...9.1...3.........6.7..4..2...5...........6....38.....4....7...1.....9.", val, true, true);

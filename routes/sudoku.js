@@ -11,7 +11,7 @@ const Usuario = require("../model/usuario");
  */
 router.put('/save', (req, res, next) => {
     let data = req.body;
-    console.log("Data: ", data);
+    console.log("ACTUALIZANDO PARTIDA");
     Usuario.findOne({
         _id: data._id
     }, (err, usuario) => {

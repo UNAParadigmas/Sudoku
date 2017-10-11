@@ -8,6 +8,7 @@ const Usuario = require("../model/usuario");
 router.post('/login', function (req, res, next) {
 
     let data = req.body;
+    console.log("LOGIN USUARIO");
     console.log("Login, data recibida: ", data.user +  data.pass)
     
 
@@ -29,7 +30,7 @@ router.post('/login', function (req, res, next) {
 //{"nombre" : "Juan","user" : "vite0150","pass" : "123"}
 router.post('/registro', (req, res, next) => {
     let data = req.body;
-    console.log("registro de usuario, nombre: ", data.nombre);
+    console.log("REGISTRO DE USUARIO, nombre: ", data.nombre);
 
 
     let newuser = new Usuario({

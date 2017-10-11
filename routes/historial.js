@@ -13,9 +13,9 @@ router.post('/historial', (req, res, next) => {
     console.log("Guardando nuevo historial");
 
     let newHistorial = new Historial({
-        usuario: data.id,
-        tiempo: data.tiempo,
-        dificultad: data.dificultad
+        usuario: data._id,
+        tiempo: data.partida.tiempo,
+        dificultad: data.partida.dificultad
     })
 
     newHistorial.save((err, historial) => {
