@@ -7,10 +7,7 @@ var Schema = mongoose.Schema;
  */
 
 var HistorialSchema = new Schema({
-    usuario: { 
-        type: Schema.Types.ObjectId,
-        ref: "Usuario"
-    },
+    usuario: String,
     tiempo: Number,
     dificultad: Number
 });

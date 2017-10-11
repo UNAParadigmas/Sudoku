@@ -46,11 +46,11 @@
 			<ul class="nav navbar-nav navbar-right notlogged">
 				<li>
 					<a class="btn btn-lg" id="loginBtn" role="button" data-toggle="modal" data-target="#login-modal" href="">
-						<span class="glyphicon glyphicon-user" ></span> Log In
+						<span class="glyphicon glyphicon-user" ></span> Log In / Registro
 					</a>
 				</li>
 			</ul>
-			<ul class="nav navbar-nav navbar-right logged">
+			<ul class="nav navbar-nav navbar-right inGame">
 				<li>
 					<a class="btn btn-lg preLogin" id="logoutBtn" role="button" href="">
 						<span class="glyphicon glyphicon-log-out" ></span> Log Out
@@ -119,6 +119,8 @@
 							<button type="button" class="btn btn-default" id="btnLoad" title='Carga sudoku a partir de texto.' data-toggle="modal" data-target="#load-modal">Load</button>
 							<button type="button" class="btn btn-default inGame" id="btnLoad" onclick="game.reset()">Restart</button>
 							<button type="button" class="btn btn-default inGame" id="btnLoad" title='Carga sudoku a partir de texto.' data-toggle="modal" data-target="#load-modal">Give Up</button>
+							<button type="button" class="btn btn-default" id="btnRegistro" title='Crear historial.'>Crear Historial</button>
+							<button type="button" class="btn btn-default" id="btnLoadRegistro" title='Cargar historial.'>Cargar Historial</button>
 						</div>
 					</div>
 				</div>
