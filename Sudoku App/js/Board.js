@@ -166,7 +166,7 @@ class Board{
 		}
 		this.isSolved = Array.from(this.check).reduce((z, loc) => (this.chechForSingleAnswer(loc, 0) || this.chechForSingleAnswer(loc, 1) || this.chechForSingleAnswer(loc, 2))&&z,true);
 		this.check=new Set();
-		if(!this.isSolved && !this.singles.length) return false; // falta pairs
+		if(!this.isSolved && !this.singles.length) return false;
 		if(this.isSolved) return false;
 		return true;
 	}
@@ -192,8 +192,9 @@ class Board{
 		this.digits = this.digits.map(x=>x.clear());
 	}
 	
-	reset() { // falta el metodo reset
-		this.digits = digits.map(x=>x.isGiven()?x:x.clear());
+	reset() {
+		let check = (cell) => cell.isGiven()? cell : cell.setValue(0);
+		this.locs.forEach(loc => check(this.getCell(loc)));
 	}
 	
 	checkIsValidSibs (digit, locs) {

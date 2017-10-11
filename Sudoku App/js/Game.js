@@ -141,7 +141,6 @@ class Game {
 				cel.setValue(0,loc);
 			cel.setValue(digit,loc);
 			this.updateCanvas();
-			console.log(this.board.digits.matrix)
 		}
 		
 		/* GAME METHODS*/

@@ -61,7 +61,7 @@ $('#nuevoJuego').click(function () {
 	$("#onStart").hide();
 	$("#statusMsg").hide();
 	var val = $('#sel1 option:selected').text();
-	$().creaCanvas("1..........4..1.9..6..8......3.7.8.......51..7..1..........3..8..5..497.4.685..1.",val,true,true);
+	$().creaCanvas(["8..........36......7..9.2...5...7.......457.....1...3...1....68..85...1..9....4.."],3000);
 });
 
 
@@ -87,23 +87,23 @@ $('#continueBtn').click(function () {
 	$("#statusMsg").hide();
 });
 
-$.fn.creaCanvas = function(txt,val,time = false, init=false){
-	var aux = $('#level option:selected').text();
+$.fn.creaCanvas = function(vec,seg){
+	/*var aux = $('#level option:selected').text();
 	var dif = (val !== '9x9' || aux === 'Fácil') ? 1 : (aux === 'Normal') ? 2 : 3 ;
 	showAllowed = dif === 1; 
-			
+	*/		
 	//$('#panelMsg').prop('hidden', false);
 	//$('#message').prop('hidden',false);
 	//$('#message').text('Juego Nuevo');
 				
-	$('#size').text(val + ((val == '9x9')? " " + aux : ""));
-	/*if(time && timer.isRunning()){				
+	//$('#size').text(val + ((val == '9x9')? " " + aux : ""));
+	if(timer.isRunning()){				
 		timer.stop();
 	}
-	//timer.start("00:00:00");
-	$('#pauseButton').prop('disabled', false);*/
-	
-	game.board.setString(txt,init);
+	timer.start({precision: 'seconds', startValues: {seconds: seg}});
+	$('#pauseButton').prop('disabled', false);
+	game.board.setString(vec[0],true);
+	if(vec.length > 1) game.board.setString(vec[vec.length-1]);
 	game.updateCanvas();
 };
 
