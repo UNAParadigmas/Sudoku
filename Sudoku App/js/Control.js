@@ -1,7 +1,5 @@
 let timer = new Timer();
 let game = new Game();
-var usuario;
-
 window.game=game;	
 /* DOCUMENT CONTROL*/
 
@@ -12,18 +10,21 @@ $( document ).ready(() => {
 	$("#onPause").hide();
 	$("#sudoku").hide();
 	
-	$('.inGame').find(':button').prop('disabled', true);
-	$('.inGame').prop('disabled', true);	
+	$('#pauseButton').prop('disabled', true);			
+	$('#btnAccept').prop('disabled', true);
+	//$('#btnSolve').prop('disabled', true);
+	$('#btnHint').prop('disabled', true);
+	$('#btnUndo').prop('disabled', true);
 });		
 
 /*CANVAS CELL SELECTION*/
 
 $( document ).on('keydown', e => { // Moves through canvas cell using arrows
 	switch (e.keyCode) {
-		case 37: game.moveSelection(0, -1); break;
+		case 37: game.moveSelection(0 ,-1); break;
 		case 38: game.moveSelection(-1, 0); break;
-		case 39: game.moveSelection(0, 1); break;
-		case 40: game.moveSelection(1, 0); break;
+		case 39: game.moveSelection(0 , 1); break;
+		case 40: game.moveSelection(1 , 0); break;
 		case 8: case 46: game.setDigitInCell(0); break;
 		default:
 			var key = Number(e.keyCode);
@@ -31,7 +32,6 @@ $( document ).on('keydown', e => { // Moves through canvas cell using arrows
 			if (digit >= 0 && digit <= 9) game.setDigitInCell(digit);
 	}	
 });
-
 
  $.fn.relMouseCoords = event => { // returns selected cell coord.
 		var currentElement = $('#canvas').get(0);
@@ -78,14 +78,12 @@ $('#nuevoJuego').click(() => {
 		});
 });
 
-$('#pauseButton').click(() => {
+$('#pauseButton').click(function () {
 	timer.pause();
-	$('.inGame').find(':button').prop('disabled', true);
-	$('.inGame').prop('disabled', true);
+	$('#pauseButton').prop('disabled', true);			
 	$('#sudoku').hide();
-	$("#onPause").show();	
-	$("#statusMsg").show();	
-;
+	$("#onPause").show();
+	$("#statusMsg").show();
 });
 
 /*BUTTONS ACTION*/
@@ -97,38 +95,40 @@ $("#sel1").change(() => {
 
 $('#continueBtn').click(() => {
 	timer.start();
-	$('.inGame').find(':button').prop('disabled', false);
-	$('.inGame').prop('disabled', false);
+	$('#pauseButton').prop('disabled', false);			
 	$('#sudoku').show();
 	$("#statusMsg").hide();
 });
 
-$.fn.creaCanvas = (txt, val, time = false, init = false) => {
-	var aux = $('#level option:selected').text();
 
+$.fn.creaCanvas = function(vec,seg){
+	/*var aux = $('#level option:selected').text();
 	var dif = (val !== '9x9' || aux === 'Fácil') ? 1 : (aux === 'Normal') ? 2 : 3 ;
 	showAllowed = dif === 1; 
-			
-	$('.inGame').find(':button').prop('disabled', false);
-	$('.inGame').prop('disabled', false);	
-			
-	$('#size').text(val + ((val == '9x9')? " " + aux : ""));
-	if(time && timer.isRunning()){				
+	*/		
+	//$('#panelMsg').prop('hidden', false);
+	//$('#message').prop('hidden',false);
+	//$('#message').text('Juego Nuevo');
+				
+	//$('#size').text(val + ((val == '9x9')? " " + aux : ""));
+	if(timer.isRunning()){				
 		timer.stop();
 	}
-	timer.start("00:00:00");
-	
-	game.board.setString(txt,init);
+	timer.start({precision: 'seconds', startValues: {seconds: seg}});
+	$('#pauseButton').prop('disabled', false);
+	game.board.setString(vec[0],true);
+	if(vec.length > 1) game.board.setString(vec[vec.length-1]);
 	game.updateCanvas();
 };
 
-$.fn.evaluaTxt = (txt) => {/////por implementar
+
+$.fn.evaluaTxt = function (txt){/////por implementar
 	return false;
 }
 
-$('#loadGame').click(() => {
+$('#loadGame').click( () =>{
 	let txt = $('#sudokuText').val();
-	$().creaCanvas(txt, $('#sel1 option:selected').text(), true);
+	$().creaCanvas(txt,$('#sel1 option:selected').text(),true);
 	$('#load-modal').modal('toggle');
 });
 
@@ -269,5 +269,4 @@ $('#btnLoadRegistro').click(() => {
 	});
 
 });
-
 

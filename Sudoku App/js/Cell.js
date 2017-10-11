@@ -10,6 +10,7 @@ class Cell{
 		this.loc=new Location(-1,-1);
 	}
 	
+	
 	// BOOLEAN METHODS
 	
 	isGiven(){//returns the given state of this particular cell, it is true if it was a number that was set by the program (hints).
@@ -60,16 +61,13 @@ class Cell{
 	
 	// SET METHODS
 	
-	setSiblings(locs, grid){
-		if(!this.given)
-			locs.forEach(loc => $(this).on(loc.toString1(), (e, sib, param) => {
-				param ? e.target.updateMaskNot( 1 << sib.getValue())
-					  : e.target.updateMask( 1 << sib.getValue(), sib.isGiven());
-			}))
-	}
-	
 	setLoc(loc){
 		this.loc=loc;
+		return this;
+	}
+	
+	setIndex(i){
+		this.index=i;
 		return this;
 	}
 	
@@ -81,8 +79,8 @@ class Cell{
 	setValue(n){
 		if(n != 0 && this.isNotAllowed(n)){
 			return false
-			console.log('fuck')
 		}
+		
 		if(n){
 			this.value=n
 			this.updateSiblings()
@@ -93,7 +91,7 @@ class Cell{
 		return true;
 	}
 	
-	setGiven(n/*, loc*/){
+	setGiven(n){
 		this.value = n;
 		this.given = !!n;
 		if(n)
@@ -101,29 +99,12 @@ class Cell{
 		return false;
 	}
 		
-	setMask(n){
-		if(n && !this.given) this.mask = 1 << n;
-	}
-	
 	// CELL METHODS
-	clone(){
-		let clone = new Cell(this.value);
-		clone.mask = this.mask;
-		clone.answer = this.answer;
-		clone.given = this.given;
-		clone.loc = this.loc;
-		return clone
-	}
-	clear(){
-		this.value = 0;
-		this.mask = new BitSet(0);
-		this.trueMask = new BitSet(0);
-		this.answer = 0;
-	}
 	
 	reset(){
 		this.setValue(0);
 		this.answer=0;
+		return this;
 	}
 	
 	
@@ -132,7 +113,6 @@ class Cell{
 			this.mask.or(n, loc)
 			if(given)
 				this.trueMask.or(n, loc);
-			window.game.board.updateMin(this);
 		}
 		return this;
 	}
@@ -153,7 +133,7 @@ class Cell{
 				this.updateMaskNot(1 << target.getValue(), target.loc)
 			else
 				this.updateMask(1 << target.getValue(), target.isGiven(), target.loc)
-		//$(this).trigger(target.loc.toString1(),[target,type]);
+		return this;
 	}
 	
 	

@@ -50,7 +50,7 @@ class Game {
 					
 					con.fillText(val, subCol, subRow);
 				});
-			}else if(!!cel.getValue()){ // draw values
+			}else if(cel.isAssigned()){ // draw values
 				let value = cel.getValue();
 				con.font = "32pt Calibri";
 				let subCol = (loc.col + 0.5) * 60;
@@ -98,7 +98,7 @@ class Game {
 		
 		pushBoard() {
 			if(!this.beforeValEquals())
-				this.stack.push(this.board.getString());
+				this.stack.push(this.board.stringAct.slice(0));
 		}
 		
 		//--------------------------------------------------------------------------------------------
@@ -141,7 +141,6 @@ class Game {
 				cel.setValue(0,loc);
 			cel.setValue(digit,loc);
 			this.updateCanvas();
-			console.log(this.board.digits.matrix)
 		}
 		
 		/* GAME METHODS*/
