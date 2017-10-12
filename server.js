@@ -40,6 +40,8 @@ var db = mongoose.connection;
 db.on('error', console.log.bind(console, 'Error al conectar a la DB !!!!!'));
 db.once('open', console.log.bind(console, 'Conectado a la DB !!!!!'));
 
+
+
 app.use('/api', sudoku);
 app.use('/api', sesion);
 app.use('/api', historial);
