@@ -107,7 +107,7 @@ $('#continueBtn').click(function () {
 	$("#statusMsg").hide();
 });
 
-.fn.creaCanvas = function(vec,seg){
+$.fn.creaCanvas = function(vec,seg){
 	$('#mstack').val(''); 
 	mov = 1;
 	
