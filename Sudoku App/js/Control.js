@@ -3,19 +3,13 @@ let game = new Game();
 window.game=game;	
 /* DOCUMENT CONTROL*/
 
-$( document ).ready(function() {	
-	//$('.logged').hide();
-	$("#onPause").hide();
-	$("#sudoku").hide();
+$( document ).ready(() => {	
 	
-	$('#pauseButton').prop('disabled', true);			
-	$('#btnAccept').prop('disabled', true);
-	//$('#btnSolve').prop('disabled', true);
-	$('#btnHint').prop('disabled', true);
-	$('#btnUndo').prop('disabled', true);
 });		
 
-$( document ).on('keydown', function(e){
+/*CANVAS CELL SELECTION*/
+
+$( document ).on('keydown', e => { // Moves through canvas cell using arrows
 	switch (e.keyCode) {
 		case 37: game.moveSelection(0 ,-1); break;
 		case 38: game.moveSelection(-1, 0); break;
@@ -29,25 +23,21 @@ $( document ).on('keydown', function(e){
 	}	
 });
 
- $.fn.relMouseCoords = event => {
-		var totalOffsetX = 0;
-		var totalOffsetY = 0;
-		var canvasX = 0;
-		var canvasY = 0;
-		var currentElement = /*$('#canvas')*/document.getElementById('canvas');
+ $.fn.relMouseCoords = event => { // returns selected cell coord.
+		var currentElement = $('#canvas').get(0);
 
-		do {
-			totalOffsetX += currentElement.offsetLeft;
-			totalOffsetY += currentElement.offsetTop;
-		}
-		while (currentElement = currentElement.offsetParent)
-
-		canvasX = event.pageX - totalOffsetX;
-		canvasY = event.pageY - totalOffsetY;
-
-		return { x: canvasX, y: canvasY }
+		let loop = (_x, _y) => (currentElement = currentElement.offsetParent)? loop(_x + currentElement.offsetLeft, _y + currentElement.offsetTop) 
+								: {x: event.pageX - _x, y: event.pageY - _y } 
+								
+		return loop(currentElement.offsetLeft, currentElement.offsetTop);		
 	}
 
+	
+	$('#canvas').on('mousedown', e=>{  // Calculate the position x-y of the canvas cell clicked.
+		var coords = $().relMouseCoords(e);
+		game.selectCell(Math.floor(coords.y / 60), Math.floor(coords.x / 60));//60 = cell size
+	});
+	
 /*TIMER CONTROL*/
 
 timer.addEventListener('secondsUpdated', function (e) {
@@ -58,27 +48,24 @@ timer.addEventListener('started', function (e) {
 	$('#values').html(timer.getTimeValues().toString());
 });
 
-$('#nuevoJuego').click(function () {
+$('#nuevoJuego').click(function() {
 	$("#sudoku").show();
 	$("#onStart").hide();
 	$("#statusMsg").hide();
-	var val = $('#sel1 option:selected').text();
-	$().creaCanvas("4...3.......6..8..........1....5..9..8....6...7.2........1.27..5.3....4.9........",val,true,true);
+	$.ajax({
+		type: 'GET',
+		dataType: 'json',
+		url: "api/sudoku/newSudoku"
+	})
+		.done(result => {
+			console.log("Nuevo sudoku: ", result.hilera);
+			$().creaCanvas([result.hilera], true);
+		})
+		.fail(err => {
+			console.log("error de conexion con backend: ");
+			$().creaCanvas(["8.5.....2...9.1...3.........6.7..4..2...5...........6....38.....4....7...1.....9."], true);
+		});
 });
-
-
-/*CANVAS CONTROL*/
-
-$('#canvas').on('mousedown', function(e){
-	var x = e.pageX - this.offsetLeft;
-	var y = e.pageY - this.offsetTop;
-	var coords = $().relMouseCoords(e);
-	game.selectCell(Math.floor(coords.y / game.CellSize), Math.floor(coords.x / game.CellSize));
-});
-
-$("#sel1").change(function(){
-	$('#dificultad').prop('hidden',(this.value != '9x9'));
-});		
 
 $('#pauseButton').click(function () {
 	timer.pause();
@@ -88,32 +75,41 @@ $('#pauseButton').click(function () {
 	$("#statusMsg").show();
 });
 
-$('#continueBtn').click(function () {
+/*BUTTONS ACTION*/
+
+$("#sel1").change(() => {
+	$('#dificultad').prop('hidden', (this.value != '9x9'));
+});
+
+
+$('#continueBtn').click(() => {
 	timer.start();
 	$('#pauseButton').prop('disabled', false);			
 	$('#sudoku').show();
 	$("#statusMsg").hide();
 });
 
-$.fn.creaCanvas = function(txt,val,time = false, init=false){
-	var aux = $('#level option:selected').text();
-	var dif = (val !== '9x9' || aux === 'Fácil') ? 1 : (aux === 'Normal') ? 2 : 3 ;
-	showAllowed = dif === 1; 
-			
-	//$('#panelMsg').prop('hidden', false);
-	//$('#message').prop('hidden',false);
-	//$('#message').text('Juego Nuevo');
-				
-	$('#size').text(val + ((val == '9x9')? " " + aux : ""));
-	/*if(time && timer.isRunning()){				
+
+$.fn.creaCanvas = function(vec,seg){
+	let lvl = $('#level option:selected').text();
+	
+	game.clear();
+	game.showSingles = Boolean(lvl == 'Easy');
+	game.showAllowed = Boolean(lvl != 'Hard');
+	
+	if(timer.isRunning()){				
 		timer.stop();
 	}
-	//timer.start("00:00:00");
-	$('#pauseButton').prop('disabled', false);*/
+	timer.start({precision: 'seconds', startValues: {seconds: seg}});
+	$('#pauseButton').prop('disabled', false);
 	
-	game.board.setString(txt,init);
+	game.board.setString(vec[0],true);
+	if(vec.length > 1) 
+		game.board.setString(vec[vec.length-1], false, true);
+	game.stack=vec;
 	game.updateCanvas();
 };
+
 
 $.fn.evaluaTxt = function (txt){/////por implementar
 	return false;
@@ -121,6 +117,81 @@ $.fn.evaluaTxt = function (txt){/////por implementar
 
 $('#loadGame').click( () =>{
 	let txt = $('#sudokuText').val();
-	$().creaCanvas(txt,$('#sel1 option:selected').text(),true);
+	$().creaCanvas([txt],true);
 	$('#load-modal').modal('toggle');
 });
+
+
+$.fn.logoutUsuario = () => {
+	usuario = null;
+
+}
+
+$('#btnSave').click(() => {
+	usuario.partida.dificultad=level.selectedIndex;
+	usuario.partida.sudokuUndo=game.stack;
+	//usuario.partida.sudokuUndo[usuario.partida.sudokuUndo.length]=game.stack;
+	let tiempo = timer.getTimeValues();
+	usuario.partida.tiempo = tiempo.seconds + tiempo.minutes * 60 + tiempo.hours * 3600;
+	console.log("GUARDANDO USUARIO: ", usuario);
+	localStorage.removeItem('usuario');
+	localStorage.setItem('usuario', JSON.stringify(usuario));
+
+	$.ajax({
+		type: 'PUT',
+		data: JSON.stringify(usuario),
+		contentType: 'application/json',
+		dataType: 'json',
+		url: "api/save"
+	}).done(result => {
+		console.log("Usuario actualizado, respuesta server: ", result);
+	}).fail(err => {
+		console.log("error al conectar con el server: ", err);
+	});
+
+});
+
+$('#btnRegistro').click(() => {
+	console.log("Registro presionado");
+	let tiempo = timer.getTimeValues();
+	usuario.partida.tiempo=tiempo.seconds + tiempo.minutes * 60 + tiempo.hours * 3600;
+	let level=document.getElementById("level");
+	usuario.partida.dificultad=level.selectedIndex;
+	$.ajax({
+		type: 'POST',
+		data: JSON.stringify(usuario),
+		contentType: 'application/json',
+		dataType: 'json',
+		url: "api/historial"
+	}).done(result => {
+		console.log("Historial nuevo: ", result);
+	}).fail(err => {
+		console.log("error al conectar con el server: ", err);
+	});
+
+});
+
+$('#btnLoadRegistro').click(() => {
+	console.log("Cargando Registro");
+	$.ajax({
+		type: 'GET',
+		dataType: 'json',
+		url: "api/historial/"+usuario._id
+	}).done(result => {
+		console.log("Historiales obtenidos: ", result);
+	}).fail(err => {
+		console.log("error al conectar con el server: ", err);
+	});
+
+});
+
+
+$(window).on('beforeunload', function(){
+	usuario.partida.dificultad=level.selectedIndex;
+	usuario.partida.sudokuUndo=game.stack;
+	let tiempo = timer.getTimeValues();
+	usuario.partida.tiempo = tiempo.seconds + tiempo.minutes * 60 + tiempo.hours * 3600;
+	localStorage.removeItem('usuario');
+	localStorage.setItem('usuario', JSON.stringify(usuario));
+});
+
