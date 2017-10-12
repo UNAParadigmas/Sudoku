@@ -30,17 +30,16 @@ router.post('/historial', (req, res, next) => {
     });
 
 });
-
 router.get('/historial/:id', (req, res) => {
     console.log("Cargando registros del jugador");
-    Historial.find({ usuario_id: req.params.id }, null, { limit: 10, sort: -date }, (err, historial) => {
+    Historial.find({ usuario: req.params.id }, null, { limit: 10, sort: {id:-1} }, (err, historiales) => {
         if (err) {
             console.log("error: ", err.message);
             res.status(500).send(err);
         }
         else {
-            console.log("historial encontrados: ", historial);
-            res.status(200).json(historial);
+            console.log("historiales encontrados: ", historiales);
+            res.status(200).json(historiales);
         }
     });
 });
