@@ -139,15 +139,20 @@ class Game {
 			var loc = new Location(this.selRow, this.selCol)
 			var cel = this.board.getCell(loc);
 			if (cel.isGiven())
-				return;
+				return "";
 			if (!!digit&&cel.isNotAllowed(digit)) {
-				return;
+				return "Not Allowed Value"; 
 			}
-			if(!!cel.getValue())
-				cel.setValue(0,loc);
-			cel.setValue(digit,loc);
-			this.updateCanvas();
+			let msg = "{Row: "+this.selRow+" ,Col: "+this.selCol+"} = "+digit;
 			this.pushBoard();
+			
+			if(!!cel.getValue()){
+				cel.setValue(0,loc);
+			}
+			cel.setValue(digit,loc);
+			
+			this.updateCanvas();
+			return msg;
 		}
 		
 		/* GAME METHODS*/
@@ -172,26 +177,23 @@ class Game {
 			this.updateCanvas();
 		}
 		
-		clear(){
-			this.board = new Board();
+		solve(){
+			let startTime = new Date().getTime();
+			this.pushBoard();
+			let totalTime
+			if(this.board.trySolve()){
+				totalTime = ((new Date()).getTime() - startTime)/1000
+			}else{
+				totalTime = -1;
+			}
+			this.updateCanvas();
+			return totalTime;
 		}
 		
-		solve(){
-			let msg;
-			let startTime = new Date().getTime();
-			//this.pushBoard();
-			if(this.board.isSolved){
-				msg = 'Sudoku Is Already Resolved';
-			}else if(this.board.trySolve()){
-				let totalTime = ((new Date()).getTime() - startTime)/1000
-				msg = 'Sudoku Solved {Time: '+totalTime+ 'seconds.}';
-			}else{
-				msg = 'Sudoku doesn\'t have answer.'
-			}			
-			Promise.resolve(this.updateCanvas()).then(alert(msg));
-		}
 		update(target,type){
 			this.board.updateDigits(target,type);
 		}
+		
+		
 	}
 		
