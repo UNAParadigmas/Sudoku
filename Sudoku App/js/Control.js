@@ -220,16 +220,56 @@ $('#btnLoadRegistro').click(() => {
 	});
 
 });
-
+/*
+$.ajax({
+		type: 'POST',
+		data: JSON.stringify(usuario),
+		contentType: 'application/json',
+		dataType: 'json',
+		url: "api/historial"
+	}).done(result => {
+		console.log("Historial nuevo: ", result);
+	}).fail(err => {
+		console.log("error al conectar con el server: ", err);
+	});
+	*/
 
 $('#btnSolve').click(() => {
-	let time = game.solve();
-	if(game.board.isSolved){
-		$('#msg').text('Sudoku Solved {time: '+time+ ' seconds}');
-	}else{
-		$('#msg').text('Sudoku doesn\'t have solution.');
-	}	
-	timer.pause();	
+	$.ajax({
+		type: 'POST',
+		data: JSON.stringify({"actual":game.board.stringAct}),
+		contentType: 'application/json',
+		dataType: 'json',
+		url: "api/sudoku/solve"
+	}).done(result => {
+		//result=JSON.parse(result);
+		if(result.msg==true){
+			console.log("RESUELTO EN SERVER", result.actual.length);
+			game.board.setString(result.actual);
+			game.board.isSolved=true;
+			game.updateCanvas();
+			$('#msg').text('Sudoku Solved {time: '+result.tiempo+ ' seconds}');
+		}
+		else{
+			$('#msg').text('Current Sudoku doesn\'t have solution.');
+		}
+		timer.pause();
+	}).fail(err => {
+		console.log("error al conectar con el server: ", err);
+		let time = game.solve();
+		if(game.board.isSolved){
+			$('#msg').text('Sudoku Solved {time: '+time+ ' seconds}');
+		}else{
+			$('#msg').text('Sudoku doesn\'t have solution.');
+		}	
+		timer.pause();
+	});
+
+
+		
+
+
+	
 });
 
 $('#btnAccept').click(() => {

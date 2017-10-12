@@ -13,6 +13,10 @@ var fs = require('fs');
 const Sudoku = require("../model/sudoku");
 const Usuario = require("../model/usuario");
 
+//Sudoku
+const {Board} = require("../sudoku_Solver/Board");
+
+
 /**
  * guardar juego del usuario actual (enviar todo el usuario para buscar y actualizar)
  * PD: load no se ocupa porque los datos van a estar en el front end cuando inicion sesion
@@ -101,6 +105,28 @@ router.get('/sudoku/:param', (req, res) => {
         } break;
 
     }
+});
+
+router.post('/sudoku/solve', function (req, res, next) {
+    let data = req.body;
+    console.log("RESOLVIENDO EN SERVER", data);
+    
+    //llega sudoku actual
+    board = new Board();
+    board.setString(data.actual);
+    let startTime = new Date().getTime();
+    let totalTime;
+    if (board.trySolve()) {
+        totalTime = ((new Date()).getTime() - startTime) / 1000
+        console.log("RESUELTO: ", board.stringAct);
+        res.status(200).json({ "msg": true, "actual": board.stringAct, "tiempo": totalTime });
+    }
+    else {
+        totalTime = -1;
+        res.status(500).json({ "msg": false, "actual": board.stringAct, "tiempo": totalTime });
+    }
+
+
 });
 
 module.exports = router;
