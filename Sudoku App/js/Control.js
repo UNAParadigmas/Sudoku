@@ -4,17 +4,7 @@ window.game=game;
 /* DOCUMENT CONTROL*/
 
 $( document ).ready(() => {	
-  $().cargaSudokus();
-	$().checkSession();
-	$('.logged').hide();
-	$("#onPause").hide();
-	$("#sudoku").hide();
 	
-	$('#pauseButton').prop('disabled', true);			
-	$('#btnAccept').prop('disabled', true);
-	//$('#btnSolve').prop('disabled', true);
-	$('#btnHint').prop('disabled', true);
-	$('#btnUndo').prop('disabled', true);
 });		
 
 /*CANVAS CELL SELECTION*/
@@ -101,26 +91,23 @@ $('#continueBtn').click(() => {
 
 
 $.fn.creaCanvas = function(vec,seg){
-	/*var aux = $('#level option:selected').text();
-	var dif = (val !== '9x9' || aux === 'Fácil') ? 1 : (aux === 'Normal') ? 2 : 3 ;
-	showAllowed = dif === 1; 
-	*/		
-	//$('#panelMsg').prop('hidden', false);
-	//$('#message').prop('hidden',false);
-	//$('#message').text('Juego Nuevo');
-				
-	//$('#size').text(val + ((val == '9x9')? " " + aux : ""));
+	let lvl = $('#level option:selected').text();
+	
+	game.clear();
+	game.showSingles = Boolean(lvl == 'Easy');
+	game.showAllowed = Boolean(lvl != 'Hard');
+	
 	if(timer.isRunning()){				
 		timer.stop();
 	}
-	game.stack=vec;
-	console.log("lenght VEC CREACANVAS: ", vec.length);
+	game.stack = vec;
 	timer.start({precision: 'seconds', startValues: {seconds: seg}});
 	$('#pauseButton').prop('disabled', false);
 	
+	game.board.setString(vec[0],true);
 	if(vec.length > 1) 
-		game.board.setString(vec[vec.length-1], true);
-	else game.board.setString(vec[0],true);
+		game.board.setString(vec[vec.length-2]);
+	
 	game.updateCanvas();
 };
 
@@ -135,62 +122,6 @@ $('#loadGame').click( () =>{
 	$('#load-modal').modal('toggle');
 });
 
-/**
- * Cargar la lista de sudokus del txt a la base de datos al inicio (primero verificando si ya existen)
- */
-$.fn.cargaSudokus = () => {
-	$.ajax({
-		type: 'GET',
-		dataType: 'json',
-		url: "api/sudoku/import"
-	}).done(result => {
-		console.log("Cargando sudokus a la base de datos: ", result);
-
-	}).fail(err => {
-		console.log("Error al conectar con el servidor para cargar los sudokus", err);
-	});
-}
-
-$.fn.loginUsuario = function(user){
-	usuario = user;
-	localStorage.removeItem('usuario');
-	localStorage.setItem('usuario', JSON.stringify(usuario));
-	console.log("USER = ", usuario);
-	if (usuario.partida.sudokuUndo.length>0) {
-		console.log("CARGANDO SUDOKU DEL USUARIO LOGEADO");
-		$().creaCanvas(usuario.partida.sudokuUndo, usuario.partida.tiempo);
-		
-	}
-	else { //es un usuario nuevo, sin partidas guardadas
-		if(game.board.stringAct.length > 1){ //verificar si ya inicio un sudoku
-			usuario.partida.sudokuUndo=game.board.stringAct;
-			$().creaCanvas([usuario.partida.sudokuUndo], 0);
-		}
-		else{
-			$("#sudoku").show();
-			$("#onStart").hide();
-			$("#statusMsg").hide();
-			$.ajax({
-				type: 'GET',
-				dataType: 'json',
-				url: "api/sudoku/newSudoku"
-			})
-				.done(result => {
-					console.log("Nuevo sudoku: ", result.hilera);
-					$().creaCanvas([result.hilera], true);
-				})
-				.fail(err => {
-					console.log("error de conexion con backend: ");
-					$().creaCanvas(["8.5.....2...9.1...3.........6.7..4..2...5...........6....38.....4....7...1.....9."], true);
-				});
-		}
-		
-	}
-	$("#onStart").hide();
-	$("#statusMsg").hide();
-	$("#sudoku").show();
-}
-
 
 $.fn.logoutUsuario = () => {
 	usuario = null;
@@ -200,7 +131,7 @@ $.fn.logoutUsuario = () => {
 $('#btnSave').click(() => {
 	usuario.partida.dificultad=level.selectedIndex;
 	usuario.partida.sudokuUndo=game.stack;
-	usuario.partida.sudokuUndo[usuario.partida.sudokuUndo.length]=game.board.stringAct;
+	//usuario.partida.sudokuUndo[usuario.partida.sudokuUndo.length]=game.stack;
 	let tiempo = timer.getTimeValues();
 	usuario.partida.tiempo = tiempo.seconds + tiempo.minutes * 60 + tiempo.hours * 3600;
 	console.log("GUARDANDO USUARIO: ", usuario);

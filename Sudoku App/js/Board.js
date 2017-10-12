@@ -1,6 +1,6 @@
 class Board{
 	
-	constructor(size) {
+	constructor(size = 9) {
 		this.size=size;
 		this.digits = new Grid(size);
 		this.locs = this.createLocs();
@@ -188,12 +188,10 @@ class Board{
 	
 	// GAME METHODS
 	
-	clear() {
-		this.digits = this.digits.map(x=>x.clear());
-	}
 	
 	reset() {
-		let check = (cell) => cell.isGiven()? cell : cell.setValue(0);
+		this.isSolved  = false;
+		let check = (cell) => cell.isGiven()? cell : cell.reset(0);
 		this.locs.forEach(loc => check(this.getCell(loc)));
 	}
 	

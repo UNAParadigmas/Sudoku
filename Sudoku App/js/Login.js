@@ -1,3 +1,9 @@
+$( document ).ready(() => {
+	$().cargaSudokus(); //carga los sudokus a la base
+	$().checkSession();	
+});
+
+
 $(function () {
 	let $formLogin = $('#login-form');
 	let $formLost = $('#lost-form');
@@ -85,26 +91,6 @@ $(function () {
 		return false;
 	});
 
-	$.fn.checkSession = () => {
-		let data = localStorage.getItem('usuario');
-		if(data=="[object Object]"){
-			localStorage.removeItem('usuario');
-			console.log("Local storage Object object");
-		}
-		else if (data!==null ) {
-			data=JSON.parse(data);
-			console.log("usuario en local storage: ", data);
-			setTimeout(() => {
-					hideLogin();
-					$().loginUsuario(data);
-			}, 50);
-		}
-		else {
-			console.log("No hay datos de usuario en el local storage");
-		}
-	}
-
-
 	$("#logoutBtn").click(e => {
 		e.preventDefault();
 		console.log("LOGOUT");
@@ -134,18 +120,6 @@ $(function () {
 
 	});
 
-
-
-
-
-	function hideLogin() {
-		$('#login-modal').modal('hide');
-		$('#loginBtn').hide();
-		$('#logoutBtn').css('visibility', 'visible');
-	}
-
-
-
 	$('#login_register_btn').click(function () { modalAnimate($formLogin, $formRegister) });
 	$('#register_login_btn').click(function () { modalAnimate($formRegister, $formLogin); });
 	$('#login_lost_btn').click(function () { modalAnimate($formLogin, $formLost); });
@@ -169,6 +143,7 @@ $(function () {
 			$(this).text($msgText).fadeIn($msgAnimateTime);
 		});
 	}
+	
 	function msgChange($divTag, $iconTag, $textTag, $divClass, $iconClass, $msgText) {
 		let $msgOld = $divTag.text();
 		msgFade($textTag, $msgText);
@@ -184,12 +159,80 @@ $(function () {
 	}
 });
 
-/* #####################################################################
-   #
-   #   Project       : Modal Login with jQuery Effects
-   #   Author        : Rodrigo Amarante (rodrigockamarante)
-   #   Version       : 1.0
-   #   Created       : 07/28/2015
-   #   Last Change   : 08/02/2015
-   #
-   ##################################################################### */
+	$.fn.checkSession = () => {
+		let data = localStorage.getItem('usuario');
+		if (data !== null) {
+			data=JSON.parse(data);
+			console.log("usuario en local storage: ", data);
+			setTimeout(() => {
+					hideLogin();
+					$().loginUsuario(data);
+			}, 50);
+		} else {
+			console.log("No hay datos de usuario en el local storage");
+		}
+	}
+	
+	$.fn.loginUsuario = function(user){
+	usuario = user;
+	localStorage.removeItem('usuario');
+	localStorage.setItem('usuario', JSON.stringify(usuario));
+	
+	if (usuario.partida.sudokuUndo.length > 0) {
+		console.log("CARGANDO SUDOKU DEL USUARIO LOGEADO");
+		$().creaCanvas(usuario.partida.sudokuUndo, usuario.partida.tiempo);
+		
+	}
+	else { //es un usuario nuevo, sin partidas guardadas
+		if(game.board.stringAct.length > 1){ //verificar si ya inicio un sudoku
+			usuario.partida.sudokuUndo=game.board.stringAct;
+			$().creaCanvas([usuario.partida.sudokuUndo], 0);
+		}
+		else{
+			$("#sudoku").show();
+			$("#onStart").hide();
+			$("#statusMsg").hide();
+			$.ajax({
+				type: 'GET',
+				dataType: 'json',
+				url: "api/sudoku/newSudoku"
+			})
+				.done(result => {
+					console.log("Nuevo sudoku: ", result.hilera);
+					$().creaCanvas([result.hilera], true);
+				})
+				.fail(err => {
+					console.log("error de conexion con backend: ");
+					$().creaCanvas(["8.5.....2...9.1...3.........6.7..4..2...5...........6....38.....4....7...1.....9."], true);
+				});
+		}
+		
+	}
+		$("#onStart").hide();
+		$("#statusMsg").hide();
+		$("#sudoku").show();
+	}
+
+
+	function hideLogin() {
+		$('#login-modal').modal('hide');
+		$('#loginBtn').hide();
+		$('#logoutBtn').show();
+		$('.logged').show();
+	}
+
+/**
+ * Cargar la lista de sudokus del txt a la base de datos al inicio (primero verificando si ya existen)
+ */
+$.fn.cargaSudokus = () => {
+	$.ajax({
+		type: 'GET',
+		dataType: 'json',
+		url: "api/sudoku/import"
+	}).done(result => {
+		console.log("Cargando sudokus a la base de datos: ", result);
+
+	}).fail(err => {
+		console.log("Error al conectar con el servidor para cargar los sudokus", err);
+	});
+}
