@@ -114,7 +114,6 @@ class Cell{
 		return this;
 	}
 	
-	
 	updateMask(n, given, loc){
 		if(!this.given){
 			this.mask.or(n, loc)
