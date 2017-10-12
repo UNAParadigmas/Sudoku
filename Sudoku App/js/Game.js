@@ -136,11 +136,11 @@ class Game {
 			if (!!digit&&cel.isNotAllowed(digit)) {
 				return;
 			}
-			this.pushBoard();
 			if(!!cel.getValue())
 				cel.setValue(0,loc);
 			cel.setValue(digit,loc);
 			this.updateCanvas();
+			this.pushBoard();
 		}
 		
 		/* GAME METHODS*/
@@ -172,7 +172,7 @@ class Game {
 		solve(){
 			let msg;
 			let startTime = new Date().getTime();
-			this.pushBoard();
+			//this.pushBoard();
 			if(this.board.isSolved){
 				msg = 'Sudoku Is Already Resolved';
 			}else if(this.board.trySolve()){

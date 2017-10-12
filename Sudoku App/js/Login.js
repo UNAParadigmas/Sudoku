@@ -164,10 +164,8 @@ $(function () {
 		if (data !== null) {
 			data=JSON.parse(data);
 			console.log("usuario en local storage: ", data);
-			setTimeout(() => {
-					hideLogin();
-					$().loginUsuario(data);
-			}, 50);
+			hideLogin();
+			$().loginUsuario(data);
 		} else {
 			console.log("No hay datos de usuario en el local storage");
 		}
@@ -199,11 +197,11 @@ $(function () {
 			})
 				.done(result => {
 					console.log("Nuevo sudoku: ", result.hilera);
-					$().creaCanvas([result.hilera], true);
+					$().creaCanvas([result.hilera], 0);
 				})
 				.fail(err => {
 					console.log("error de conexion con backend: ");
-					$().creaCanvas(["8.5.....2...9.1...3.........6.7..4..2...5...........6....38.....4....7...1.....9."], true);
+					$().creaCanvas(["8.5.....2...9.1...3.........6.7..4..2...5...........6....38.....4....7...1.....9."], 0);
 				});
 		}
 		

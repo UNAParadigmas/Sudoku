@@ -100,14 +100,13 @@ $.fn.creaCanvas = function(vec,seg){
 	if(timer.isRunning()){				
 		timer.stop();
 	}
-	game.stack = vec;
 	timer.start({precision: 'seconds', startValues: {seconds: seg}});
 	$('#pauseButton').prop('disabled', false);
 	
 	game.board.setString(vec[0],true);
 	if(vec.length > 1) 
-		game.board.setString(vec[vec.length-2]);
-	
+		game.board.setString(vec[vec.length-1], false, true);
+	game.stack=vec;
 	game.updateCanvas();
 };
 
@@ -173,22 +172,13 @@ $('#btnRegistro').click(() => {
 });
 
 $('#btnLoadRegistro').click(() => {
-	console.log("saveGame presionado ", usuario);
-	usuario.partida.sudokuGuardado = game.board.getString();
-	let tiempo = timer.getTimeValues();
-	usuario.partida.tiempo = tiempo.seconds + tiempo.minutes * 60 + tiempo.hours * 3600;
-	console.log("Despues de agregar sudoku ", usuario);
-
+	console.log("Cargando Registro");
 	$.ajax({
-		type: 'PUT',
-		data: JSON.stringify(usuario),
-		contentType: 'application/json',
+		type: 'GET',
 		dataType: 'json',
-		url: "api/save"
+		url: "api/historial/"+usuario._id
 	}).done(result => {
-		console.log("Usuario actualizado, respuesta server: ", result);
-		usuario = result;
-		localStorage.setItem('usuario', result);
+		console.log("Historiales obtenidos: ", result);
 	}).fail(err => {
 		console.log("error al conectar con el server: ", err);
 	});
@@ -199,7 +189,6 @@ $('#btnLoadRegistro').click(() => {
 $(window).on('beforeunload', function(){
 	usuario.partida.dificultad=level.selectedIndex;
 	usuario.partida.sudokuUndo=game.stack;
-	usuario.partida.sudokuUndo[usuario.partida.sudokuUndo.length]=game.board.stringAct;
 	let tiempo = timer.getTimeValues();
 	usuario.partida.tiempo = tiempo.seconds + tiempo.minutes * 60 + tiempo.hours * 3600;
 	localStorage.removeItem('usuario');

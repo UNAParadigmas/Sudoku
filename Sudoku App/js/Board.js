@@ -36,7 +36,10 @@ class Board{
 		if(target.isNotAssigned()){
 			if((this.minLoc.mask.count>target.mask.count)||this.minLoc.isAssigned())
 				this.minLoc=target;
-			this.check.add(target.loc);
+			//this.check.add(target.loc);
+			if(target.mask.count==1){
+				this.singles.push(target);
+			}
 		}
 	}
 	
@@ -59,10 +62,15 @@ class Board{
 		this.getCell(loc) = value;
 	}
 	
-	setString (value, init=false) { 
+	setString (value, init=false, undo=false) { 
+		
 		let loc = i => new Location(Math.floor(i/9),i%9);
 		let check =(val) => isNaN(val)? 0 : parseInt(val);
-		if(!init){
+		if(undo){
+			value = Array.from(this.stringInit).reduce((z,e,i)=>e==value[i]?z+'.':z+value[i],'');
+			Array.from(value).forEach((e, i) => check(e)?this.getCell(loc(i)).setValue(e):undefined);
+		}
+		else if(!init){
 			value = Array.from(this.stringAct).reduce((z,e,i)=>e==value[i]?z+'.':z+e,'');
 			Array.from(value).forEach((e, i) => check(e)?this.getCell(loc(i)).reset():undefined)
 		}
@@ -76,16 +84,23 @@ class Board{
 	
 	// ANSWER METHODS
 	acceptPossibles(){//cambiar nombre
+
+		if(!this.singles.length && this.minLoc.mask.count==0)
+			return false;
 		this.singles.forEach(cell => cell.setValue(0));
 		return !this.singles.filter(cell => !cell.setValue(cell.getAnswer())).length;
 	}
 	
 	trySolve(){
+		window.game.updateCanvas();
 		this.singles = [];
-		let vec=this.detSolve()
-		if(vec[vec.length-1]==false){
-			return false;
+		if(this.minLoc.mask.count==1){
+			let vec=this.detSolve()
+			if(vec[vec.length-1]==false){
+				return false;
+			}
 		}
+		
 		if(this.minLoc.mask.count>2||this.minLoc.isAssigned())
 			this.findCellWithFewestChoices();
 		if(!this.isSolved){//non deteministic case
@@ -103,18 +118,20 @@ class Board{
 	}
 	
 	detSolve(vec = []){
-		if(this.analyzeGrid()){
+		//if(this.analyzeGrid()){
 			if(!this.acceptPossibles())
 				return vec.concat(this.singles.concat(false));
+			if(this.minLoc.mask.count==0)
+				return vec;
 			return this.detSolve(vec.concat(this.singles));
-		}
-		else{
+		//}
+		/*else{
 			if(!this.acceptPossibles())
 				vec.concat(this.singles.concat(false));
 			else
 				vec.concat(this.singles);
-		}
-		return vec
+		}*/
+		//return vec
 	}
 	
 	nonDetSolve(arr, i){
