@@ -1,10 +1,14 @@
-/**
- * @license easytimer.js v1.0
- * Created by Albert González
- * Licensed under The MIT License.
- *
-* @class Timer
+/*
+  @author Denis Rodriguez Viquez
+          Luis Vasquez Quiros
+          Walter Chavez Oviedo
+          Manuel Masis Segura
+  @since 2017
+  @license easytimer.js v1.0
+  Created by Albert González
+  Licensed under The MIT License.
 */
+
 
 var module;
 

@@ -1,3 +1,10 @@
+/*
+  @author Denis Rodriguez Viquez
+          Luis Vasquez Quiros
+          Walter Chavez Oviedo
+          Manuel Masis Segura
+  @since 2017
+*/
 
 class Grid{
 	constructor(size){//constructor method, builds a grid of a given size.

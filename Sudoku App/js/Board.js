@@ -1,3 +1,11 @@
+/*
+  @author Denis Rodriguez Viquez
+          Luis Vasquez Quiros
+          Walter Chavez Oviedo
+          Manuel Masis Segura
+  @since 2017
+*/
+
 class Board{
 	
 	constructor(size) {

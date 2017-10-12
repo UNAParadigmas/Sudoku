@@ -1,3 +1,11 @@
+/*
+  @author Denis Rodriguez Viquez
+          Luis Vasquez Quiros
+          Walter Chavez Oviedo
+          Manuel Masis Segura
+  @since 2017
+*/
+
 let timer = new Timer();
 let game = new Game();
 let mov = 1;
@@ -269,11 +277,13 @@ $('#btnSolve').click(() => {
 });
 
 $(window).on('beforeunload', function(){
-	usuario.partida.dificultad=level.selectedIndex;
-	usuario.partida.sudokuUndo=game.stack;
-	usuario.partida.sudokuUndo[usuario.partida.sudokuUndo.length]=game.board.stringAct;
-	let tiempo = timer.getTimeValues();
-	usuario.partida.tiempo = tiempo.seconds + tiempo.minutes * 60 + tiempo.hours * 3600;
-	localStorage.removeItem('usuario');
-	localStorage.setItem('usuario', JSON.stringify(usuario));
+if(usuario){
+		usuario.partida.dificultad=level.selectedIndex;
+		usuario.partida.sudokuUndo=game.stack;
+		let tiempo = timer.getTimeValues();
+		usuario.partida.tiempo = tiempo.seconds + tiempo.minutes * 60 + tiempo.hours * 3600;
+		localStorage.removeItem('usuario');
+		localStorage.setItem('usuario', JSON.stringify(usuario));
+	}
+	
 });
