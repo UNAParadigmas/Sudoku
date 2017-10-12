@@ -136,11 +136,12 @@ class Game {
 			if (!!digit&&cel.isNotAllowed(digit)) {
 				return;
 			}
+			this.pushBoard();
 			if(!!cel.getValue())
 				cel.setValue(0,loc);
 			cel.setValue(digit,loc);
 			this.updateCanvas();
-			this.pushBoard();
+			console.log(this.board.digits.matrix)
 		}
 		
 		/* GAME METHODS*/
@@ -165,23 +166,16 @@ class Game {
 			this.updateCanvas();
 		}
 		
-		clear(){
-			this.board = new Board();
-		}
-		
 		solve(){
-			let msg;
 			let startTime = new Date().getTime();
-			//this.pushBoard();
-			if(this.board.isSolved){
-				msg = 'Sudoku Is Already Resolved';
-			}else if(this.board.trySolve()){
+			this.pushBoard();
+			if(this.board.trySolve()){
 				let totalTime = ((new Date()).getTime() - startTime)/1000
-				msg = 'Sudoku Solved {Time: '+totalTime+ 'seconds.}';
+				console.log('solved, time: '+totalTime+ 'seconds.');
 			}else{
-				msg = 'Sudoku doesn\'t have answer.'
-			}			
-			Promise.resolve(this.updateCanvas()).then(alert(msg));
+				//dont have answer
+			}
+			this.updateCanvas();
 		}
 		update(target,type){
 			this.board.updateDigits(target,type);

@@ -1,6 +1,6 @@
 class Board{
 	
-	constructor(size = 9) {
+	constructor(size) {
 		this.size=size;
 		this.digits = new Grid(size);
 		this.locs = this.createLocs();
@@ -36,10 +36,7 @@ class Board{
 		if(target.isNotAssigned()){
 			if((this.minLoc.mask.count>target.mask.count)||this.minLoc.isAssigned())
 				this.minLoc=target;
-			//this.check.add(target.loc);
-			if(target.mask.count==1){
-				this.singles.push(target);
-			}
+			this.check.add(target.loc);
 		}
 	}
 	
@@ -62,15 +59,10 @@ class Board{
 		this.getCell(loc) = value;
 	}
 	
-	setString (value, init=false, undo=false) { 
-		
+	setString (value, init=false) { 
 		let loc = i => new Location(Math.floor(i/9),i%9);
 		let check =(val) => isNaN(val)? 0 : parseInt(val);
-		if(undo){
-			value = Array.from(this.stringInit).reduce((z,e,i)=>e==value[i]?z+'.':z+value[i],'');
-			Array.from(value).forEach((e, i) => check(e)?this.getCell(loc(i)).setValue(e):undefined);
-		}
-		else if(!init){
+		if(!init){
 			value = Array.from(this.stringAct).reduce((z,e,i)=>e==value[i]?z+'.':z+e,'');
 			Array.from(value).forEach((e, i) => check(e)?this.getCell(loc(i)).reset():undefined)
 		}
@@ -84,23 +76,16 @@ class Board{
 	
 	// ANSWER METHODS
 	acceptPossibles(){//cambiar nombre
-
-		if(!this.singles.length && this.minLoc.mask.count==0)
-			return false;
 		this.singles.forEach(cell => cell.setValue(0));
 		return !this.singles.filter(cell => !cell.setValue(cell.getAnswer())).length;
 	}
 	
 	trySolve(){
-		window.game.updateCanvas();
 		this.singles = [];
-		if(this.minLoc.mask.count==1){
-			let vec=this.detSolve()
-			if(vec[vec.length-1]==false){
-				return false;
-			}
+		let vec=this.detSolve()
+		if(vec[vec.length-1]==false){
+			return false;
 		}
-		
 		if(this.minLoc.mask.count>2||this.minLoc.isAssigned())
 			this.findCellWithFewestChoices();
 		if(!this.isSolved){//non deteministic case
@@ -118,20 +103,18 @@ class Board{
 	}
 	
 	detSolve(vec = []){
-		//if(this.analyzeGrid()){
+		if(this.analyzeGrid()){
 			if(!this.acceptPossibles())
 				return vec.concat(this.singles.concat(false));
-			if(this.minLoc.mask.count==0)
-				return vec;
 			return this.detSolve(vec.concat(this.singles));
-		//}
-		/*else{
+		}
+		else{
 			if(!this.acceptPossibles())
 				vec.concat(this.singles.concat(false));
 			else
 				vec.concat(this.singles);
-		}*/
-		//return vec
+		}
+		return vec
 	}
 	
 	nonDetSolve(arr, i){
@@ -183,7 +166,7 @@ class Board{
 		}
 		this.isSolved = Array.from(this.check).reduce((z, loc) => (this.chechForSingleAnswer(loc, 0) || this.chechForSingleAnswer(loc, 1) || this.chechForSingleAnswer(loc, 2))&&z,true);
 		this.check=new Set();
-		if(!this.isSolved && !this.singles.length) return false;
+		if(!this.isSolved && !this.singles.length) return false; // falta pairs
 		if(this.isSolved) return false;
 		return true;
 	}
@@ -205,11 +188,12 @@ class Board{
 	
 	// GAME METHODS
 	
+	clear() {
+		this.digits = this.digits.map(x=>x.clear());
+	}
 	
-	reset() {
-		this.isSolved  = false;
-		let check = (cell) => cell.isGiven()? cell : cell.reset(0);
-		this.locs.forEach(loc => check(this.getCell(loc)));
+	reset() { // falta el metodo reset
+		this.digits = digits.map(x=>x.isGiven()?x:x.clear());
 	}
 	
 	checkIsValidSibs (digit, locs) {
