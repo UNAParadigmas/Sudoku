@@ -13,7 +13,14 @@ window.game=game;
 /* DOCUMENT CONTROL*/
 
 $( document ).ready(() => {	
-	
+		$('#btnSave').prop('disabled', true)
+		$('#btnSolve').prop('disabled', true)
+		$('#btnAccept').prop('disabled', true)
+		$('#btnHint').prop('disabled', true)
+		$('#btnUndo').prop('disabled', true)
+		$('#btnLoad').prop('disabled', true)
+		$('#pauseButton').prop('disabled', true)
+		$("#onPause").hide();
 });		
 
 /*CANVAS CELL SELECTION*/
@@ -41,19 +48,7 @@ $( document ).on('keydown', e => { // Moves through canvas cell using arrows
 		let timev = timer.getTimeValues()
 		let time = timev.seconds + timev.minutes * 60 + timev.hours * 3600;
 		$('#msg').text('Sudoku Solved {time: '+time+ ' seconds}');	
-		if( localStorage.getItem('usuario')){ 
-			usuario.partida.tiempo = time;
-			let level= $("#level").prop('selectedIndex');
-			$.ajax({
-				type: 'POST',
-				data: JSON.stringify(usuario),
-				contentType: 'application/json',
-				dataType: 'json',
-				url: "api/historial"
-			}).fail(err => {
-				console.log("error al conectar con el server: ", err);
-			});
-		}
+		$().guardaPartida();
 	}		
 });
 
@@ -86,6 +81,12 @@ $('#nuevoJuego').click(function() {
 	$("#sudoku").show();
 	$("#onStart").hide();
 	$("#statusMsg").hide();
+	$('#btnSave').prop('disabled', false)
+	$('#btnSolve').prop('disabled', false)
+	$('#btnAccept').prop('disabled', false)
+	$('#btnHint').prop('disabled', false)
+	$('#btnUndo').prop('disabled', false)
+	$('#btnLoad').prop('disabled', false)
 	$.ajax({
 		type: 'GET',
 		dataType: 'json',
@@ -107,6 +108,13 @@ $('#pauseButton').click(function () {
 	$('#sudoku').hide();
 	$("#onPause").show();
 	$("#statusMsg").show();
+	$('#btnSave').prop('disabled', true)
+	$('#btnSolve').prop('disabled', true)
+	$('#btnAccept').prop('disabled', true)
+	$('#btnHint').prop('disabled', true)
+	$('#btnUndo').prop('disabled', true)
+	$('#btnLoad').prop('disabled', true)
+	$('#pauseButton').prop('disabled', true)
 });
 
 /*BUTTONS ACTION*/
@@ -128,7 +136,8 @@ $.fn.creaCanvas = function(vec,seg){
 	$('#mstack').val(''); 
 	mov = 1;
 	let lvl = $('#level option:selected').text();
-	
+	if(lvl == 'Easy')
+		
 	game.clear();
 	game.showSingles = Boolean(lvl == 'Easy');
 	game.showAllowed = Boolean(lvl != 'Hard');
@@ -161,6 +170,24 @@ $('#loadGame').click( () =>{
 $.fn.logoutUsuario = () => {
 	usuario = null;
 
+}
+
+$.fn.guardaPartida = () => {
+	if( localStorage.getItem('usuario')){ 
+		let tiempo = timer.getTimeValues();
+		usuario.partida.tiempo = tiempo.seconds + tiempo.minutes * 60 + tiempo.hours * 3600;
+		let level= $("#level").prop('selectedIndex');
+		usuario.partida.dificultad = level;
+		$.ajax({
+			type: 'POST',
+			data: JSON.stringify(usuario),
+			contentType: 'application/json',
+			dataType: 'json',
+			url: "api/historial"
+		}).fail(err => {
+			console.log("error al conectar con el server: ", err);
+		});
+	}
 }
 
 $('#btnSave').click(() => {
@@ -253,54 +280,30 @@ $('#btnSolve').click(() => {
 		}	
 		timer.pause();
 	});
+	$().guardaPartida();
 });
 
 $('#btnAccept').click(() => {
+	
 	game.board.findSingles();
-
 	if(game.board.checkSolved()){
 		timer.pause();
 		let timev = timer.getTimeValues()
 		let time = timev.seconds + timev.minutes * 60 + timev.hours * 3600;
 		$('#msg').text('Sudoku Solved {time: '+time+ ' seconds}');	
-		if( localStorage.getItem('usuario')){ 
-			usuario.partida.tiempo = time;
-			let level= $("#level").prop('selectedIndex');
-			$.ajax({
-				type: 'POST',
-				data: JSON.stringify(usuario),
-				contentType: 'application/json',
-				dataType: 'json',
-				url: "api/historial"
-			}).fail(err => {
-				console.log("error al conectar con el server: ", err);
-			});
-		}
+		$().guardaPartida();
 	}
 	game.updateCanvas();
 });
 
 $('#btnHint').click(() => {
 	game.board.findAloneSingle();
-
 	if(game.board.checkSolved()){
 		timer.pause();
 		let timev = timer.getTimeValues()
 		let time = timev.seconds + timev.minutes * 60 + timev.hours * 3600;
 		$('#msg').text('Sudoku Solved {time: '+time+ ' seconds}');	
-		if( localStorage.getItem('usuario')){ 
-			usuario.partida.tiempo = time;
-			let level= $("#level").prop('selectedIndex');
-			$.ajax({
-				type: 'POST',
-				data: JSON.stringify(usuario),
-				contentType: 'application/json',
-				dataType: 'json',
-				url: "api/historial"
-			}).fail(err => {
-				console.log("error al conectar con el server: ", err);
-			});
-		}
+		$().guardaPartida();
 	}
 	game.updateCanvas();
 });
