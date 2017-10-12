@@ -72,12 +72,15 @@ class Board{
 		let check =(val) => isNaN(val)? 0 : parseInt(val);
 		if(undo){
 			value = Array.from(this.stringInit).reduce((z,e,i)=>e==value[i]?z+'.':z+value[i],'');
-			Array.from(value).forEach((e, i) => check(e)?this.getCell(loc(i)).setValue(e):undefined);
+			Array.from(value).forEach((e, i) => check(e)?this.getCell(loc(i)).setValue(parseInt(e)):undefined);
 		}
 		else if(!init){
 			value = Array.from(this.stringAct).reduce((z,e,i)=>e==value[i]?z+'.':z+e,'');
 			Array.from(value).forEach((e, i) => check(e)?this.getCell(loc(i)).reset():undefined)
-		}
+		} /*if(init && undo){
+			value = Array.from(this.stringInit).reduce((z,e,i)=>e==value[i]?z+'.':z+value[i],'');
+			Array.from(value).forEach((e, i) => check(e)?this.getCell(loc(i)).setValue(0):undefined);
+		}*/
 		else{
 			let changes = Array.from(value).reduce((z, val, i) => this.getCell(loc(i)).setGiven(check(val), loc(i))?z.concat(loc(i)):z,[])
 			changes.forEach(e=>this.digits.get(e).updateSiblings())
@@ -87,7 +90,7 @@ class Board{
 	}
 	
 	// ANSWER METHODS
-	acceptPossibles(){//cambiar nombre
+	acceptPossibles(){
 		return !this.singles.filter(cell => !cell.setValue(cell.getAnswer())).length;
 	}
 	
@@ -99,12 +102,7 @@ class Board{
 				return false;
 			}
 		}
-		if(this.minLoc.mask.count>2||this.minLoc.isAssigned())
-			this.findCellWithFewestChoices();
-		if(this.minLoc.isAssigned()){
-			this.isSolved=true
-			return true
-		}
+		if(this.checkSolved()) return true;
 		if(!this.isSolved){//non deteministic case
 			this.stack.push(this.minLoc);
 			this.stack.push(this.stringAct.slice(0));
@@ -178,6 +176,29 @@ class Board{
 			return true;
 		}
 		return false;
+	}
+	
+	checkSolved(){		
+		if(this.minLoc.mask.count>2||this.minLoc.isAssigned())
+			this.findCellWithFewestChoices();
+		if(this.minLoc.isAssigned()){
+			this.isSolved=true
+			return true
+		}
+	}
+	//USER METHODS
+	
+	findSingles(){
+		let checkCell = (z,cell) => (cell.isNotAssigned() && cell.mask.count == 1)? z.concat(cell.setAnswer(cell.mask.getSingle())) : z;
+		this.locs.reduce((z,loc) => checkCell(z,this.getCell(loc)),[]).forEach(cell => cell.setValue(cell.getAnswer()));
+	}
+	
+	findAloneSingle(){
+		let checkCell = (z,cell) => (cell.isNotAssigned() && cell.mask.count == 1)? z.concat(cell) : z;
+		let vec = this.locs.reduce((z,loc) => checkCell(z,this.getCell(loc)),[]);
+		if(vec.length > 0){
+			vec[0].setValue(vec[0].mask.getSingle());
+		} 		
 	}
 	
 	

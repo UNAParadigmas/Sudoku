@@ -35,11 +35,25 @@ $( document ).on('keydown', e => { // Moves through canvas cell using arrows
 	if(msg){
 		$('#mstack').val($('#mstack').val()+'\t'+(mov++)+'. '+msg+'\n'); 
 	}
-	if(game.board.isSolved){
+	game.board.analyzeGrid();
+	if(game.board.checkSolved()){
 		timer.pause();
 		let timev = timer.getTimeValues()
 		let time = timev.seconds + timev.minutes * 60 + timev.hours * 3600;
 		$('#msg').text('Sudoku Solved {time: '+time+ ' seconds}');	
+		if( localStorage.getItem('usuario')){ 
+			usuario.partida.tiempo = time;
+			let level= $("#level").prop('selectedIndex');
+			$.ajax({
+				type: 'POST',
+				data: JSON.stringify(usuario),
+				contentType: 'application/json',
+				dataType: 'json',
+				url: "api/historial"
+			}).fail(err => {
+				console.log("error al conectar con el server: ", err);
+			});
+		}
 	}		
 });
 
@@ -83,7 +97,7 @@ $('#nuevoJuego').click(function() {
 		})
 		.fail(err => {
 			console.log("error de conexion con backend: ");
-			$().creaCanvas(["8.5.....2...9.1...3.........6.7..4..2...5...........6....38.....4....7...1.....9."], true);
+			$().creaCanvas([".87..3...1.5......3..782.5..6....5177.8...4...5.3..986246..9.......7..4.8..42.3.9"], true);
 		});
 });
 
@@ -218,6 +232,55 @@ $('#btnSolve').click(() => {
 	timer.pause();	
 });
 
+$('#btnAccept').click(() => {
+	game.board.findSingles();
+
+	if(game.board.checkSolved()){
+		timer.pause();
+		let timev = timer.getTimeValues()
+		let time = timev.seconds + timev.minutes * 60 + timev.hours * 3600;
+		$('#msg').text('Sudoku Solved {time: '+time+ ' seconds}');	
+		if( localStorage.getItem('usuario')){ 
+			usuario.partida.tiempo = time;
+			let level= $("#level").prop('selectedIndex');
+			$.ajax({
+				type: 'POST',
+				data: JSON.stringify(usuario),
+				contentType: 'application/json',
+				dataType: 'json',
+				url: "api/historial"
+			}).fail(err => {
+				console.log("error al conectar con el server: ", err);
+			});
+		}
+	}
+	game.updateCanvas();
+});
+
+$('#btnHint').click(() => {
+	game.board.findAloneSingle();
+
+	if(game.board.checkSolved()){
+		timer.pause();
+		let timev = timer.getTimeValues()
+		let time = timev.seconds + timev.minutes * 60 + timev.hours * 3600;
+		$('#msg').text('Sudoku Solved {time: '+time+ ' seconds}');	
+		if( localStorage.getItem('usuario')){ 
+			usuario.partida.tiempo = time;
+			let level= $("#level").prop('selectedIndex');
+			$.ajax({
+				type: 'POST',
+				data: JSON.stringify(usuario),
+				contentType: 'application/json',
+				dataType: 'json',
+				url: "api/historial"
+			}).fail(err => {
+				console.log("error al conectar con el server: ", err);
+			});
+		}
+	}
+	game.updateCanvas();
+});
 
 $(window).on('beforeunload', function(){
 	if(usuario){
