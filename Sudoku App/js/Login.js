@@ -1,3 +1,11 @@
+/*
+  @author Denis Rodriguez Viquez
+          Luis Vasquez Quiros
+          Walter Chavez Oviedo
+          Manuel Masis Segura
+  @since 2017
+*/
+
 $( document ).ready(() => {
 	$().cargaSudokus(); //carga los sudokus a la base
 	$().checkSession();	
@@ -175,7 +183,8 @@ $(function () {
 	usuario = user;
 	localStorage.removeItem('usuario');
 	localStorage.setItem('usuario', JSON.stringify(usuario));
-	
+	chart();
+	chart2();
 	if (usuario.partida.sudokuUndo.length > 0) {
 		console.log("CARGANDO SUDOKU DEL USUARIO LOGEADO");
 		$().creaCanvas(usuario.partida.sudokuUndo, usuario.partida.tiempo);
