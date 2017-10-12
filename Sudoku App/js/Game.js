@@ -97,9 +97,12 @@ class Game {
 	/* stack methods */
 
 	undo() {
-		if (this.stack.length) {
-			this.board.setString(this.stack.pop());
-			this.update();
+		if (this.stack.length > 1) {
+			this.stack.pop();
+			this.board = new Board();
+			this.board.setString(this.stack[0],true);
+			this.board.setString(this.stack[this.stack.length-1],false,true);
+			this.updateCanvas();
 		}
 	}
 
@@ -192,6 +195,12 @@ class Game {
 		this.updateCanvas();
 		return totalTime;
 	}
+	/*
+	acceptPossibles(){
+		check()
+		acceptPossibles
+		[]		
+	}*/
 
 	update(target, type) {
 		this.board.updateDigits(target, type);
