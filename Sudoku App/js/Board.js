@@ -72,7 +72,7 @@ class Board{
 		let check =(val) => isNaN(val)? 0 : parseInt(val);
 		if(undo){
 			value = Array.from(this.stringInit).reduce((z,e,i)=>e==value[i]?z+'.':z+value[i],'');
-			Array.from(value).forEach((e, i) => check(e)?this.getCell(loc(i)).setValue(e):undefined);
+			Array.from(value).forEach((e, i) => check(e)?this.getCell(loc(i)).setValue(parseInt(e)):undefined);
 		}
 		else if(!init){
 			value = Array.from(this.stringAct).reduce((z,e,i)=>e==value[i]?z+'.':z+e,'');

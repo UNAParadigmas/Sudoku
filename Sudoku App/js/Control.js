@@ -206,19 +206,7 @@ $('#btnLoadRegistro').click(() => {
 	});
 
 });
-/*
-$.ajax({
-		type: 'POST',
-		data: JSON.stringify(usuario),
-		contentType: 'application/json',
-		dataType: 'json',
-		url: "api/historial"
-	}).done(result => {
-		console.log("Historial nuevo: ", result);
-	}).fail(err => {
-		console.log("error al conectar con el server: ", err);
-	});
-	*/
+
 
 $('#btnSolve').click(() => {
 	$.ajax({
@@ -231,7 +219,7 @@ $('#btnSolve').click(() => {
 		//result=JSON.parse(result);
 		if(result.msg==true){
 			console.log("RESUELTO EN SERVER", result.actual.length);
-			game.board.setString(result.actual);
+			game.board.setString(result.actual,true,true);
 			game.board.isSolved=true;
 			game.updateCanvas();
 			$('#msg').text('Sudoku Solved {time: '+result.tiempo+ ' seconds}');
@@ -242,6 +230,7 @@ $('#btnSolve').click(() => {
 		timer.pause();
 	}).fail(err => {
 		console.log("error al conectar con el server: ", err);
+		console.log("RESOLVIENDO EN CLIENTE");
 		let time = game.solve();
 		if(game.board.isSolved){
 			$('#msg').text('Sudoku Solved {time: '+time+ ' seconds}');
@@ -250,12 +239,6 @@ $('#btnSolve').click(() => {
 		}	
 		timer.pause();
 	});
-
-
-		
-
-
-	
 });
 
 

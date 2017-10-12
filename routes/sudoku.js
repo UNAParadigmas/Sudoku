@@ -113,12 +113,12 @@ router.post('/sudoku/solve', function (req, res, next) {
     
     //llega sudoku actual
     board = new Board();
-    board.setString(data.actual);
+    board.setString(data.actual,true);
     let startTime = new Date().getTime();
     let totalTime;
     if (board.trySolve()) {
+		console.log("RESUELTO: ", board.stringAct);
         totalTime = ((new Date()).getTime() - startTime) / 1000
-        console.log("RESUELTO: ", board.stringAct);
         res.status(200).json({ "msg": true, "actual": board.stringAct, "tiempo": totalTime });
     }
     else {
