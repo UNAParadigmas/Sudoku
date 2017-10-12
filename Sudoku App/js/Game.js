@@ -132,16 +132,20 @@ class Game {
 			var loc = new Location(this.selRow, this.selCol)
 			var cel = this.board.getCell(loc);
 			if (cel.isGiven())
-				return;
+				return "";
 			if (!!digit&&cel.isNotAllowed(digit)) {
-				return;
+				return "Not Allowed Value"; 
 			}
+			let msg = "{Row: "+this.selRow+" ,Col: "+this.selCol+"} = "+digit;
 			this.pushBoard();
-			if(!!cel.getValue())
+			
+			if(!!cel.getValue()){
 				cel.setValue(0,loc);
+			}
 			cel.setValue(digit,loc);
+			
 			this.updateCanvas();
-			console.log(this.board.digits.matrix)
+			return msg;
 		}
 		
 		/* GAME METHODS*/
@@ -169,16 +173,20 @@ class Game {
 		solve(){
 			let startTime = new Date().getTime();
 			this.pushBoard();
+			let totalTime
 			if(this.board.trySolve()){
-				let totalTime = ((new Date()).getTime() - startTime)/1000
-				console.log('solved, time: '+totalTime+ 'seconds.');
+				totalTime = ((new Date()).getTime() - startTime)/1000
 			}else{
-				//dont have answer
+				totalTime = -1;
 			}
 			this.updateCanvas();
+			return totalTime;
 		}
+		
 		update(target,type){
 			this.board.updateDigits(target,type);
 		}
+		
+		
 	}
 		
