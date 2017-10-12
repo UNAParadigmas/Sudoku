@@ -1,5 +1,6 @@
 let timer = new Timer();
 let game = new Game();
+let mov = 1;
 window.game=game;	
 /* DOCUMENT CONTROL*/
 
@@ -15,22 +16,34 @@ $( document ).ready(() => {
 	//$('#btnSolve').prop('disabled', true);
 	$('#btnHint').prop('disabled', true);
 	$('#btnUndo').prop('disabled', true);
+	
 });		
 
 /*CANVAS CELL SELECTION*/
 
 $( document ).on('keydown', e => { // Moves through canvas cell using arrows
+	let msg;
+	
 	switch (e.keyCode) {
 		case 37: game.moveSelection(0 ,-1); break;
 		case 38: game.moveSelection(-1, 0); break;
 		case 39: game.moveSelection(0 , 1); break;
 		case 40: game.moveSelection(1 , 0); break;
-		case 8: case 46: game.setDigitInCell(0); break;
+		case 8: case 46: msg = game.setDigitInCell(0); break;
 		default:
 			var key = Number(e.keyCode);
 			var digit = key >= 96 ? key - 96 : key - 48;
-			if (digit >= 0 && digit <= 9) game.setDigitInCell(digit);
+			if (digit >= 0 && digit <= 9) msg = game.setDigitInCell(digit);
 	}	
+	if(msg){
+		$('#mstack').val($('#mstack').val()+'\t'+(mov++)+'. '+msg+'\n'); 
+	}
+	if(game.board.isSolved){
+		timer.pause();
+		let timev = timer.getTimeValues()
+		let time = timev.seconds + timev.minutes * 60 + timev.hours * 3600;
+		$('#msg').text('Sudoku Solved {time: '+time+ ' seconds}');	
+	}		
 });
 
  $.fn.relMouseCoords = event => { // returns selected cell coord.
@@ -101,15 +114,9 @@ $('#continueBtn').click(() => {
 
 
 $.fn.creaCanvas = function(vec,seg){
-	/*var aux = $('#level option:selected').text();
-	var dif = (val !== '9x9' || aux === 'Fácil') ? 1 : (aux === 'Normal') ? 2 : 3 ;
-	showAllowed = dif === 1; 
-	*/		
-	//$('#panelMsg').prop('hidden', false);
-	//$('#message').prop('hidden',false);
-	//$('#message').text('Juego Nuevo');
-				
-	//$('#size').text(val + ((val == '9x9')? " " + aux : ""));
+	$('#mstack').val(''); 
+	mov = 1;
+	
 	if(timer.isRunning()){				
 		timer.stop();
 	}
@@ -264,6 +271,16 @@ $('#btnLoadRegistro').click(() => {
 
 });
 
+
+$('#btnSolve').click(() => {
+	let time = game.solve();
+	if(game.board.isSolved){
+		$('#msg').text('Sudoku Solved {time: '+time+ ' seconds}');
+	}else{
+		$('#msg').text('Sudoku doesn\'t have solution.');
+	}	
+	timer.pause();	
+});
 
 $(window).on('beforeunload', function(){
 	usuario.partida.dificultad=level.selectedIndex;
